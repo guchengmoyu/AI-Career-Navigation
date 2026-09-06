@@ -1,0 +1,9 @@
+﻿dimension_id,name,description,display_order,schema_version,origin,is_synthetic,source_ids,generated_at,confidence,claim_level,verification_status,last_verified_at,license_scope,is_market_fact,data_split
+DIM-01,编程与计算基础,代码、算法、计算机系统与软件质量基础,1,1.1.0,derived,false,SRC-ONET|SRC-ESCO|SRC-WEF,2026-09-05T00:00:00+08:00,0.95,primary_derived,derived,,cc_by_4_0_attribution,false,dev
+DIM-02,数据处理与分析,数据获取、清洗、分析、解释和可视化能力,2,1.1.0,derived,false,SRC-ONET|SRC-ESCO|SRC-WEF,2026-09-05T00:00:00+08:00,0.95,primary_derived,derived,,cc_by_4_0_attribution,false,dev
+DIM-03,机器学习与算法,数学基础、模型构建、评估和优化能力,3,1.1.0,derived,false,SRC-ONET|SRC-ESCO|SRC-WEF,2026-09-05T00:00:00+08:00,0.95,primary_derived,derived,,cc_by_4_0_attribution,false,dev
+DIM-04,大模型与AI应用,大模型、RAG、Agent、MCP和安全评估能力,4,1.1.0,derived,false,SRC-ONET|SRC-ESCO|SRC-WEF,2026-09-05T00:00:00+08:00,0.95,primary_derived,derived,,cc_by_4_0_attribution,false,dev
+DIM-05,工程部署与工具,版本控制、服务开发、部署、监控和数据管道能力,5,1.1.0,derived,false,SRC-ONET|SRC-ESCO|SRC-WEF,2026-09-05T00:00:00+08:00,0.95,primary_derived,derived,,cc_by_4_0_attribution,false,dev
+DIM-06,问题解决与产品思维,需求理解、问题拆解、指标设计和业务判断能力,6,1.1.0,derived,false,SRC-ONET|SRC-ESCO|SRC-WEF,2026-09-05T00:00:00+08:00,0.95,primary_derived,derived,,cc_by_4_0_attribution,false,dev
+DIM-07,沟通协作与职业素养,书面表达、跨岗位协作、时间管理和隐私伦理意识,7,1.1.0,derived,false,SRC-ONET|SRC-ESCO|SRC-WEF,2026-09-05T00:00:00+08:00,0.95,primary_derived,derived,,cc_by_4_0_attribution,false,dev
+DIM-08,学习成长与项目实践,自主学习、知识管理、项目交付、反馈与职业探索能力,8,1.1.0,derived,false,SRC-ONET|SRC-ESCO|SRC-WEF,2026-09-05T00:00:00+08:00,0.95,primary_derived,derived,,cc_by_4_0_attribution,false,dev

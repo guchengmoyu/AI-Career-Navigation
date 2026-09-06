@@ -1,0 +1,4 @@
+﻿role_id,name,summary,target_user_stage,typical_entry_level,display_order,schema_version,origin,is_synthetic,source_ids,generated_at,confidence,claim_level,verification_status,last_verified_at,license_scope,is_market_fact,data_split
+ROLE-AI-ALG,AI算法工程师,负责数据处理、模型训练、评估优化及算法实验复现。,student|newcomer,本科及以上，重视数学与项目,1,1.1.0,derived,false,SRC-ONET|SRC-ESCO|SRC-MOHRSS,2026-09-05T00:00:00+08:00,0.92,primary_derived,derived,,cc_by_4_0_attribution,false,dev
+ROLE-AI-APP,AI应用开发工程师,负责将大模型、知识库和工具能力集成为可靠的业务应用。,student|newcomer,本科或同等能力，重视可验证成果,2,1.1.0,derived,false,SRC-ONET|SRC-ESCO|SRC-MOHRSS,2026-09-05T00:00:00+08:00,0.92,primary_derived,derived,,cc_by_4_0_attribution,false,dev
+ROLE-DATA,数据分析师,负责定义指标、处理数据、分析问题并向业务解释结论。,student|newcomer,本科或同等能力，重视可验证成果,3,1.1.0,derived,false,SRC-ONET|SRC-ESCO|SRC-MOHRSS,2026-09-05T00:00:00+08:00,0.92,primary_derived,derived,,cc_by_4_0_attribution,false,dev
