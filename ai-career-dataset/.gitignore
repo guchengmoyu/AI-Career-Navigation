@@ -1,0 +1,6 @@
+node_modules/
+.artifact-runtime/
+data/v1.0-full/
+reports/workbook_previews/
+outputs/**/*.inspect.ndjson
+*.zip

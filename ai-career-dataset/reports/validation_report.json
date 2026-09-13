@@ -1,0 +1,4108 @@
+{
+  "status": "PASS",
+  "schema_version": "1.2.0",
+  "validated_at": "2026-09-13T10:10:46.311Z",
+  "summary": {
+    "checks": 581,
+    "passed": 580,
+    "failed": 0,
+    "warnings": 1,
+    "verified_primary_resources": 22,
+    "deterministic_files_compared": 104
+  },
+  "versions": {
+    "v0.2-seed": {
+      "users": 12,
+      "jobs": 60,
+      "resources": 60,
+      "events": 360,
+      "trends": 120,
+      "scenarios": 15
+    },
+    "v0.5-core": {
+      "users": 100,
+      "jobs": 300,
+      "resources": 200,
+      "events": 4000,
+      "trends": 360,
+      "scenarios": 60
+    },
+    "v1.0-full": {
+      "users": 500,
+      "jobs": 1500,
+      "resources": 600,
+      "events": 20000,
+      "trends": 720,
+      "scenarios": 150
+    }
+  },
+  "checks": [
+    {
+      "check_id": "deterministic_regeneration",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "104 generated files compared byte-for-byte"
+    },
+    {
+      "check_id": "schema_version",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected 1.2.0, actual 1.2.0"
+    },
+    {
+      "check_id": "dimensions_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=8, csv=8"
+    },
+    {
+      "check_id": "dimensions_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "dimension_id: 8/8 unique"
+    },
+    {
+      "check_id": "dimensions_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "dimensions_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "8 metadata rows valid"
+    },
+    {
+      "check_id": "dimensions_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "skills_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=60, csv=60"
+    },
+    {
+      "check_id": "skills_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "skill_id: 60/60 unique"
+    },
+    {
+      "check_id": "skills_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "skills_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 metadata rows valid"
+    },
+    {
+      "check_id": "skills_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "roles_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=3, csv=3"
+    },
+    {
+      "check_id": "roles_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "role_id: 3/3 unique"
+    },
+    {
+      "check_id": "roles_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "roles_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 metadata rows valid"
+    },
+    {
+      "check_id": "roles_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "role_skills_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=54, csv=54"
+    },
+    {
+      "check_id": "role_skills_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "role_skill_id: 54/54 unique"
+    },
+    {
+      "check_id": "role_skills_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "role_skills_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "54 metadata rows valid"
+    },
+    {
+      "check_id": "role_skills_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "users_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=12, csv=12"
+    },
+    {
+      "check_id": "users_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "user_id: 12/12 unique"
+    },
+    {
+      "check_id": "users_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "users_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 metadata rows valid"
+    },
+    {
+      "check_id": "users_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "user_skill_evidence_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=720, csv=720"
+    },
+    {
+      "check_id": "user_skill_evidence_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "evidence_id: 720/720 unique"
+    },
+    {
+      "check_id": "user_skill_evidence_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "user_skill_evidence_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "720 metadata rows valid"
+    },
+    {
+      "check_id": "user_skill_evidence_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "user_skill_scores_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=720, csv=720"
+    },
+    {
+      "check_id": "user_skill_scores_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "user_skill_score_id: 720/720 unique"
+    },
+    {
+      "check_id": "user_skill_scores_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "user_skill_scores_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "720 metadata rows valid"
+    },
+    {
+      "check_id": "user_skill_scores_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "jobs_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=60, csv=60"
+    },
+    {
+      "check_id": "jobs_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "job_id: 60/60 unique"
+    },
+    {
+      "check_id": "jobs_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "jobs_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 metadata rows valid"
+    },
+    {
+      "check_id": "jobs_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "4 temporal fields valid"
+    },
+    {
+      "check_id": "job_skills_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=909, csv=909"
+    },
+    {
+      "check_id": "job_skills_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "job_skill_id: 909/909 unique"
+    },
+    {
+      "check_id": "job_skills_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "job_skills_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "909 metadata rows valid"
+    },
+    {
+      "check_id": "job_skills_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "learning_resources_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=60, csv=60"
+    },
+    {
+      "check_id": "learning_resources_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "resource_id: 60/60 unique"
+    },
+    {
+      "check_id": "learning_resources_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "learning_resources_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 metadata rows valid"
+    },
+    {
+      "check_id": "learning_resources_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "resource_skills_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=130, csv=130"
+    },
+    {
+      "check_id": "resource_skills_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "resource_skill_id: 130/130 unique"
+    },
+    {
+      "check_id": "resource_skills_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "resource_skills_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "130 metadata rows valid"
+    },
+    {
+      "check_id": "resource_skills_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "growth_events_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=360, csv=360"
+    },
+    {
+      "check_id": "growth_events_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "event_id: 360/360 unique"
+    },
+    {
+      "check_id": "growth_events_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "growth_events_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "360 metadata rows valid"
+    },
+    {
+      "check_id": "growth_events_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "trend_snapshots_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=120, csv=120"
+    },
+    {
+      "check_id": "trend_snapshots_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "trend_id: 120/120 unique"
+    },
+    {
+      "check_id": "trend_snapshots_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "trend_snapshots_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "120 metadata rows valid"
+    },
+    {
+      "check_id": "trend_snapshots_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "scenario_cases_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=15, csv=15"
+    },
+    {
+      "check_id": "scenario_cases_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "scenario_id: 15/15 unique"
+    },
+    {
+      "check_id": "scenario_cases_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "scenario_cases_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "15 metadata rows valid"
+    },
+    {
+      "check_id": "scenario_cases_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "golden_profile_snapshots_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=768, csv=768"
+    },
+    {
+      "check_id": "golden_profile_snapshots_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "snapshot_id: 768/768 unique"
+    },
+    {
+      "check_id": "golden_profile_snapshots_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "golden_profile_snapshots_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "768 metadata rows valid"
+    },
+    {
+      "check_id": "golden_profile_snapshots_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "career_paths_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=24, csv=24"
+    },
+    {
+      "check_id": "career_paths_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "path_id: 24/24 unique"
+    },
+    {
+      "check_id": "career_paths_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "career_paths_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "24 metadata rows valid"
+    },
+    {
+      "check_id": "career_paths_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "career_milestones_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=120, csv=120"
+    },
+    {
+      "check_id": "career_milestones_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "milestone_id: 120/120 unique"
+    },
+    {
+      "check_id": "career_milestones_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "career_milestones_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "120 metadata rows valid"
+    },
+    {
+      "check_id": "career_milestones_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "golden_expected_results_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=12, csv=12"
+    },
+    {
+      "check_id": "golden_expected_results_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected_result_id: 12/12 unique"
+    },
+    {
+      "check_id": "golden_expected_results_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "golden_expected_results_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 metadata rows valid"
+    },
+    {
+      "check_id": "golden_expected_results_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "knowledge_cards_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=200, csv=200"
+    },
+    {
+      "check_id": "knowledge_cards_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "knowledge_card_id: 200/200 unique"
+    },
+    {
+      "check_id": "knowledge_cards_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "knowledge_cards_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "200 metadata rows valid"
+    },
+    {
+      "check_id": "knowledge_cards_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "retrieval_eval_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=50, csv=50"
+    },
+    {
+      "check_id": "retrieval_eval_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "retrieval_case_id: 50/50 unique"
+    },
+    {
+      "check_id": "retrieval_eval_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "retrieval_eval_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "50 metadata rows valid"
+    },
+    {
+      "check_id": "retrieval_eval_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "matching_eval_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=36, csv=36"
+    },
+    {
+      "check_id": "matching_eval_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "match_case_id: 36/36 unique"
+    },
+    {
+      "check_id": "matching_eval_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "matching_eval_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "36 metadata rows valid"
+    },
+    {
+      "check_id": "matching_eval_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "path_eval_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=12, csv=12"
+    },
+    {
+      "check_id": "path_eval_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "path_case_id: 12/12 unique"
+    },
+    {
+      "check_id": "path_eval_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "path_eval_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 metadata rows valid"
+    },
+    {
+      "check_id": "path_eval_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "dialogue_eval_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=30, csv=30"
+    },
+    {
+      "check_id": "dialogue_eval_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "dialogue_case_id: 30/30 unique"
+    },
+    {
+      "check_id": "dialogue_eval_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "dialogue_eval_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "30 metadata rows valid"
+    },
+    {
+      "check_id": "dialogue_eval_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "fairness_eval_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=12, csv=12"
+    },
+    {
+      "check_id": "fairness_eval_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "fairness_pair_id: 12/12 unique"
+    },
+    {
+      "check_id": "fairness_eval_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "fairness_eval_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 metadata rows valid"
+    },
+    {
+      "check_id": "fairness_eval_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "privacy_security_eval_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=30, csv=30"
+    },
+    {
+      "check_id": "privacy_security_eval_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "security_case_id: 30/30 unique"
+    },
+    {
+      "check_id": "privacy_security_eval_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "privacy_security_eval_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "30 metadata rows valid"
+    },
+    {
+      "check_id": "privacy_security_eval_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "source_registry_manifest_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=8, csv=8"
+    },
+    {
+      "check_id": "source_registry_unique",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "source_id: 8/8 unique"
+    },
+    {
+      "check_id": "source_registry_common_headers",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "source_registry_metadata_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "8 metadata rows valid"
+    },
+    {
+      "check_id": "source_registry_date_values",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "users_expected_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=12, actual=12"
+    },
+    {
+      "check_id": "jobs_expected_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=60, actual=60"
+    },
+    {
+      "check_id": "learning_resources_expected_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=60, actual=60"
+    },
+    {
+      "check_id": "growth_events_expected_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=360, actual=360"
+    },
+    {
+      "check_id": "scenario_cases_expected_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=15, actual=15"
+    },
+    {
+      "check_id": "trend_snapshots_expected_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=120, actual=120"
+    },
+    {
+      "check_id": "knowledge_cards_expected_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=200, actual=200"
+    },
+    {
+      "check_id": "retrieval_eval_expected_count",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=50, actual=50"
+    },
+    {
+      "check_id": "users_stage_enum",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 allowed values used"
+    },
+    {
+      "check_id": "jobs_work_mode_enum",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 allowed values used"
+    },
+    {
+      "check_id": "learning_resources_resource_type_enum",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "5 allowed values used"
+    },
+    {
+      "check_id": "learning_resources_difficulty_enum",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 allowed values used"
+    },
+    {
+      "check_id": "scenario_cases_difficulty_enum",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 allowed values used"
+    },
+    {
+      "check_id": "privacy_security_eval_severity_enum",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 allowed values used"
+    },
+    {
+      "check_id": "knowledge_cards_category_enum",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "6 allowed values used"
+    },
+    {
+      "check_id": "user_stage_balance",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "student=6, newcomer=6"
+    },
+    {
+      "check_id": "resource_mix",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"verified_course_metadata\":6,\"public_catalog_topic_card\":12,\"synthetic_project\":24,\"synthetic_assessment\":12,\"synthetic_guide\":6}"
+    },
+    {
+      "check_id": "knowledge_category_mix",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"skill_level\":90,\"learning_resource\":60,\"role_skill\":9,\"role_adjacent_skill\":21,\"trend_interpretation\":10,\"ethics_privacy\":10}"
+    },
+    {
+      "check_id": "trend_coverage",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 skills × 2 months"
+    },
+    {
+      "check_id": "user_skill_scores_user_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "720 references valid"
+    },
+    {
+      "check_id": "user_skill_scores_skill_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "720 references valid"
+    },
+    {
+      "check_id": "user_skill_evidence_user_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "720 references valid"
+    },
+    {
+      "check_id": "user_skill_evidence_skill_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "720 references valid"
+    },
+    {
+      "check_id": "jobs_role_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 references valid"
+    },
+    {
+      "check_id": "job_skills_job_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "909 references valid"
+    },
+    {
+      "check_id": "job_skills_skill_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "909 references valid"
+    },
+    {
+      "check_id": "resource_skills_resource_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "130 references valid"
+    },
+    {
+      "check_id": "resource_skills_skill_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "130 references valid"
+    },
+    {
+      "check_id": "growth_events_user_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "360 references valid"
+    },
+    {
+      "check_id": "growth_events_skill_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "360 references valid"
+    },
+    {
+      "check_id": "growth_events_job_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "360 references valid"
+    },
+    {
+      "check_id": "growth_events_resource_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "360 references valid"
+    },
+    {
+      "check_id": "golden_snapshots_user_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "768 references valid"
+    },
+    {
+      "check_id": "career_paths_user_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "24 references valid"
+    },
+    {
+      "check_id": "career_milestones_path_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "120 references valid"
+    },
+    {
+      "check_id": "retrieval_expected_card_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "50 retrieval cases reference current package cards"
+    },
+    {
+      "check_id": "knowledge_entity_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "200 knowledge-card entities resolve"
+    },
+    {
+      "check_id": "knowledge_direct_role_relations",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "9 direct role cards map to role_skills"
+    },
+    {
+      "check_id": "knowledge_adjacent_role_relations",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "21 adjacent role cards are outside role_skills"
+    },
+    {
+      "check_id": "knowledge_adjacent_metadata",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "21 adjacent cards are synthetic and excluded from scoring"
+    },
+    {
+      "check_id": "knowledge_role_balance",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "direct={\"ROLE-DATA\":3,\"ROLE-AI-ALG\":3,\"ROLE-AI-APP\":3}, adjacent={\"ROLE-AI-ALG\":7,\"ROLE-AI-APP\":7,\"ROLE-DATA\":7}"
+    },
+    {
+      "check_id": "role_weights",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"ROLE-AI-ALG\":1,\"ROLE-AI-APP\":1,\"ROLE-DATA\":1}"
+    },
+    {
+      "check_id": "job_weights",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 job weight sums checked"
+    },
+    {
+      "check_id": "resource_weights",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 resource weight sums checked"
+    },
+    {
+      "check_id": "score_range",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "720 scores within 0-100"
+    },
+    {
+      "check_id": "matching_eval_test_split",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "36 held-out rows"
+    },
+    {
+      "check_id": "path_eval_test_split",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 held-out rows"
+    },
+    {
+      "check_id": "dialogue_eval_test_split",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "30 held-out rows"
+    },
+    {
+      "check_id": "fairness_eval_test_split",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 held-out rows"
+    },
+    {
+      "check_id": "privacy_security_eval_test_split",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "30 held-out rows"
+    },
+    {
+      "check_id": "retrieval_eval_test_split",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "50 held-out rows"
+    },
+    {
+      "check_id": "matching_eval_inputs",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "36 matching inputs self-contained"
+    },
+    {
+      "check_id": "path_eval_inputs",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 path inputs self-contained"
+    },
+    {
+      "check_id": "fairness_pairs",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 counterfactual pairs have zero expected delta"
+    },
+    {
+      "check_id": "source_registry_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all source_ids resolve"
+    },
+    {
+      "check_id": "retrieval_expected_source_fk",
+      "version": "v0.2-seed",
+      "severity": "error",
+      "passed": true,
+      "detail": "all retrieval expected_source_ids resolve"
+    },
+    {
+      "check_id": "schema_version",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected 1.2.0, actual 1.2.0"
+    },
+    {
+      "check_id": "dimensions_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=8, csv=8"
+    },
+    {
+      "check_id": "dimensions_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "dimension_id: 8/8 unique"
+    },
+    {
+      "check_id": "dimensions_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "dimensions_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "8 metadata rows valid"
+    },
+    {
+      "check_id": "dimensions_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "skills_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=60, csv=60"
+    },
+    {
+      "check_id": "skills_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "skill_id: 60/60 unique"
+    },
+    {
+      "check_id": "skills_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "skills_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 metadata rows valid"
+    },
+    {
+      "check_id": "skills_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "roles_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=3, csv=3"
+    },
+    {
+      "check_id": "roles_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "role_id: 3/3 unique"
+    },
+    {
+      "check_id": "roles_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "roles_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 metadata rows valid"
+    },
+    {
+      "check_id": "roles_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "role_skills_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=54, csv=54"
+    },
+    {
+      "check_id": "role_skills_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "role_skill_id: 54/54 unique"
+    },
+    {
+      "check_id": "role_skills_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "role_skills_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "54 metadata rows valid"
+    },
+    {
+      "check_id": "role_skills_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "users_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=100, csv=100"
+    },
+    {
+      "check_id": "users_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "user_id: 100/100 unique"
+    },
+    {
+      "check_id": "users_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "users_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "100 metadata rows valid"
+    },
+    {
+      "check_id": "users_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "user_skill_evidence_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=6000, csv=6000"
+    },
+    {
+      "check_id": "user_skill_evidence_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "evidence_id: 6000/6000 unique"
+    },
+    {
+      "check_id": "user_skill_evidence_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "user_skill_evidence_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "6000 metadata rows valid"
+    },
+    {
+      "check_id": "user_skill_evidence_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "user_skill_scores_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=6000, csv=6000"
+    },
+    {
+      "check_id": "user_skill_scores_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "user_skill_score_id: 6000/6000 unique"
+    },
+    {
+      "check_id": "user_skill_scores_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "user_skill_scores_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "6000 metadata rows valid"
+    },
+    {
+      "check_id": "user_skill_scores_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "jobs_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=300, csv=300"
+    },
+    {
+      "check_id": "jobs_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "job_id: 300/300 unique"
+    },
+    {
+      "check_id": "jobs_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "jobs_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "300 metadata rows valid"
+    },
+    {
+      "check_id": "jobs_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "4 temporal fields valid"
+    },
+    {
+      "check_id": "job_skills_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=4491, csv=4491"
+    },
+    {
+      "check_id": "job_skills_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "job_skill_id: 4491/4491 unique"
+    },
+    {
+      "check_id": "job_skills_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "job_skills_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "4491 metadata rows valid"
+    },
+    {
+      "check_id": "job_skills_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "learning_resources_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=200, csv=200"
+    },
+    {
+      "check_id": "learning_resources_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "resource_id: 200/200 unique"
+    },
+    {
+      "check_id": "learning_resources_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "learning_resources_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "200 metadata rows valid"
+    },
+    {
+      "check_id": "learning_resources_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "resource_skills_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=414, csv=414"
+    },
+    {
+      "check_id": "resource_skills_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "resource_skill_id: 414/414 unique"
+    },
+    {
+      "check_id": "resource_skills_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "resource_skills_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "414 metadata rows valid"
+    },
+    {
+      "check_id": "resource_skills_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "growth_events_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=4000, csv=4000"
+    },
+    {
+      "check_id": "growth_events_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "event_id: 4000/4000 unique"
+    },
+    {
+      "check_id": "growth_events_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "growth_events_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "4000 metadata rows valid"
+    },
+    {
+      "check_id": "growth_events_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "trend_snapshots_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=360, csv=360"
+    },
+    {
+      "check_id": "trend_snapshots_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "trend_id: 360/360 unique"
+    },
+    {
+      "check_id": "trend_snapshots_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "trend_snapshots_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "360 metadata rows valid"
+    },
+    {
+      "check_id": "trend_snapshots_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "scenario_cases_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=60, csv=60"
+    },
+    {
+      "check_id": "scenario_cases_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "scenario_id: 60/60 unique"
+    },
+    {
+      "check_id": "scenario_cases_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "scenario_cases_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 metadata rows valid"
+    },
+    {
+      "check_id": "scenario_cases_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "golden_profile_snapshots_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=768, csv=768"
+    },
+    {
+      "check_id": "golden_profile_snapshots_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "snapshot_id: 768/768 unique"
+    },
+    {
+      "check_id": "golden_profile_snapshots_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "golden_profile_snapshots_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "768 metadata rows valid"
+    },
+    {
+      "check_id": "golden_profile_snapshots_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "career_paths_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=24, csv=24"
+    },
+    {
+      "check_id": "career_paths_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "path_id: 24/24 unique"
+    },
+    {
+      "check_id": "career_paths_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "career_paths_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "24 metadata rows valid"
+    },
+    {
+      "check_id": "career_paths_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "career_milestones_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=120, csv=120"
+    },
+    {
+      "check_id": "career_milestones_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "milestone_id: 120/120 unique"
+    },
+    {
+      "check_id": "career_milestones_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "career_milestones_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "120 metadata rows valid"
+    },
+    {
+      "check_id": "career_milestones_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "golden_expected_results_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=12, csv=12"
+    },
+    {
+      "check_id": "golden_expected_results_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected_result_id: 12/12 unique"
+    },
+    {
+      "check_id": "golden_expected_results_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "golden_expected_results_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 metadata rows valid"
+    },
+    {
+      "check_id": "golden_expected_results_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "knowledge_cards_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=600, csv=600"
+    },
+    {
+      "check_id": "knowledge_cards_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "knowledge_card_id: 600/600 unique"
+    },
+    {
+      "check_id": "knowledge_cards_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "knowledge_cards_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "600 metadata rows valid"
+    },
+    {
+      "check_id": "knowledge_cards_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "retrieval_eval_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=100, csv=100"
+    },
+    {
+      "check_id": "retrieval_eval_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "retrieval_case_id: 100/100 unique"
+    },
+    {
+      "check_id": "retrieval_eval_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "retrieval_eval_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "100 metadata rows valid"
+    },
+    {
+      "check_id": "retrieval_eval_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "matching_eval_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=300, csv=300"
+    },
+    {
+      "check_id": "matching_eval_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "match_case_id: 300/300 unique"
+    },
+    {
+      "check_id": "matching_eval_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "matching_eval_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "300 metadata rows valid"
+    },
+    {
+      "check_id": "matching_eval_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "path_eval_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=60, csv=60"
+    },
+    {
+      "check_id": "path_eval_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "path_case_id: 60/60 unique"
+    },
+    {
+      "check_id": "path_eval_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "path_eval_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 metadata rows valid"
+    },
+    {
+      "check_id": "path_eval_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "dialogue_eval_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=75, csv=75"
+    },
+    {
+      "check_id": "dialogue_eval_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "dialogue_case_id: 75/75 unique"
+    },
+    {
+      "check_id": "dialogue_eval_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "dialogue_eval_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "75 metadata rows valid"
+    },
+    {
+      "check_id": "dialogue_eval_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "fairness_eval_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=50, csv=50"
+    },
+    {
+      "check_id": "fairness_eval_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "fairness_pair_id: 50/50 unique"
+    },
+    {
+      "check_id": "fairness_eval_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "fairness_eval_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "50 metadata rows valid"
+    },
+    {
+      "check_id": "fairness_eval_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "privacy_security_eval_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=50, csv=50"
+    },
+    {
+      "check_id": "privacy_security_eval_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "security_case_id: 50/50 unique"
+    },
+    {
+      "check_id": "privacy_security_eval_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "privacy_security_eval_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "50 metadata rows valid"
+    },
+    {
+      "check_id": "privacy_security_eval_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "source_registry_manifest_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=8, csv=8"
+    },
+    {
+      "check_id": "source_registry_unique",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "source_id: 8/8 unique"
+    },
+    {
+      "check_id": "source_registry_common_headers",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "source_registry_metadata_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "8 metadata rows valid"
+    },
+    {
+      "check_id": "source_registry_date_values",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "users_expected_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=100, actual=100"
+    },
+    {
+      "check_id": "jobs_expected_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=300, actual=300"
+    },
+    {
+      "check_id": "learning_resources_expected_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=200, actual=200"
+    },
+    {
+      "check_id": "growth_events_expected_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=4000, actual=4000"
+    },
+    {
+      "check_id": "scenario_cases_expected_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=60, actual=60"
+    },
+    {
+      "check_id": "trend_snapshots_expected_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=360, actual=360"
+    },
+    {
+      "check_id": "knowledge_cards_expected_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=600, actual=600"
+    },
+    {
+      "check_id": "retrieval_eval_expected_count",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=100, actual=100"
+    },
+    {
+      "check_id": "users_stage_enum",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 allowed values used"
+    },
+    {
+      "check_id": "jobs_work_mode_enum",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 allowed values used"
+    },
+    {
+      "check_id": "learning_resources_resource_type_enum",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "5 allowed values used"
+    },
+    {
+      "check_id": "learning_resources_difficulty_enum",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 allowed values used"
+    },
+    {
+      "check_id": "scenario_cases_difficulty_enum",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 allowed values used"
+    },
+    {
+      "check_id": "privacy_security_eval_severity_enum",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 allowed values used"
+    },
+    {
+      "check_id": "knowledge_cards_category_enum",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "6 allowed values used"
+    },
+    {
+      "check_id": "user_stage_balance",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "student=50, newcomer=50"
+    },
+    {
+      "check_id": "resource_mix",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"verified_course_metadata\":12,\"public_catalog_topic_card\":28,\"synthetic_project\":100,\"synthetic_assessment\":40,\"synthetic_guide\":20}"
+    },
+    {
+      "check_id": "knowledge_category_mix",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"skill_level\":250,\"learning_resource\":200,\"role_skill\":27,\"role_adjacent_skill\":63,\"trend_interpretation\":30,\"ethics_privacy\":30}"
+    },
+    {
+      "check_id": "trend_coverage",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 skills × 6 months"
+    },
+    {
+      "check_id": "user_skill_scores_user_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "6000 references valid"
+    },
+    {
+      "check_id": "user_skill_scores_skill_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "6000 references valid"
+    },
+    {
+      "check_id": "user_skill_evidence_user_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "6000 references valid"
+    },
+    {
+      "check_id": "user_skill_evidence_skill_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "6000 references valid"
+    },
+    {
+      "check_id": "jobs_role_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "300 references valid"
+    },
+    {
+      "check_id": "job_skills_job_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "4491 references valid"
+    },
+    {
+      "check_id": "job_skills_skill_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "4491 references valid"
+    },
+    {
+      "check_id": "resource_skills_resource_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "414 references valid"
+    },
+    {
+      "check_id": "resource_skills_skill_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "414 references valid"
+    },
+    {
+      "check_id": "growth_events_user_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "4000 references valid"
+    },
+    {
+      "check_id": "growth_events_skill_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "4000 references valid"
+    },
+    {
+      "check_id": "growth_events_job_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "4000 references valid"
+    },
+    {
+      "check_id": "growth_events_resource_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "4000 references valid"
+    },
+    {
+      "check_id": "golden_snapshots_user_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "768 references valid"
+    },
+    {
+      "check_id": "career_paths_user_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "24 references valid"
+    },
+    {
+      "check_id": "career_milestones_path_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "120 references valid"
+    },
+    {
+      "check_id": "retrieval_expected_card_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "100 retrieval cases reference current package cards"
+    },
+    {
+      "check_id": "knowledge_entity_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "600 knowledge-card entities resolve"
+    },
+    {
+      "check_id": "knowledge_direct_role_relations",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "27 direct role cards map to role_skills"
+    },
+    {
+      "check_id": "knowledge_adjacent_role_relations",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "63 adjacent role cards are outside role_skills"
+    },
+    {
+      "check_id": "knowledge_adjacent_metadata",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "63 adjacent cards are synthetic and excluded from scoring"
+    },
+    {
+      "check_id": "knowledge_role_balance",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "direct={\"ROLE-AI-ALG\":9,\"ROLE-AI-APP\":9,\"ROLE-DATA\":9}, adjacent={\"ROLE-AI-ALG\":21,\"ROLE-AI-APP\":21,\"ROLE-DATA\":21}"
+    },
+    {
+      "check_id": "role_weights",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"ROLE-AI-ALG\":1,\"ROLE-AI-APP\":1,\"ROLE-DATA\":1}"
+    },
+    {
+      "check_id": "job_weights",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "300 job weight sums checked"
+    },
+    {
+      "check_id": "resource_weights",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "200 resource weight sums checked"
+    },
+    {
+      "check_id": "score_range",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "6000 scores within 0-100"
+    },
+    {
+      "check_id": "matching_eval_test_split",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "300 held-out rows"
+    },
+    {
+      "check_id": "path_eval_test_split",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 held-out rows"
+    },
+    {
+      "check_id": "dialogue_eval_test_split",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "75 held-out rows"
+    },
+    {
+      "check_id": "fairness_eval_test_split",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "50 held-out rows"
+    },
+    {
+      "check_id": "privacy_security_eval_test_split",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "50 held-out rows"
+    },
+    {
+      "check_id": "retrieval_eval_test_split",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "100 held-out rows"
+    },
+    {
+      "check_id": "matching_eval_inputs",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "300 matching inputs self-contained"
+    },
+    {
+      "check_id": "path_eval_inputs",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 path inputs self-contained"
+    },
+    {
+      "check_id": "fairness_pairs",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "50 counterfactual pairs have zero expected delta"
+    },
+    {
+      "check_id": "source_registry_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all source_ids resolve"
+    },
+    {
+      "check_id": "retrieval_expected_source_fk",
+      "version": "v0.5-core",
+      "severity": "error",
+      "passed": true,
+      "detail": "all retrieval expected_source_ids resolve"
+    },
+    {
+      "check_id": "schema_version",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected 1.2.0, actual 1.2.0"
+    },
+    {
+      "check_id": "dimensions_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=8, csv=8"
+    },
+    {
+      "check_id": "dimensions_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "dimension_id: 8/8 unique"
+    },
+    {
+      "check_id": "dimensions_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "dimensions_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "8 metadata rows valid"
+    },
+    {
+      "check_id": "dimensions_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "skills_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=60, csv=60"
+    },
+    {
+      "check_id": "skills_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "skill_id: 60/60 unique"
+    },
+    {
+      "check_id": "skills_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "skills_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 metadata rows valid"
+    },
+    {
+      "check_id": "skills_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "roles_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=3, csv=3"
+    },
+    {
+      "check_id": "roles_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "role_id: 3/3 unique"
+    },
+    {
+      "check_id": "roles_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "roles_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 metadata rows valid"
+    },
+    {
+      "check_id": "roles_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "role_skills_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=54, csv=54"
+    },
+    {
+      "check_id": "role_skills_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "role_skill_id: 54/54 unique"
+    },
+    {
+      "check_id": "role_skills_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "role_skills_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "54 metadata rows valid"
+    },
+    {
+      "check_id": "role_skills_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "users_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=500, csv=500"
+    },
+    {
+      "check_id": "users_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "user_id: 500/500 unique"
+    },
+    {
+      "check_id": "users_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "users_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "500 metadata rows valid"
+    },
+    {
+      "check_id": "users_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "user_skill_evidence_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=30000, csv=30000"
+    },
+    {
+      "check_id": "user_skill_evidence_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "evidence_id: 30000/30000 unique"
+    },
+    {
+      "check_id": "user_skill_evidence_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "user_skill_evidence_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "30000 metadata rows valid"
+    },
+    {
+      "check_id": "user_skill_evidence_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "user_skill_scores_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=30000, csv=30000"
+    },
+    {
+      "check_id": "user_skill_scores_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "user_skill_score_id: 30000/30000 unique"
+    },
+    {
+      "check_id": "user_skill_scores_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "user_skill_scores_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "30000 metadata rows valid"
+    },
+    {
+      "check_id": "user_skill_scores_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "jobs_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=1500, csv=1500"
+    },
+    {
+      "check_id": "jobs_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "job_id: 1500/1500 unique"
+    },
+    {
+      "check_id": "jobs_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "jobs_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "1500 metadata rows valid"
+    },
+    {
+      "check_id": "jobs_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "4 temporal fields valid"
+    },
+    {
+      "check_id": "job_skills_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=22491, csv=22491"
+    },
+    {
+      "check_id": "job_skills_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "job_skill_id: 22491/22491 unique"
+    },
+    {
+      "check_id": "job_skills_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "job_skills_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "22491 metadata rows valid"
+    },
+    {
+      "check_id": "job_skills_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "learning_resources_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=600, csv=600"
+    },
+    {
+      "check_id": "learning_resources_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "resource_id: 600/600 unique"
+    },
+    {
+      "check_id": "learning_resources_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "learning_resources_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "600 metadata rows valid"
+    },
+    {
+      "check_id": "learning_resources_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "resource_skills_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=1222, csv=1222"
+    },
+    {
+      "check_id": "resource_skills_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "resource_skill_id: 1222/1222 unique"
+    },
+    {
+      "check_id": "resource_skills_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "resource_skills_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "1222 metadata rows valid"
+    },
+    {
+      "check_id": "resource_skills_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "growth_events_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=20000, csv=20000"
+    },
+    {
+      "check_id": "growth_events_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "event_id: 20000/20000 unique"
+    },
+    {
+      "check_id": "growth_events_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "growth_events_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "20000 metadata rows valid"
+    },
+    {
+      "check_id": "growth_events_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "trend_snapshots_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=720, csv=720"
+    },
+    {
+      "check_id": "trend_snapshots_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "trend_id: 720/720 unique"
+    },
+    {
+      "check_id": "trend_snapshots_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "trend_snapshots_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "720 metadata rows valid"
+    },
+    {
+      "check_id": "trend_snapshots_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "scenario_cases_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=150, csv=150"
+    },
+    {
+      "check_id": "scenario_cases_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "scenario_id: 150/150 unique"
+    },
+    {
+      "check_id": "scenario_cases_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "scenario_cases_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "150 metadata rows valid"
+    },
+    {
+      "check_id": "scenario_cases_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "golden_profile_snapshots_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=768, csv=768"
+    },
+    {
+      "check_id": "golden_profile_snapshots_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "snapshot_id: 768/768 unique"
+    },
+    {
+      "check_id": "golden_profile_snapshots_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "golden_profile_snapshots_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "768 metadata rows valid"
+    },
+    {
+      "check_id": "golden_profile_snapshots_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "career_paths_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=24, csv=24"
+    },
+    {
+      "check_id": "career_paths_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "path_id: 24/24 unique"
+    },
+    {
+      "check_id": "career_paths_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "career_paths_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "24 metadata rows valid"
+    },
+    {
+      "check_id": "career_paths_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "career_milestones_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=120, csv=120"
+    },
+    {
+      "check_id": "career_milestones_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "milestone_id: 120/120 unique"
+    },
+    {
+      "check_id": "career_milestones_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "career_milestones_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "120 metadata rows valid"
+    },
+    {
+      "check_id": "career_milestones_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "golden_expected_results_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=12, csv=12"
+    },
+    {
+      "check_id": "golden_expected_results_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected_result_id: 12/12 unique"
+    },
+    {
+      "check_id": "golden_expected_results_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "golden_expected_results_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 metadata rows valid"
+    },
+    {
+      "check_id": "golden_expected_results_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "knowledge_cards_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=1200, csv=1200"
+    },
+    {
+      "check_id": "knowledge_cards_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "knowledge_card_id: 1200/1200 unique"
+    },
+    {
+      "check_id": "knowledge_cards_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "knowledge_cards_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "1200 metadata rows valid"
+    },
+    {
+      "check_id": "knowledge_cards_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "retrieval_eval_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=200, csv=200"
+    },
+    {
+      "check_id": "retrieval_eval_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "retrieval_case_id: 200/200 unique"
+    },
+    {
+      "check_id": "retrieval_eval_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "retrieval_eval_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "200 metadata rows valid"
+    },
+    {
+      "check_id": "retrieval_eval_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "matching_eval_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=300, csv=300"
+    },
+    {
+      "check_id": "matching_eval_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "match_case_id: 300/300 unique"
+    },
+    {
+      "check_id": "matching_eval_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "matching_eval_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "300 metadata rows valid"
+    },
+    {
+      "check_id": "matching_eval_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "path_eval_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=60, csv=60"
+    },
+    {
+      "check_id": "path_eval_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "path_case_id: 60/60 unique"
+    },
+    {
+      "check_id": "path_eval_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "path_eval_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 metadata rows valid"
+    },
+    {
+      "check_id": "path_eval_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "dialogue_eval_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=150, csv=150"
+    },
+    {
+      "check_id": "dialogue_eval_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "dialogue_case_id: 150/150 unique"
+    },
+    {
+      "check_id": "dialogue_eval_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "dialogue_eval_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "150 metadata rows valid"
+    },
+    {
+      "check_id": "dialogue_eval_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "fairness_eval_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=100, csv=100"
+    },
+    {
+      "check_id": "fairness_eval_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "fairness_pair_id: 100/100 unique"
+    },
+    {
+      "check_id": "fairness_eval_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "fairness_eval_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "100 metadata rows valid"
+    },
+    {
+      "check_id": "fairness_eval_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "privacy_security_eval_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=100, csv=100"
+    },
+    {
+      "check_id": "privacy_security_eval_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "security_case_id: 100/100 unique"
+    },
+    {
+      "check_id": "privacy_security_eval_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "privacy_security_eval_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "100 metadata rows valid"
+    },
+    {
+      "check_id": "privacy_security_eval_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 temporal fields valid"
+    },
+    {
+      "check_id": "source_registry_manifest_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "manifest=8, csv=8"
+    },
+    {
+      "check_id": "source_registry_unique",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "source_id: 8/8 unique"
+    },
+    {
+      "check_id": "source_registry_common_headers",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all common metadata fields present"
+    },
+    {
+      "check_id": "source_registry_metadata_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "8 metadata rows valid"
+    },
+    {
+      "check_id": "source_registry_date_values",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 temporal fields valid"
+    },
+    {
+      "check_id": "users_expected_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=500, actual=500"
+    },
+    {
+      "check_id": "jobs_expected_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=1500, actual=1500"
+    },
+    {
+      "check_id": "learning_resources_expected_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=600, actual=600"
+    },
+    {
+      "check_id": "growth_events_expected_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=20000, actual=20000"
+    },
+    {
+      "check_id": "scenario_cases_expected_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=150, actual=150"
+    },
+    {
+      "check_id": "trend_snapshots_expected_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=720, actual=720"
+    },
+    {
+      "check_id": "knowledge_cards_expected_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=1200, actual=1200"
+    },
+    {
+      "check_id": "retrieval_eval_expected_count",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "expected=200, actual=200"
+    },
+    {
+      "check_id": "users_stage_enum",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 allowed values used"
+    },
+    {
+      "check_id": "jobs_work_mode_enum",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 allowed values used"
+    },
+    {
+      "check_id": "learning_resources_resource_type_enum",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "5 allowed values used"
+    },
+    {
+      "check_id": "learning_resources_difficulty_enum",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 allowed values used"
+    },
+    {
+      "check_id": "scenario_cases_difficulty_enum",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "3 allowed values used"
+    },
+    {
+      "check_id": "privacy_security_eval_severity_enum",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "2 allowed values used"
+    },
+    {
+      "check_id": "knowledge_cards_category_enum",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "6 allowed values used"
+    },
+    {
+      "check_id": "user_stage_balance",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "student=250, newcomer=250"
+    },
+    {
+      "check_id": "resource_mix",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"verified_course_metadata\":22,\"public_catalog_topic_card\":98,\"synthetic_project\":300,\"synthetic_assessment\":120,\"synthetic_guide\":60}"
+    },
+    {
+      "check_id": "knowledge_category_mix",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"skill_level\":300,\"learning_resource\":600,\"role_skill\":54,\"role_adjacent_skill\":126,\"trend_interpretation\":60,\"ethics_privacy\":60}"
+    },
+    {
+      "check_id": "trend_coverage",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 skills × 12 months"
+    },
+    {
+      "check_id": "user_skill_scores_user_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "30000 references valid"
+    },
+    {
+      "check_id": "user_skill_scores_skill_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "30000 references valid"
+    },
+    {
+      "check_id": "user_skill_evidence_user_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "30000 references valid"
+    },
+    {
+      "check_id": "user_skill_evidence_skill_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "30000 references valid"
+    },
+    {
+      "check_id": "jobs_role_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "1500 references valid"
+    },
+    {
+      "check_id": "job_skills_job_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "22491 references valid"
+    },
+    {
+      "check_id": "job_skills_skill_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "22491 references valid"
+    },
+    {
+      "check_id": "resource_skills_resource_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "1222 references valid"
+    },
+    {
+      "check_id": "resource_skills_skill_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "1222 references valid"
+    },
+    {
+      "check_id": "growth_events_user_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "20000 references valid"
+    },
+    {
+      "check_id": "growth_events_skill_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "20000 references valid"
+    },
+    {
+      "check_id": "growth_events_job_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "20000 references valid"
+    },
+    {
+      "check_id": "growth_events_resource_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "20000 references valid"
+    },
+    {
+      "check_id": "golden_snapshots_user_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "768 references valid"
+    },
+    {
+      "check_id": "career_paths_user_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "24 references valid"
+    },
+    {
+      "check_id": "career_milestones_path_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "120 references valid"
+    },
+    {
+      "check_id": "retrieval_expected_card_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "200 retrieval cases reference current package cards"
+    },
+    {
+      "check_id": "knowledge_entity_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "1200 knowledge-card entities resolve"
+    },
+    {
+      "check_id": "knowledge_direct_role_relations",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "54 direct role cards map to role_skills"
+    },
+    {
+      "check_id": "knowledge_adjacent_role_relations",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "126 adjacent role cards are outside role_skills"
+    },
+    {
+      "check_id": "knowledge_adjacent_metadata",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "126 adjacent cards are synthetic and excluded from scoring"
+    },
+    {
+      "check_id": "knowledge_role_balance",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "direct={\"ROLE-AI-ALG\":18,\"ROLE-AI-APP\":18,\"ROLE-DATA\":18}, adjacent={\"ROLE-AI-ALG\":42,\"ROLE-AI-APP\":42,\"ROLE-DATA\":42}"
+    },
+    {
+      "check_id": "role_weights",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"ROLE-AI-ALG\":1,\"ROLE-AI-APP\":1,\"ROLE-DATA\":1}"
+    },
+    {
+      "check_id": "job_weights",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "1500 job weight sums checked"
+    },
+    {
+      "check_id": "resource_weights",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "600 resource weight sums checked"
+    },
+    {
+      "check_id": "score_range",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "30000 scores within 0-100"
+    },
+    {
+      "check_id": "user_split_counts",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"golden\":12,\"dev\":388,\"test\":100}"
+    },
+    {
+      "check_id": "job_split_counts",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"dev\":1200,\"test\":300}"
+    },
+    {
+      "check_id": "job_level_mix_ROLE-AI-ALG",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"campus\":167,\"entry\":167,\"junior\":166}"
+    },
+    {
+      "check_id": "job_level_mix_ROLE-AI-APP",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"campus\":167,\"entry\":167,\"junior\":166}"
+    },
+    {
+      "check_id": "job_level_mix_ROLE-DATA",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "{\"campus\":167,\"entry\":167,\"junior\":166}"
+    },
+    {
+      "check_id": "events_per_user",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "500 users × 40 events"
+    },
+    {
+      "check_id": "matching_eval_test_split",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "300 held-out rows"
+    },
+    {
+      "check_id": "path_eval_test_split",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 held-out rows"
+    },
+    {
+      "check_id": "dialogue_eval_test_split",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "150 held-out rows"
+    },
+    {
+      "check_id": "fairness_eval_test_split",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "100 held-out rows"
+    },
+    {
+      "check_id": "privacy_security_eval_test_split",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "100 held-out rows"
+    },
+    {
+      "check_id": "retrieval_eval_test_split",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "200 held-out rows"
+    },
+    {
+      "check_id": "matching_eval_inputs",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "300 matching inputs self-contained"
+    },
+    {
+      "check_id": "path_eval_inputs",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "60 path inputs self-contained"
+    },
+    {
+      "check_id": "fairness_pairs",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "100 counterfactual pairs have zero expected delta"
+    },
+    {
+      "check_id": "source_registry_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all source_ids resolve"
+    },
+    {
+      "check_id": "retrieval_expected_source_fk",
+      "version": "v1.0-full",
+      "severity": "error",
+      "passed": true,
+      "detail": "all retrieval expected_source_ids resolve"
+    },
+    {
+      "check_id": "verified_primary_resource_minimum",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "22 official course/course-series pages verified"
+    },
+    {
+      "check_id": "verified_resource_fields",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "verified resources use official URLs and metadata-only scope"
+    },
+    {
+      "check_id": "topic_card_labeling",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "98 derived topic cards are not labeled as official courses"
+    },
+    {
+      "check_id": "market_claim_boundaries",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "jobs, salaries and trends remain explicitly simulated"
+    },
+    {
+      "check_id": "onet_attribution",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "O*NET version, attribution license and modification notice present"
+    },
+    {
+      "check_id": "golden_case_counts",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 golden users, two paths each, eight 8-dimension snapshots each"
+    },
+    {
+      "check_id": "golden_g009_rank",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "USER-G009 target AI application role ranks first"
+    },
+    {
+      "check_id": "golden_target_top_two",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "all golden target roles rank in top two"
+    },
+    {
+      "check_id": "golden_closed_loop",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 golden users contain ordered learning→project→recalculation→adjustment chain"
+    },
+    {
+      "check_id": "no_pii_patterns",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "no phone, ID, email or long account-number patterns found"
+    },
+    {
+      "check_id": "golden_manual_review_template",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 blank template rows prepared"
+    },
+    {
+      "check_id": "golden_manual_review_record",
+      "version": "global",
+      "severity": "error",
+      "passed": true,
+      "detail": "12 human-review records with 12 unique users"
+    },
+    {
+      "check_id": "golden_manual_signoff",
+      "version": "global",
+      "severity": "warning",
+      "passed": false,
+      "detail": "0/12 signed; team signoff is required before competition freeze"
+    }
+  ]
+}

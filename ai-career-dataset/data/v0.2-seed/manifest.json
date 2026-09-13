@@ -1,0 +1,143 @@
+{
+  "dataset_name": "AI职业导航比赛模拟数据",
+  "dataset_version": "v0.2-seed",
+  "schema_version": "1.2.0",
+  "generated_at": "2026-09-13T00:00:00+08:00",
+  "random_seed": 20260905,
+  "all_operational_records_are_synthetic": false,
+  "user_job_event_records_are_synthetic": true,
+  "contains_verified_primary_metadata": true,
+  "verified_primary_resource_count": 6,
+  "tables": {
+    "dimensions": {
+      "rows": 8,
+      "primary_key": "dimension_id",
+      "description": "8个雷达图展示维度"
+    },
+    "skills": {
+      "rows": 60,
+      "primary_key": "skill_id",
+      "description": "60项原子技能及衰减参数"
+    },
+    "roles": {
+      "rows": 3,
+      "primary_key": "role_id",
+      "description": "三个目标岗位"
+    },
+    "role_skills": {
+      "rows": 54,
+      "primary_key": "role_skill_id",
+      "description": "岗位能力要求、权重与目标分"
+    },
+    "users": {
+      "rows": 12,
+      "primary_key": "user_id",
+      "description": "高校生与职场新人模拟画像"
+    },
+    "user_skill_evidence": {
+      "rows": 720,
+      "primary_key": "evidence_id",
+      "description": "能力证据及可信度"
+    },
+    "user_skill_scores": {
+      "rows": 720,
+      "primary_key": "user_skill_score_id",
+      "description": "时间衰减后的当前能力分"
+    },
+    "jobs": {
+      "rows": 60,
+      "primary_key": "job_id",
+      "description": "虚构企业模拟岗位"
+    },
+    "job_skills": {
+      "rows": 909,
+      "primary_key": "job_skill_id",
+      "description": "岗位级技能要求"
+    },
+    "learning_resources": {
+      "rows": 60,
+      "primary_key": "resource_id",
+      "description": "课程、项目、测评和指南"
+    },
+    "resource_skills": {
+      "rows": 130,
+      "primary_key": "resource_skill_id",
+      "description": "学习资源与技能映射"
+    },
+    "growth_events": {
+      "rows": 360,
+      "primary_key": "event_id",
+      "description": "用户学习、求职和反馈事件"
+    },
+    "trend_snapshots": {
+      "rows": 120,
+      "primary_key": "trend_id",
+      "description": "技能月度模拟趋势"
+    },
+    "scenario_cases": {
+      "rows": 15,
+      "primary_key": "scenario_id",
+      "description": "三类职场训练案例"
+    },
+    "golden_profile_snapshots": {
+      "rows": 768,
+      "primary_key": "snapshot_id",
+      "description": "黄金用户雷达图时间快照"
+    },
+    "career_paths": {
+      "rows": 24,
+      "primary_key": "path_id",
+      "description": "黄金用户双分支职业路径"
+    },
+    "career_milestones": {
+      "rows": 120,
+      "primary_key": "milestone_id",
+      "description": "职业路径里程碑"
+    },
+    "golden_expected_results": {
+      "rows": 12,
+      "primary_key": "expected_result_id",
+      "description": "黄金案例人工复核基准"
+    },
+    "knowledge_cards": {
+      "rows": 200,
+      "primary_key": "knowledge_card_id",
+      "description": "知识库检索卡片"
+    },
+    "retrieval_eval": {
+      "rows": 50,
+      "primary_key": "retrieval_case_id",
+      "description": "知识库Top5评测"
+    },
+    "matching_eval": {
+      "rows": 36,
+      "primary_key": "match_case_id",
+      "description": "岗位匹配排序与分数评测"
+    },
+    "path_eval": {
+      "rows": 12,
+      "primary_key": "path_case_id",
+      "description": "职业路径约束评测"
+    },
+    "dialogue_eval": {
+      "rows": 30,
+      "primary_key": "dialogue_case_id",
+      "description": "情绪与长期陪伴评测"
+    },
+    "fairness_eval": {
+      "rows": 12,
+      "primary_key": "fairness_pair_id",
+      "description": "非评分属性反事实评测"
+    },
+    "privacy_security_eval": {
+      "rows": 30,
+      "primary_key": "security_case_id",
+      "description": "隐私、越权与提示词攻击评测"
+    },
+    "source_registry": {
+      "rows": 8,
+      "primary_key": "source_id",
+      "description": "公开来源、许可和改写台账"
+    }
+  }
+}
