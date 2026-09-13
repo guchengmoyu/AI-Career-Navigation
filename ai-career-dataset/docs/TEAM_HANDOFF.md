@@ -2,7 +2,7 @@
 
 ## 首选联调版本
 
-开发初期使用 `data/v0.2-seed/json/`。字段稳定后切换到 `v0.5-core`，性能与答辩数据使用 `v1.0-full`。三个版本的 ID 前缀和字段完全一致。
+开发初期使用 `data/v0.2-seed/json/`。字段稳定后切换到 `v0.5-core`，性能与答辩数据使用 `v1.0-full`。三个规模版本共享 `schema_version=1.2.0`，ID 前缀和字段完全一致。
 
 ## 模块依赖
 
@@ -23,6 +23,20 @@
 - `data_split=test` 的用户和岗位只用于独立评测，不参与规则调参或演示挑选。
 - 所有模拟记录均有 `is_synthetic=true`。
 - 面向用户展示 `jobs` 或 `trend_snapshots` 时必须显示“演示数据”。
+
+## 知识库 v1.2.0 兼容说明
+
+- 完整包仍为 1,200 张知识卡和 200 条检索评测；所有既有 `knowledge_card_id`、`retrieval_case_id` 和 `expected_card_ids` 保持不变。
+- 原有 180 张 `role_skill` 岗位卡拆分为 54 张 `role_skill` 与 126 张 `role_adjacent_skill`。前者必须存在于 `role_skills.csv` 并参与评分；后者是合成相邻能力扩展，明确不参与当前岗位匹配评分。
+- 知识库同学原先报告的“126 张孤儿岗位卡”已通过类别和关系语义修复，不应删除这些卡。只使用技能等级卡的既有实验不受影响。
+- 种子包和核心包改为按类别、技能及岗位分层选择，并优先包含其评测引用卡片；两个版本的检索引用悬空数现应为 0。
+- 消费方若以前只接受 `category=role_skill`，应增加 `role_adjacent_skill` 展示分支，并禁止把相邻能力权重写入岗位匹配分数。
+
+## 黄金案例冻结状态
+
+- `templates/golden_manual_review_template.csv` 是生成器维护的空白模板。
+- 人工记录仅写入 `reviews/golden_manual_review.csv`，生成器不会覆盖。
+- 当前 12 条记录均为 `pending_team_signoff`，黄金案例尚未最终冻结，不得在答辩材料中声称已完成签字。
 
 建议的模拟 MCP 工具：
 

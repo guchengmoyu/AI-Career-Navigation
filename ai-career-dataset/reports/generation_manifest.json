@@ -1,6 +1,6 @@
 {
-  "schema_version": "1.1.0",
-  "generated_at": "2026-09-05T00:00:00+08:00",
+  "schema_version": "1.2.0",
+  "generated_at": "2026-09-13T00:00:00+08:00",
   "random_seed": 20260905,
   "checks": [
     {
@@ -114,6 +114,11 @@
       "detail": "expected 1200, actual 1200"
     },
     {
+      "check_id": "knowledge_category_mix",
+      "passed": true,
+      "detail": "knowledge category mix={\"skill_level\":300,\"learning_resource\":600,\"role_skill\":54,\"role_adjacent_skill\":126,\"trend_interpretation\":60,\"ethics_privacy\":60}"
+    },
+    {
       "check_id": "retrieval_eval_count",
       "passed": true,
       "detail": "retrieval eval must equal 200"
@@ -219,6 +224,21 @@
       "detail": "resource_skills contains unknown ID"
     },
     {
+      "check_id": "knowledge_role_skill_relation",
+      "passed": true,
+      "detail": "role_skill card lacks a direct scoring relationship"
+    },
+    {
+      "check_id": "knowledge_adjacent_relation",
+      "passed": true,
+      "detail": "role_adjacent_skill card overlaps a direct scoring relationship"
+    },
+    {
+      "check_id": "knowledge_adjacent_metadata",
+      "passed": true,
+      "detail": "role_adjacent_skill metadata or disclaimer is invalid"
+    },
+    {
       "check_id": "score_range",
       "passed": true,
       "detail": "skill score outside 0-100"
@@ -238,8 +258,8 @@
     {
       "dataset_name": "AI职业导航比赛模拟数据",
       "dataset_version": "v0.2-seed",
-      "schema_version": "1.1.0",
-      "generated_at": "2026-09-05T00:00:00+08:00",
+      "schema_version": "1.2.0",
+      "generated_at": "2026-09-13T00:00:00+08:00",
       "random_seed": 20260905,
       "all_operational_records_are_synthetic": false,
       "user_job_event_records_are_synthetic": true,
@@ -297,7 +317,7 @@
           "description": "课程、项目、测评和指南"
         },
         "resource_skills": {
-          "rows": 126,
+          "rows": 130,
           "primary_key": "resource_skill_id",
           "description": "学习资源与技能映射"
         },
@@ -381,8 +401,8 @@
     {
       "dataset_name": "AI职业导航比赛模拟数据",
       "dataset_version": "v0.5-core",
-      "schema_version": "1.1.0",
-      "generated_at": "2026-09-05T00:00:00+08:00",
+      "schema_version": "1.2.0",
+      "generated_at": "2026-09-13T00:00:00+08:00",
       "random_seed": 20260905,
       "all_operational_records_are_synthetic": false,
       "user_job_event_records_are_synthetic": true,
@@ -524,8 +544,8 @@
     {
       "dataset_name": "AI职业导航比赛模拟数据",
       "dataset_version": "v1.0-full",
-      "schema_version": "1.1.0",
-      "generated_at": "2026-09-05T00:00:00+08:00",
+      "schema_version": "1.2.0",
+      "generated_at": "2026-09-13T00:00:00+08:00",
       "random_seed": 20260905,
       "all_operational_records_are_synthetic": false,
       "user_job_event_records_are_synthetic": true,

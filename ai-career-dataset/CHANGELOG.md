@@ -1,5 +1,14 @@
 # 变更记录
 
+## 1.2.0 - 2026-09-13
+
+- 将 54 张存在 `role_skills` 直接关系的岗位卡保留为 `role_skill`，将其余 126 张改为 `role_adjacent_skill`，并明确不参与岗位匹配评分。
+- 保留全部 1,200 张知识卡、知识卡 ID、200 条检索评测及评测 ID，修复种子包和核心包中的检索引用悬空问题。
+- 知识卡按类别、技能和岗位分层纳入三个版本，并新增类别规模、实体关系、来源声明和检索外键校验。
+- 将人工复核模板与 `reviews/golden_manual_review.csv` 正式记录分离，生成器不再覆盖人工状态；12 条记录继续保持待团队签字。
+- 补回 `.gitignore`，完整包继续本地生成但不进入 Git 历史。
+- 工作簿、Schema、Manifest、数据字典和质量报告升级至 `schema_version=1.2.0`。
+
 ## 1.1.0 - 2026-09-05
 
 - 新增 `claim_level`、`verification_status`、`last_verified_at`、`license_scope`、`is_market_fact` 和 `data_split`。

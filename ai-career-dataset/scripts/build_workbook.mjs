@@ -8,7 +8,7 @@ const ROOT = path.resolve(SCRIPT_DIR, "..");
 const FULL_CSV_DIR = path.join(ROOT, "data", "v1.0-full", "csv");
 const REPORT_DIR = path.join(ROOT, "reports");
 const OUTPUT_DIR = path.join(ROOT, "outputs", "quality-report");
-const OUTPUT_PATH = path.join(OUTPUT_DIR, "A02_模拟数据与质量报告_v1.0.xlsx");
+const OUTPUT_PATH = path.join(OUTPUT_DIR, "A02_模拟数据与质量报告_v1.2.0.xlsx");
 const PREVIEW_DIR = path.join(REPORT_DIR, "workbook_previews");
 const FONT = "Arial";
 const COLORS = {
@@ -131,8 +131,10 @@ function styleBody(range) {
 }
 
 const manifests = {};
+const knowledgeCardsByVersion = {};
 for (const version of ["v0.2-seed", "v0.5-core", "v1.0-full"]) {
   manifests[version] = JSON.parse(await fs.readFile(path.join(ROOT, "data", version, "manifest.json"), "utf8"));
+  knowledgeCardsByVersion[version] = await readCsv(path.join(ROOT, "data", version, "csv", "knowledge_cards.csv"));
 }
 const validation = JSON.parse(await fs.readFile(path.join(REPORT_DIR, "validation_report.json"), "utf8"));
 const users = await readCsv(path.join(FULL_CSV_DIR, "users.csv"));
@@ -141,7 +143,7 @@ const expected = await readCsv(path.join(FULL_CSV_DIR, "golden_expected_results.
 const sources = await readCsv(path.join(FULL_CSV_DIR, "source_registry.csv"));
 const resources = await readCsv(path.join(FULL_CSV_DIR, "learning_resources.csv"));
 const dataDictionary = await readCsv(path.join(ROOT, "schemas", "data_dictionary.csv"));
-const manualReview = await readCsv(path.join(ROOT, "templates", "golden_manual_review_template.csv"));
+const manualReview = await readCsv(path.join(ROOT, "reviews", "golden_manual_review.csv"));
 const roleNames = new Map(roles.map((row) => [row.role_id, row.name]));
 const expectedByUser = new Map(expected.map((row) => [row.user_id, row]));
 const reviewByUser = new Map(manualReview.map((row) => [row.user_id, row]));
@@ -159,7 +161,7 @@ baseSheet(overview, COLORS.navy);
 titleBlock(overview, "A02 模拟数据与质量报告", "面向团队联调、评测与答辩；岗位、薪资和趋势均为模拟演示数据", "H");
 overview.getRange("A5:B11").values = [
   ["指标", "结果"],
-  ["数据契约版本", "1.1.0"],
+  ["数据契约版本", validation.schema_version],
   ["自动验证", ""],
   ["已核验官方课程/专题页", validation.summary.verified_primary_resources],
   ["完整包用户", ""],
@@ -244,6 +246,31 @@ scale.getRange("A12:E17").values = [
 styleHeader(scale.getRange("A12:E12"));
 styleBody(scale.getRange("A13:E17"));
 scale.getRange("B13:D17").format.numberFormat = "#,##0";
+scale.getRange("A20").values = [["知识卡类别构成"]];
+styleSection(scale.getRange("A20:G20"), COLORS.paleTeal);
+const knowledgeCategoryRows = [
+  ["技能等级", "skill_level", "技能证据与等级解释", "否"],
+  ["学习资源", "learning_resource", "课程、任务与指南检索", "否"],
+  ["直接岗位能力", "role_skill", "存在 role_skills 关系", "是"],
+  ["相邻岗位能力", "role_adjacent_skill", "合成扩展，仅用于检索与路线探索", "否"],
+  ["趋势解释", "trend_interpretation", "模拟趋势边界说明", "否"],
+  ["伦理与隐私", "ethics_privacy", "数据使用边界", "否"],
+].map(([label, category, semantics, scoreable]) => [
+  label,
+  countBy(knowledgeCardsByVersion["v0.2-seed"], "category")[category] ?? 0,
+  countBy(knowledgeCardsByVersion["v0.5-core"], "category")[category] ?? 0,
+  countBy(knowledgeCardsByVersion["v1.0-full"], "category")[category] ?? 0,
+  category,
+  scoreable,
+  semantics,
+]);
+scale.getRange("A21:G27").values = [
+  ["知识卡类别", "v0.2", "v0.5", "v1.0", "category", "参与匹配评分", "语义与用途"],
+  ...knowledgeCategoryRows,
+];
+styleHeader(scale.getRange("A21:G21"));
+styleBody(scale.getRange("A22:G27"));
+scale.getRange("B22:D27").format.numberFormat = "#,##0";
 const scaleChart = scale.charts.add("bar", scale.getRange("A5:D8"));
 scaleChart.title = "用户、岗位和学习资源规模";
 scaleChart.titleTextStyle.fontSize = 12;
@@ -259,9 +286,11 @@ scale.getRange("A:P").format.font.name = FONT;
 scale.getRange("A:A").format.columnWidth = 26;
 scale.getRange("B:H").format.columnWidth = 14;
 scale.getRange("E:E").format.columnWidth = 28;
+scale.getRange("F:F").format.columnWidth = 16;
+scale.getRange("G:G").format.columnWidth = 40;
 
 baseSheet(golden, COLORS.teal);
-titleBlock(golden, "黄金用户案例", "12 名人工精修案例；自动预检已完成，人工签字状态来自复核模板", "M");
+titleBlock(golden, "黄金用户案例", "12 名人工精修案例；自动预检已完成，人工签字状态来自 reviews/golden_manual_review.csv", "M");
 const goldenUsers = users.filter((row) => row.is_golden === "true");
 const goldenRows = goldenUsers.map((user) => {
   const result = expectedByUser.get(user.user_id);
@@ -450,9 +479,10 @@ dictionary.getRange("H:H").format.columnWidth = 45;
 dictionary.getRange("I:I").format.columnWidth = 38;
 
 await fs.mkdir(PREVIEW_DIR, { recursive: true });
+await workbook.recalculate();
 const previewSpecs = [
   ["总览", "A1:H23", "overview.png"],
-  ["版本规模", "A1:P19", "scale.png"],
+  ["版本规模", "A1:P27", "scale.png"],
   ["黄金用户", "A1:M17", "golden.png"],
   ["评测覆盖", "A1:F16", "evaluation.png"],
   ["质量校验", "A1:E35", "quality.png"],

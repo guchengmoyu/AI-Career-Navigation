@@ -3,11 +3,11 @@ dimensions,8个雷达图展示维度,画像/前端,dimension_id,string,true,true
 dimensions,8个雷达图展示维度,画像/前端,name,string,true,false,name,编程与计算基础
 dimensions,8个雷达图展示维度,画像/前端,description,string,true,false,description,代码、算法、计算机系统与软件质量基础
 dimensions,8个雷达图展示维度,画像/前端,display_order,integer,true,false,display order,1
-dimensions,8个雷达图展示维度,画像/前端,schema_version,string,true,false,数据契约版本,1.1.0
+dimensions,8个雷达图展示维度,画像/前端,schema_version,string,true,false,数据契约版本,1.2.0
 dimensions,8个雷达图展示维度,画像/前端,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,derived
 dimensions,8个雷达图展示维度,画像/前端,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,false
 dimensions,8个雷达图展示维度,画像/前端,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-ONET|SRC-ESCO|SRC-WEF
-dimensions,8个雷达图展示维度,画像/前端,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+dimensions,8个雷达图展示维度,画像/前端,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 dimensions,8个雷达图展示维度,画像/前端,confidence,number,true,false,记录可信度，0至1,0.95
 dimensions,8个雷达图展示维度,画像/前端,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,primary_derived
 dimensions,8个雷达图展示维度,画像/前端,verification_status,string,true,false,来源核验状态,derived
@@ -24,11 +24,11 @@ skills,60项原子技能及衰减参数,画像/路径,definition,string,true,fal
 skills,60项原子技能及衰减参数,画像/路径,score_min,integer,true,false,score min,0
 skills,60项原子技能及衰减参数,画像/路径,score_max,integer,true,false,score max,100
 skills,60项原子技能及衰减参数,画像/路径,half_life_days,integer,true,false,half life days,365
-skills,60项原子技能及衰减参数,画像/路径,schema_version,string,true,false,数据契约版本,1.1.0
+skills,60项原子技能及衰减参数,画像/路径,schema_version,string,true,false,数据契约版本,1.2.0
 skills,60项原子技能及衰减参数,画像/路径,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,derived
 skills,60项原子技能及衰减参数,画像/路径,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,false
 skills,60项原子技能及衰减参数,画像/路径,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-ONET|SRC-ESCO
-skills,60项原子技能及衰减参数,画像/路径,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+skills,60项原子技能及衰减参数,画像/路径,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 skills,60项原子技能及衰减参数,画像/路径,confidence,number,true,false,记录可信度，0至1,0.94
 skills,60项原子技能及衰减参数,画像/路径,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,primary_derived
 skills,60项原子技能及衰减参数,画像/路径,verification_status,string,true,false,来源核验状态,derived
@@ -42,11 +42,11 @@ roles,三个目标岗位,画像/路径,summary,string,true,false,summary,负责�
 roles,三个目标岗位,画像/路径,target_user_stage,string,true,false,target user stage,student|newcomer
 roles,三个目标岗位,画像/路径,typical_entry_level,string,true,false,typical entry level,本科及以上，重视数学与项目
 roles,三个目标岗位,画像/路径,display_order,integer,true,false,display order,1
-roles,三个目标岗位,画像/路径,schema_version,string,true,false,数据契约版本,1.1.0
+roles,三个目标岗位,画像/路径,schema_version,string,true,false,数据契约版本,1.2.0
 roles,三个目标岗位,画像/路径,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,derived
 roles,三个目标岗位,画像/路径,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,false
 roles,三个目标岗位,画像/路径,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-ONET|SRC-ESCO|SRC-MOHRSS
-roles,三个目标岗位,画像/路径,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+roles,三个目标岗位,画像/路径,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 roles,三个目标岗位,画像/路径,confidence,number,true,false,记录可信度，0至1,0.92
 roles,三个目标岗位,画像/路径,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,primary_derived
 roles,三个目标岗位,画像/路径,verification_status,string,true,false,来源核验状态,derived
@@ -61,11 +61,11 @@ role_skills,岗位能力要求、权重与目标分,画像/匹配,required_score
 role_skills,岗位能力要求、权重与目标分,画像/匹配,weight,number,true,false,岗位技能权重，岗位内合计为1,0.072503
 role_skills,岗位能力要求、权重与目标分,画像/匹配,is_core,boolean,true,false,is core,true
 role_skills,岗位能力要求、权重与目标分,画像/匹配,rationale,string,true,false,rationale,岗位核心能力
-role_skills,岗位能力要求、权重与目标分,画像/匹配,schema_version,string,true,false,数据契约版本,1.1.0
+role_skills,岗位能力要求、权重与目标分,画像/匹配,schema_version,string,true,false,数据契约版本,1.2.0
 role_skills,岗位能力要求、权重与目标分,画像/匹配,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,derived
 role_skills,岗位能力要求、权重与目标分,画像/匹配,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,false
 role_skills,岗位能力要求、权重与目标分,画像/匹配,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-ONET|SRC-ESCO|SRC-SYNTH
-role_skills,岗位能力要求、权重与目标分,画像/匹配,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+role_skills,岗位能力要求、权重与目标分,画像/匹配,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 role_skills,岗位能力要求、权重与目标分,画像/匹配,confidence,number,true,false,记录可信度，0至1,0.9
 role_skills,岗位能力要求、权重与目标分,画像/匹配,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,primary_derived
 role_skills,岗位能力要求、权重与目标分,画像/匹配,verification_status,string,true,false,来源核验状态,derived
@@ -92,11 +92,11 @@ users,高校生与职场新人模拟画像,全模块,current_challenge,string,tr
 users,高校生与职场新人模拟画像,全模块,consent_status,string,true,false,consent status,granted_for_demo
 users,高校生与职场新人模拟画像,全模块,data_retention_days,integer,true,false,data retention days,365
 users,高校生与职场新人模拟画像,全模块,created_at,datetime,true,false,created at,2025-10-11T16:00:00Z
-users,高校生与职场新人模拟画像,全模块,schema_version,string,true,false,数据契约版本,1.1.0
+users,高校生与职场新人模拟画像,全模块,schema_version,string,true,false,数据契约版本,1.2.0
 users,高校生与职场新人模拟画像,全模块,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 users,高校生与职场新人模拟画像,全模块,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 users,高校生与职场新人模拟画像,全模块,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-users,高校生与职场新人模拟画像,全模块,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+users,高校生与职场新人模拟画像,全模块,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 users,高校生与职场新人模拟画像,全模块,confidence,number,true,false,记录可信度，0至1,0.98
 users,高校生与职场新人模拟画像,全模块,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 users,高校生与职场新人模拟画像,全模块,verification_status,string,true,false,来源核验状态,not_applicable
@@ -114,11 +114,11 @@ user_skill_evidence,能力证据及可信度,画像/解释,evidence_confidence,n
 user_skill_evidence,能力证据及可信度,画像/解释,occurred_at,datetime,true,false,occurred at,2026-07-03T16:00:00Z
 user_skill_evidence,能力证据及可信度,画像/解释,verified,boolean,true,false,verified,true
 user_skill_evidence,能力证据及可信度,画像/解释,evidence_title,string,true,false,evidence title,Python编程项目成果
-user_skill_evidence,能力证据及可信度,画像/解释,schema_version,string,true,false,数据契约版本,1.1.0
+user_skill_evidence,能力证据及可信度,画像/解释,schema_version,string,true,false,数据契约版本,1.2.0
 user_skill_evidence,能力证据及可信度,画像/解释,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 user_skill_evidence,能力证据及可信度,画像/解释,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 user_skill_evidence,能力证据及可信度,画像/解释,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-user_skill_evidence,能力证据及可信度,画像/解释,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+user_skill_evidence,能力证据及可信度,画像/解释,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 user_skill_evidence,能力证据及可信度,画像/解释,confidence,number,true,false,记录可信度，0至1,0.9
 user_skill_evidence,能力证据及可信度,画像/解释,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 user_skill_evidence,能力证据及可信度,画像/解释,verification_status,string,true,false,来源核验状态,not_applicable
@@ -136,12 +136,12 @@ user_skill_scores,时间衰减后的当前能力分,画像/匹配,half_life_days
 user_skill_scores,时间衰减后的当前能力分,画像/匹配,decay_factor,number,true,false,decay factor,0.8872
 user_skill_scores,时间衰减后的当前能力分,画像/匹配,calculation_note,string,true,false,calculation note,current_score=observed_score*2^(-evidence_age_days/half_life_days)
 user_skill_scores,时间衰减后的当前能力分,画像/匹配,last_evidence_id,string,true,false,last evidence id,EVID-G001-001
-user_skill_scores,时间衰减后的当前能力分,画像/匹配,last_updated_at,datetime,true,false,last updated at,2026-09-05T00:00:00+08:00
-user_skill_scores,时间衰减后的当前能力分,画像/匹配,schema_version,string,true,false,数据契约版本,1.1.0
+user_skill_scores,时间衰减后的当前能力分,画像/匹配,last_updated_at,datetime,true,false,last updated at,2026-09-13T00:00:00+08:00
+user_skill_scores,时间衰减后的当前能力分,画像/匹配,schema_version,string,true,false,数据契约版本,1.2.0
 user_skill_scores,时间衰减后的当前能力分,画像/匹配,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,derived
 user_skill_scores,时间衰减后的当前能力分,画像/匹配,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 user_skill_scores,时间衰减后的当前能力分,画像/匹配,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-user_skill_scores,时间衰减后的当前能力分,画像/匹配,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+user_skill_scores,时间衰减后的当前能力分,画像/匹配,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 user_skill_scores,时间衰减后的当前能力分,画像/匹配,confidence,number,true,false,记录可信度，0至1,0.9
 user_skill_scores,时间衰减后的当前能力分,画像/匹配,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,primary_derived
 user_skill_scores,时间衰减后的当前能力分,画像/匹配,verification_status,string,true,false,来源核验状态,derived
@@ -167,11 +167,11 @@ jobs,虚构企业模拟岗位,匹配/MCP,summary,string,true,false,summary,参�
 jobs,虚构企业模拟岗位,匹配/MCP,posted_at,date,true,false,posted at,2026-09-02
 jobs,虚构企业模拟岗位,匹配/MCP,expires_at,date,true,false,expires at,2026-11-01
 jobs,虚构企业模拟岗位,匹配/MCP,display_disclaimer,string,true,false,display disclaimer,模拟岗位/演示数据，不代表真实招聘机会
-jobs,虚构企业模拟岗位,匹配/MCP,schema_version,string,true,false,数据契约版本,1.1.0
+jobs,虚构企业模拟岗位,匹配/MCP,schema_version,string,true,false,数据契约版本,1.2.0
 jobs,虚构企业模拟岗位,匹配/MCP,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 jobs,虚构企业模拟岗位,匹配/MCP,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 jobs,虚构企业模拟岗位,匹配/MCP,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-ONET|SRC-ESCO|SRC-SYNTH
-jobs,虚构企业模拟岗位,匹配/MCP,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+jobs,虚构企业模拟岗位,匹配/MCP,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 jobs,虚构企业模拟岗位,匹配/MCP,confidence,number,true,false,记录可信度，0至1,0.88
 jobs,虚构企业模拟岗位,匹配/MCP,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 jobs,虚构企业模拟岗位,匹配/MCP,verification_status,string,true,false,来源核验状态,not_applicable
@@ -185,11 +185,11 @@ job_skills,岗位级技能要求,匹配,skill_id,string,true,false,原子技能I
 job_skills,岗位级技能要求,匹配,required_score,integer,true,false,required score,72
 job_skills,岗位级技能要求,匹配,importance_weight,number,true,false,importance weight,0.076923
 job_skills,岗位级技能要求,匹配,requirement_type,string,true,false,requirement type,required
-job_skills,岗位级技能要求,匹配,schema_version,string,true,false,数据契约版本,1.1.0
+job_skills,岗位级技能要求,匹配,schema_version,string,true,false,数据契约版本,1.2.0
 job_skills,岗位级技能要求,匹配,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 job_skills,岗位级技能要求,匹配,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 job_skills,岗位级技能要求,匹配,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-job_skills,岗位级技能要求,匹配,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+job_skills,岗位级技能要求,匹配,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 job_skills,岗位级技能要求,匹配,confidence,number,true,false,记录可信度，0至1,0.88
 job_skills,岗位级技能要求,匹配,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 job_skills,岗位级技能要求,匹配,verification_status,string,true,false,来源核验状态,not_applicable
@@ -212,11 +212,11 @@ learning_resources,课程、项目、测评和指南,路径/MCP,page_kind,string
 learning_resources,课程、项目、测评和指南,路径/MCP,metadata_scope,string,true,false,metadata scope,标题、提供方、链接和页面类型
 learning_resources,课程、项目、测评和指南,路径/MCP,estimated_hours_is_simulated,boolean,true,false,estimated hours is simulated,true
 learning_resources,课程、项目、测评和指南,路径/MCP,summary,string,true,false,summary,仅保存官方页面公开元数据；课程内容、状态和适用对象以原页面为准。
-learning_resources,课程、项目、测评和指南,路径/MCP,schema_version,string,true,false,数据契约版本,1.1.0
+learning_resources,课程、项目、测评和指南,路径/MCP,schema_version,string,true,false,数据契约版本,1.2.0
 learning_resources,课程、项目、测评和指南,路径/MCP,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,public_metadata
 learning_resources,课程、项目、测评和指南,路径/MCP,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,false
 learning_resources,课程、项目、测评和指南,路径/MCP,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SMARTEDU
-learning_resources,课程、项目、测评和指南,路径/MCP,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+learning_resources,课程、项目、测评和指南,路径/MCP,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 learning_resources,课程、项目、测评和指南,路径/MCP,confidence,number,true,false,记录可信度，0至1,0.97
 learning_resources,课程、项目、测评和指南,路径/MCP,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,verified_primary
 learning_resources,课程、项目、测评和指南,路径/MCP,verification_status,string,true,false,来源核验状态,verified
@@ -229,11 +229,11 @@ resource_skills,学习资源与技能映射,路径,resource_id,string,true,false
 resource_skills,学习资源与技能映射,路径,skill_id,string,true,false,原子技能ID,SKILL-002
 resource_skills,学习资源与技能映射,路径,coverage_weight,number,true,false,coverage weight,0.3333
 resource_skills,学习资源与技能映射,路径,expected_score_gain,integer,true,false,expected score gain,3
-resource_skills,学习资源与技能映射,路径,schema_version,string,true,false,数据契约版本,1.1.0
+resource_skills,学习资源与技能映射,路径,schema_version,string,true,false,数据契约版本,1.2.0
 resource_skills,学习资源与技能映射,路径,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,derived
 resource_skills,学习资源与技能映射,路径,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 resource_skills,学习资源与技能映射,路径,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SMARTEDU
-resource_skills,学习资源与技能映射,路径,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+resource_skills,学习资源与技能映射,路径,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 resource_skills,学习资源与技能映射,路径,confidence,number,true,false,记录可信度，0至1,0.84
 resource_skills,学习资源与技能映射,路径,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,primary_derived
 resource_skills,学习资源与技能映射,路径,verification_status,string,true,false,来源核验状态,derived
@@ -254,11 +254,11 @@ growth_events,用户学习、求职和反馈事件,画像/对话,sentiment,strin
 growth_events,用户学习、求职和反馈事件,画像/对话,user_state,string,true,false,user state,active
 growth_events,用户学习、求职和反馈事件,画像/对话,risk_level,string,true,false,risk level,low
 growth_events,用户学习、求职和反馈事件,画像/对话,detail,string,true,false,detail,完成基础信息和学习约束录入
-growth_events,用户学习、求职和反馈事件,画像/对话,schema_version,string,true,false,数据契约版本,1.1.0
+growth_events,用户学习、求职和反馈事件,画像/对话,schema_version,string,true,false,数据契约版本,1.2.0
 growth_events,用户学习、求职和反馈事件,画像/对话,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 growth_events,用户学习、求职和反馈事件,画像/对话,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 growth_events,用户学习、求职和反馈事件,画像/对话,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-growth_events,用户学习、求职和反馈事件,画像/对话,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+growth_events,用户学习、求职和反馈事件,画像/对话,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 growth_events,用户学习、求职和反馈事件,画像/对话,confidence,number,true,false,记录可信度，0至1,0.9
 growth_events,用户学习、求职和反馈事件,画像/对话,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 growth_events,用户学习、求职和反馈事件,画像/对话,verification_status,string,true,false,来源核验状态,not_applicable
@@ -274,11 +274,11 @@ trend_snapshots,技能月度模拟趋势,画像/趋势,month_over_month_change,n
 trend_snapshots,技能月度模拟趋势,画像/趋势,direction,string,true,false,direction,baseline
 trend_snapshots,技能月度模拟趋势,画像/趋势,is_market_fact,boolean,true,false,是否可解释为真实市场事实；模拟岗位和趋势恒为false,false
 trend_snapshots,技能月度模拟趋势,画像/趋势,display_disclaimer,string,true,false,display disclaimer,模拟趋势/演示数据，不代表真实市场统计
-trend_snapshots,技能月度模拟趋势,画像/趋势,schema_version,string,true,false,数据契约版本,1.1.0
+trend_snapshots,技能月度模拟趋势,画像/趋势,schema_version,string,true,false,数据契约版本,1.2.0
 trend_snapshots,技能月度模拟趋势,画像/趋势,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 trend_snapshots,技能月度模拟趋势,画像/趋势,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 trend_snapshots,技能月度模拟趋势,画像/趋势,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-WEF|SRC-SYNTH
-trend_snapshots,技能月度模拟趋势,画像/趋势,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+trend_snapshots,技能月度模拟趋势,画像/趋势,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 trend_snapshots,技能月度模拟趋势,画像/趋势,confidence,number,true,false,记录可信度，0至1,0.72
 trend_snapshots,技能月度模拟趋势,画像/趋势,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 trend_snapshots,技能月度模拟趋势,画像/趋势,verification_status,string,true,false,来源核验状态,not_applicable
@@ -298,11 +298,11 @@ scenario_cases,三类职场训练案例,对话/训练,expected_actions,string,tr
 scenario_cases,三类职场训练案例,对话/训练,rubric_json,string,true,false,rubric json,"{""task_completion"":25,""clarification"":20,""evidence_and_privacy"":20,""collaboration"":20,""reflection"":15}"
 scenario_cases,三类职场训练案例,对话/训练,red_flags,string,true,false,red flags,只催进度|公开指责成员|不记录结论|承诺无法完成的时间
 scenario_cases,三类职场训练案例,对话/训练,privacy_focus,string,true,false,privacy focus,medium
-scenario_cases,三类职场训练案例,对话/训练,schema_version,string,true,false,数据契约版本,1.1.0
+scenario_cases,三类职场训练案例,对话/训练,schema_version,string,true,false,数据契约版本,1.2.0
 scenario_cases,三类职场训练案例,对话/训练,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 scenario_cases,三类职场训练案例,对话/训练,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 scenario_cases,三类职场训练案例,对话/训练,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH|SRC-PIPL
-scenario_cases,三类职场训练案例,对话/训练,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+scenario_cases,三类职场训练案例,对话/训练,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 scenario_cases,三类职场训练案例,对话/训练,confidence,number,true,false,记录可信度，0至1,0.93
 scenario_cases,三类职场训练案例,对话/训练,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 scenario_cases,三类职场训练案例,对话/训练,verification_status,string,true,false,来源核验状态,not_applicable
@@ -318,11 +318,11 @@ golden_profile_snapshots,黄金用户雷达图时间快照,演示,dimension_id,s
 golden_profile_snapshots,黄金用户雷达图时间快照,演示,score,number,true,false,score,32.8
 golden_profile_snapshots,黄金用户雷达图时间快照,演示,trigger_event_id,string,true,false,trigger event id,EVT-G001-01
 golden_profile_snapshots,黄金用户雷达图时间快照,演示,explanation,string,true,false,explanation,由课程、项目、练习或反馈事件更新
-golden_profile_snapshots,黄金用户雷达图时间快照,演示,schema_version,string,true,false,数据契约版本,1.1.0
+golden_profile_snapshots,黄金用户雷达图时间快照,演示,schema_version,string,true,false,数据契约版本,1.2.0
 golden_profile_snapshots,黄金用户雷达图时间快照,演示,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,derived
 golden_profile_snapshots,黄金用户雷达图时间快照,演示,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 golden_profile_snapshots,黄金用户雷达图时间快照,演示,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-golden_profile_snapshots,黄金用户雷达图时间快照,演示,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+golden_profile_snapshots,黄金用户雷达图时间快照,演示,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 golden_profile_snapshots,黄金用户雷达图时间快照,演示,confidence,number,true,false,记录可信度，0至1,0.95
 golden_profile_snapshots,黄金用户雷达图时间快照,演示,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,primary_derived
 golden_profile_snapshots,黄金用户雷达图时间快照,演示,verification_status,string,true,false,来源核验状态,derived
@@ -339,11 +339,11 @@ career_paths,黄金用户双分支职业路径,路径,horizon_years,integer,true
 career_paths,黄金用户双分支职业路径,路径,weekly_hours_limit,integer,true,false,weekly hours limit,12
 career_paths,黄金用户双分支职业路径,路径,objective,string,true,false,objective,4年内达到AI算法工程师独立项目交付水平
 career_paths,黄金用户双分支职业路径,路径,status,string,true,false,status,reference_expected
-career_paths,黄金用户双分支职业路径,路径,schema_version,string,true,false,数据契约版本,1.1.0
+career_paths,黄金用户双分支职业路径,路径,schema_version,string,true,false,数据契约版本,1.2.0
 career_paths,黄金用户双分支职业路径,路径,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 career_paths,黄金用户双分支职业路径,路径,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 career_paths,黄金用户双分支职业路径,路径,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-career_paths,黄金用户双分支职业路径,路径,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+career_paths,黄金用户双分支职业路径,路径,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 career_paths,黄金用户双分支职业路径,路径,confidence,number,true,false,记录可信度，0至1,0.96
 career_paths,黄金用户双分支职业路径,路径,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 career_paths,黄金用户双分支职业路径,路径,verification_status,string,true,false,来源核验状态,not_applicable
@@ -360,11 +360,11 @@ career_milestones,职业路径里程碑,路径,target_skill_id,string,true,false
 career_milestones,职业路径里程碑,路径,target_score,integer,true,false,target score,82
 career_milestones,职业路径里程碑,路径,deliverable,string,true,false,deliverable,测评与学习记录
 career_milestones,职业路径里程碑,路径,acceptance_rule,string,true,false,acceptance rule,在每周不超过12小时的前提下完成，并产生可验证证据
-career_milestones,职业路径里程碑,路径,schema_version,string,true,false,数据契约版本,1.1.0
+career_milestones,职业路径里程碑,路径,schema_version,string,true,false,数据契约版本,1.2.0
 career_milestones,职业路径里程碑,路径,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 career_milestones,职业路径里程碑,路径,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 career_milestones,职业路径里程碑,路径,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-career_milestones,职业路径里程碑,路径,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+career_milestones,职业路径里程碑,路径,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 career_milestones,职业路径里程碑,路径,confidence,number,true,false,记录可信度，0至1,0.94
 career_milestones,职业路径里程碑,路径,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 career_milestones,职业路径里程碑,路径,verification_status,string,true,false,来源核验状态,not_applicable
@@ -386,11 +386,11 @@ golden_expected_results,黄金案例人工复核基准,测试,final_match_score,
 golden_expected_results,黄金案例人工复核基准,测试,required_event_chain,string,true,false,required event chain,course_completed|project_completed|profile_recalculated|plan_adjusted
 golden_expected_results,黄金案例人工复核基准,测试,automated_review_status,string,true,false,automated review status,passed
 golden_expected_results,黄金案例人工复核基准,测试,human_review_status,string,true,false,human review status,pending_team_signoff
-golden_expected_results,黄金案例人工复核基准,测试,schema_version,string,true,false,数据契约版本,1.1.0
+golden_expected_results,黄金案例人工复核基准,测试,schema_version,string,true,false,数据契约版本,1.2.0
 golden_expected_results,黄金案例人工复核基准,测试,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,derived
 golden_expected_results,黄金案例人工复核基准,测试,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 golden_expected_results,黄金案例人工复核基准,测试,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-golden_expected_results,黄金案例人工复核基准,测试,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+golden_expected_results,黄金案例人工复核基准,测试,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 golden_expected_results,黄金案例人工复核基准,测试,confidence,number,true,false,记录可信度，0至1,0.98
 golden_expected_results,黄金案例人工复核基准,测试,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,primary_derived
 golden_expected_results,黄金案例人工复核基准,测试,verification_status,string,true,false,来源核验状态,derived
@@ -399,17 +399,17 @@ golden_expected_results,黄金案例人工复核基准,测试,license_scope,stri
 golden_expected_results,黄金案例人工复核基准,测试,is_market_fact,boolean,true,false,是否可解释为真实市场事实；模拟岗位和趋势恒为false,false
 golden_expected_results,黄金案例人工复核基准,测试,data_split,string,true,false,数据用途划分：golden、dev或test,golden
 knowledge_cards,知识库检索卡片,知识库,knowledge_card_id,string,true,true,knowledge card id,KC-SKILL-001-L1
-knowledge_cards,知识库检索卡片,知识库,category,string,true,false,category,skill_level
+knowledge_cards,知识库检索卡片,知识库,category,string,true,false,知识卡类别；role_skill参与直接评分，role_adjacent_skill仅用于扩展检索且不参与评分,skill_level
 knowledge_cards,知识库检索卡片,知识库,title,string,true,false,title,Python编程等级1
 knowledge_cards,知识库检索卡片,知识库,content,string,true,false,content,Python编程属于编程与计算基础。等级1要求学习者理解基础概念并在指导下完成任务。评估应引用近期课程、项目、测评或工作样例。
 knowledge_cards,知识库检索卡片,知识库,keywords,string,true,false,keywords,Python编程|编程与计算基础|能力等级|证据
-knowledge_cards,知识库检索卡片,知识库,related_entity_type,string,true,false,related entity type,skill
-knowledge_cards,知识库检索卡片,知识库,related_entity_id,string,true,false,related entity id,SKILL-001
-knowledge_cards,知识库检索卡片,知识库,schema_version,string,true,false,数据契约版本,1.1.0
+knowledge_cards,知识库检索卡片,知识库,related_entity_type,string,true,false,知识卡关联实体类型；直接岗位能力为role_skill，相邻能力为role_skill_candidate,skill
+knowledge_cards,知识库检索卡片,知识库,related_entity_id,string,true,false,知识卡关联实体ID；岗位能力使用role_id|skill_id复合值,SKILL-001
+knowledge_cards,知识库检索卡片,知识库,schema_version,string,true,false,数据契约版本,1.2.0
 knowledge_cards,知识库检索卡片,知识库,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,derived
 knowledge_cards,知识库检索卡片,知识库,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 knowledge_cards,知识库检索卡片,知识库,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-ONET|SRC-ESCO|SRC-SYNTH
-knowledge_cards,知识库检索卡片,知识库,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+knowledge_cards,知识库检索卡片,知识库,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 knowledge_cards,知识库检索卡片,知识库,confidence,number,true,false,记录可信度，0至1,0.9
 knowledge_cards,知识库检索卡片,知识库,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,primary_derived
 knowledge_cards,知识库检索卡片,知识库,verification_status,string,true,false,来源核验状态,derived
@@ -424,11 +424,11 @@ retrieval_eval,知识库Top5评测,评测,expected_source_ids,string,true,false,
 retrieval_eval,知识库Top5评测,评测,top_k,integer,true,false,top k,5
 retrieval_eval,知识库Top5评测,评测,relevance_grade,integer,true,false,relevance grade,3
 retrieval_eval,知识库Top5评测,评测,acceptance_rule,string,true,false,acceptance rule,expected_card_ids至少一项出现在Top5且回答引用来源ID
-retrieval_eval,知识库Top5评测,评测,schema_version,string,true,false,数据契约版本,1.1.0
+retrieval_eval,知识库Top5评测,评测,schema_version,string,true,false,数据契约版本,1.2.0
 retrieval_eval,知识库Top5评测,评测,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 retrieval_eval,知识库Top5评测,评测,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 retrieval_eval,知识库Top5评测,评测,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-retrieval_eval,知识库Top5评测,评测,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+retrieval_eval,知识库Top5评测,评测,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 retrieval_eval,知识库Top5评测,评测,confidence,number,true,false,记录可信度，0至1,0.96
 retrieval_eval,知识库Top5评测,评测,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 retrieval_eval,知识库Top5评测,评测,verification_status,string,true,false,来源核验状态,not_applicable
@@ -449,11 +449,11 @@ matching_eval,岗位匹配排序与分数评测,评测,experience_fit_component,
 matching_eval,岗位匹配排序与分数评测,评测,preference_fit_component,integer,true,false,preference fit component,100
 matching_eval,岗位匹配排序与分数评测,评测,formula,string,true,false,formula,0.8*skill_fit+0.1*experience_fit+0.1*preference_fit
 matching_eval,岗位匹配排序与分数评测,评测,review_status,string,true,false,review status,held_out_rule_generated
-matching_eval,岗位匹配排序与分数评测,评测,schema_version,string,true,false,数据契约版本,1.1.0
+matching_eval,岗位匹配排序与分数评测,评测,schema_version,string,true,false,数据契约版本,1.2.0
 matching_eval,岗位匹配排序与分数评测,评测,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,derived
 matching_eval,岗位匹配排序与分数评测,评测,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 matching_eval,岗位匹配排序与分数评测,评测,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-matching_eval,岗位匹配排序与分数评测,评测,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+matching_eval,岗位匹配排序与分数评测,评测,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 matching_eval,岗位匹配排序与分数评测,评测,confidence,number,true,false,记录可信度，0至1,0.94
 matching_eval,岗位匹配排序与分数评测,评测,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,primary_derived
 matching_eval,岗位匹配排序与分数评测,评测,verification_status,string,true,false,来源核验状态,derived
@@ -474,11 +474,11 @@ path_eval,职业路径约束评测,评测,expected_first_gap_skill_id,string,tru
 path_eval,职业路径约束评测,评测,required_elements,string,true,false,required elements,能力目标|学习资源|实践项目|岗位验证|动态调整
 path_eval,职业路径约束评测,评测,forbidden_conditions,string,true,false,forbidden conditions,超过每周时间上限|承诺就业结果|忽略用户反馈
 path_eval,职业路径约束评测,评测,acceptance_rule,string,true,false,acceptance rule,满足时间约束、覆盖首要差距并提供至少两个分支
-path_eval,职业路径约束评测,评测,schema_version,string,true,false,数据契约版本,1.1.0
+path_eval,职业路径约束评测,评测,schema_version,string,true,false,数据契约版本,1.2.0
 path_eval,职业路径约束评测,评测,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 path_eval,职业路径约束评测,评测,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 path_eval,职业路径约束评测,评测,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH
-path_eval,职业路径约束评测,评测,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+path_eval,职业路径约束评测,评测,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 path_eval,职业路径约束评测,评测,confidence,number,true,false,记录可信度，0至1,0.94
 path_eval,职业路径约束评测,评测,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 path_eval,职业路径约束评测,评测,verification_status,string,true,false,来源核验状态,not_applicable
@@ -497,11 +497,11 @@ dialogue_eval,情绪与长期陪伴评测,评测,expected_response_requirements,
 dialogue_eval,情绪与长期陪伴评测,评测,forbidden_response_patterns,string,true,false,forbidden response patterns,否定感受|保证一定成功
 dialogue_eval,情绪与长期陪伴评测,评测,linked_skill_id,string,true,false,linked skill id,SKILL-008
 dialogue_eval,情绪与长期陪伴评测,评测,evaluation_method,string,true,false,evaluation method,人工量表0-2分：缺失/部分满足/完全满足
-dialogue_eval,情绪与长期陪伴评测,评测,schema_version,string,true,false,数据契约版本,1.1.0
+dialogue_eval,情绪与长期陪伴评测,评测,schema_version,string,true,false,数据契约版本,1.2.0
 dialogue_eval,情绪与长期陪伴评测,评测,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 dialogue_eval,情绪与长期陪伴评测,评测,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 dialogue_eval,情绪与长期陪伴评测,评测,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH|SRC-PIPL
-dialogue_eval,情绪与长期陪伴评测,评测,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+dialogue_eval,情绪与长期陪伴评测,评测,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 dialogue_eval,情绪与长期陪伴评测,评测,confidence,number,true,false,记录可信度，0至1,0.94
 dialogue_eval,情绪与长期陪伴评测,评测,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 dialogue_eval,情绪与长期陪伴评测,评测,verification_status,string,true,false,来源核验状态,not_applicable
@@ -521,11 +521,11 @@ fairness_eval,非评分属性反事实评测,伦理,base_expected_score,number,t
 fairness_eval,非评分属性反事实评测,伦理,variant_expected_score,number,true,false,variant expected score,77.6
 fairness_eval,非评分属性反事实评测,伦理,expected_score_delta,integer,true,false,expected score delta,0
 fairness_eval,非评分属性反事实评测,伦理,acceptance_rule,string,true,false,acceptance rule,非评分属性变化后匹配分和排序保持不变
-fairness_eval,非评分属性反事实评测,伦理,schema_version,string,true,false,数据契约版本,1.1.0
+fairness_eval,非评分属性反事实评测,伦理,schema_version,string,true,false,数据契约版本,1.2.0
 fairness_eval,非评分属性反事实评测,伦理,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 fairness_eval,非评分属性反事实评测,伦理,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 fairness_eval,非评分属性反事实评测,伦理,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH|SRC-PIPL
-fairness_eval,非评分属性反事实评测,伦理,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+fairness_eval,非评分属性反事实评测,伦理,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 fairness_eval,非评分属性反事实评测,伦理,confidence,number,true,false,记录可信度，0至1,0.99
 fairness_eval,非评分属性反事实评测,伦理,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 fairness_eval,非评分属性反事实评测,伦理,verification_status,string,true,false,来源核验状态,not_applicable
@@ -540,11 +540,11 @@ privacy_security_eval,隐私、越权与提示词攻击评测,伦理,expected_ac
 privacy_security_eval,隐私、越权与提示词攻击评测,伦理,forbidden_action,string,true,false,forbidden action,收集或输出真实身份信息
 privacy_security_eval,隐私、越权与提示词攻击评测,伦理,severity,string,true,false,severity,high
 privacy_security_eval,隐私、越权与提示词攻击评测,伦理,expected_result,string,true,false,expected result,pass_if_expected_action_present_and_forbidden_action_absent
-privacy_security_eval,隐私、越权与提示词攻击评测,伦理,schema_version,string,true,false,数据契约版本,1.1.0
+privacy_security_eval,隐私、越权与提示词攻击评测,伦理,schema_version,string,true,false,数据契约版本,1.2.0
 privacy_security_eval,隐私、越权与提示词攻击评测,伦理,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
 privacy_security_eval,隐私、越权与提示词攻击评测,伦理,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,true
 privacy_security_eval,隐私、越权与提示词攻击评测,伦理,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-SYNTH|SRC-PIPL
-privacy_security_eval,隐私、越权与提示词攻击评测,伦理,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+privacy_security_eval,隐私、越权与提示词攻击评测,伦理,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 privacy_security_eval,隐私、越权与提示词攻击评测,伦理,confidence,number,true,false,记录可信度，0至1,0.98
 privacy_security_eval,隐私、越权与提示词攻击评测,伦理,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,synthetic
 privacy_security_eval,隐私、越权与提示词攻击评测,伦理,verification_status,string,true,false,来源核验状态,not_applicable
@@ -563,11 +563,11 @@ source_registry,公开来源、许可和改写台账,全模块,derived_fields,st
 source_registry,公开来源、许可和改写台账,全模块,transform_note,string,true,false,transform note,仅提炼要求，不复制正文
 source_registry,公开来源、许可和改写台账,全模块,refresh_days,integer,true,false,refresh days,0
 source_registry,公开来源、许可和改写台账,全模块,status,string,true,false,status,verified
-source_registry,公开来源、许可和改写台账,全模块,schema_version,string,true,false,数据契约版本,1.1.0
+source_registry,公开来源、许可和改写台账,全模块,schema_version,string,true,false,数据契约版本,1.2.0
 source_registry,公开来源、许可和改写台账,全模块,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,public_metadata
 source_registry,公开来源、许可和改写台账,全模块,is_synthetic,boolean,true,false,是否为模拟或派生演示数据,false
 source_registry,公开来源、许可和改写台账,全模块,source_ids,string,true,false,来源ID，多个值使用竖线分隔,SRC-A02
-source_registry,公开来源、许可和改写台账,全模块,generated_at,datetime,true,false,记录生成时间,2026-09-05T00:00:00+08:00
+source_registry,公开来源、许可和改写台账,全模块,generated_at,datetime,true,false,记录生成时间,2026-09-13T00:00:00+08:00
 source_registry,公开来源、许可和改写台账,全模块,confidence,integer,true,false,记录可信度，0至1,1
 source_registry,公开来源、许可和改写台账,全模块,claim_level,string,true,false,事实声明层级：官方已核验、官方参考派生或纯模拟,verified_primary
 source_registry,公开来源、许可和改写台账,全模块,verification_status,string,true,false,来源核验状态,verified

@@ -11,20 +11,27 @@ const ROOT = path.resolve(SCRIPT_DIR, "..");
 const DATA_DIR = path.join(ROOT, "data");
 const SCHEMA_DIR = path.join(ROOT, "schemas");
 const TEMPLATE_DIR = path.join(ROOT, "templates");
+const REVIEW_DIR = path.join(ROOT, "reviews");
 const REPORT_DIR = path.join(ROOT, "reports");
 const GENERATOR = path.join(SCRIPT_DIR, "generate_dataset.mjs");
-const SCHEMA_VERSION = "1.1.0";
+const SCHEMA_VERSION = "1.2.0";
 
 const VERSION_EXPECTED = {
-  "v0.2-seed": { users: 12, jobs: 60, learning_resources: 60, growth_events: 360, scenario_cases: 15, trend_snapshots: 120, trendMonths: 2, students: 6, newcomers: 6 },
-  "v0.5-core": { users: 100, jobs: 300, learning_resources: 200, growth_events: 4000, scenario_cases: 60, trend_snapshots: 360, trendMonths: 6, students: 50, newcomers: 50 },
-  "v1.0-full": { users: 500, jobs: 1500, learning_resources: 600, growth_events: 20000, scenario_cases: 150, trend_snapshots: 720, trendMonths: 12, students: 250, newcomers: 250 },
+  "v0.2-seed": { users: 12, jobs: 60, learning_resources: 60, growth_events: 360, scenario_cases: 15, trend_snapshots: 120, knowledge_cards: 200, retrieval_eval: 50, trendMonths: 2, students: 6, newcomers: 6 },
+  "v0.5-core": { users: 100, jobs: 300, learning_resources: 200, growth_events: 4000, scenario_cases: 60, trend_snapshots: 360, knowledge_cards: 600, retrieval_eval: 100, trendMonths: 6, students: 50, newcomers: 50 },
+  "v1.0-full": { users: 500, jobs: 1500, learning_resources: 600, growth_events: 20000, scenario_cases: 150, trend_snapshots: 720, knowledge_cards: 1200, retrieval_eval: 200, trendMonths: 12, students: 250, newcomers: 250 },
 };
 
 const RESOURCE_MIX_EXPECTED = {
   "v0.2-seed": { verified_course_metadata: 6, public_catalog_topic_card: 12, synthetic_project: 24, synthetic_assessment: 12, synthetic_guide: 6 },
   "v0.5-core": { verified_course_metadata: 12, public_catalog_topic_card: 28, synthetic_project: 100, synthetic_assessment: 40, synthetic_guide: 20 },
   "v1.0-full": { verified_course_metadata: 22, public_catalog_topic_card: 98, synthetic_project: 300, synthetic_assessment: 120, synthetic_guide: 60 },
+};
+
+const KNOWLEDGE_MIX_EXPECTED = {
+  "v0.2-seed": { skill_level: 90, learning_resource: 60, role_skill: 9, role_adjacent_skill: 21, trend_interpretation: 10, ethics_privacy: 10 },
+  "v0.5-core": { skill_level: 250, learning_resource: 200, role_skill: 27, role_adjacent_skill: 63, trend_interpretation: 30, ethics_privacy: 30 },
+  "v1.0-full": { skill_level: 300, learning_resource: 600, role_skill: 54, role_adjacent_skill: 126, trend_interpretation: 60, ethics_privacy: 60 },
 };
 
 const COMMON_FIELDS = [
@@ -36,6 +43,17 @@ const CLAIM_LEVELS = new Set(["verified_primary", "primary_derived", "synthetic"
 const VERIFICATION_STATUSES = new Set(["verified", "derived", "not_applicable"]);
 const LICENSE_SCOPES = new Set(["metadata_only", "cc_by_4_0_attribution", "reference_only", "team_generated"]);
 const DATA_SPLITS = new Set(["golden", "dev", "test"]);
+const TABLE_ENUM_RULES = {
+  users: { stage: new Set(["student", "newcomer"]) },
+  jobs: { work_mode: new Set(["onsite", "hybrid", "remote"]) },
+  learning_resources: {
+    resource_type: new Set(["verified_course_metadata", "public_catalog_topic_card", "synthetic_project", "synthetic_assessment", "synthetic_guide"]),
+    difficulty: new Set(["beginner", "intermediate", "advanced"]),
+  },
+  scenario_cases: { difficulty: new Set(["beginner", "intermediate", "advanced"]) },
+  privacy_security_eval: { severity: new Set(["low", "medium", "high", "critical"]) },
+  knowledge_cards: { category: new Set(["skill_level", "learning_resource", "role_skill", "role_adjacent_skill", "trend_interpretation", "ethics_privacy"]) },
+};
 
 function parseCsv(text) {
   const input = text.replace(/^\uFEFF/, "");
@@ -138,6 +156,13 @@ function sumBy(rows, keyField, valueField) {
   return result;
 }
 
+function validTemporalValue(field, value) {
+  if (value === "") return true;
+  if (field === "month") return /^\d{4}-\d{2}$/.test(value);
+  if (field.endsWith("_date") || field === "last_verified_at") return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
+  return !Number.isNaN(Date.parse(value));
+}
+
 async function loadPackage(version) {
   const base = path.join(DATA_DIR, version);
   const manifest = JSON.parse(await fs.readFile(path.join(base, "manifest.json"), "utf8"));
@@ -191,11 +216,21 @@ function checkPackage(pkg, fullTestUserIds, fullTestJobIds) {
       || number(row.confidence) > 1
     );
     addCheck(`${tableName}_metadata_values`, invalidMetadata.length === 0, invalidMetadata.length ? `${invalidMetadata.length} invalid metadata rows` : `${rows.length} metadata rows valid`, { version });
+    const temporalFields = headers[tableName].filter((field) => field === "month" || field.endsWith("_at") || field.endsWith("_date") || field.endsWith("_time"));
+    const invalidDates = rows.filter((row) => temporalFields.some((field) => !validTemporalValue(field, row[field])));
+    addCheck(`${tableName}_date_values`, invalidDates.length === 0, invalidDates.length ? `${invalidDates.length} rows contain invalid dates` : `${temporalFields.length} temporal fields valid`, { version });
   }
 
   for (const [tableName, count] of Object.entries(expected)) {
     if (["trendMonths", "students", "newcomers"].includes(tableName)) continue;
     addCheck(`${tableName}_expected_count`, tables[tableName].length === count, `expected=${count}, actual=${tables[tableName].length}`, { version });
+  }
+
+  for (const [tableName, fields] of Object.entries(TABLE_ENUM_RULES)) {
+    for (const [field, allowed] of Object.entries(fields)) {
+      const invalid = tables[tableName].filter((row) => !allowed.has(row[field]));
+      addCheck(`${tableName}_${field}_enum`, invalid.length === 0, invalid.length ? `${invalid.length} invalid ${field} values` : `${new Set(tables[tableName].map((row) => row[field])).size} allowed values used`, { version });
+    }
   }
 
   const stageCounts = counts(tables.users, "stage");
@@ -204,6 +239,10 @@ function checkPackage(pkg, fullTestUserIds, fullTestJobIds) {
   const resourceCounts = counts(tables.learning_resources, "resource_type");
   const mixExpected = RESOURCE_MIX_EXPECTED[version];
   addCheck("resource_mix", Object.entries(mixExpected).every(([type, count]) => resourceCounts[type] === count), JSON.stringify(resourceCounts), { version });
+
+  const knowledgeCounts = counts(tables.knowledge_cards, "category");
+  const knowledgeMixExpected = KNOWLEDGE_MIX_EXPECTED[version];
+  addCheck("knowledge_category_mix", Object.entries(knowledgeMixExpected).every(([category, count]) => knowledgeCounts[category] === count) && Object.keys(knowledgeCounts).length === Object.keys(knowledgeMixExpected).length, JSON.stringify(knowledgeCounts), { version });
 
   const trendCounts = counts(tables.trend_snapshots, "skill_id");
   addCheck("trend_coverage", Object.keys(trendCounts).length === 60 && Object.values(trendCounts).every((count) => count === expected.trendMonths), `${Object.keys(trendCounts).length} skills × ${expected.trendMonths} months`, { version });
@@ -214,6 +253,8 @@ function checkPackage(pkg, fullTestUserIds, fullTestJobIds) {
   const jobIds = new Set(tables.jobs.map((row) => row.job_id));
   const resourceIds = new Set(tables.learning_resources.map((row) => row.resource_id));
   const pathIds = new Set(tables.career_paths.map((row) => row.path_id));
+  const knowledgeCardIds = new Set(tables.knowledge_cards.map((row) => row.knowledge_card_id));
+  const directRoleSkillPairs = new Set(tables.role_skills.map((row) => `${row.role_id}|${row.skill_id}`));
 
   checkForeignKey(tables.user_skill_scores, "user_id", userIds, "user_skill_scores_user_fk", version);
   checkForeignKey(tables.user_skill_scores, "skill_id", skillIds, "user_skill_scores_skill_fk", version);
@@ -231,6 +272,32 @@ function checkPackage(pkg, fullTestUserIds, fullTestJobIds) {
   checkForeignKey(tables.golden_profile_snapshots, "user_id", userIds, "golden_snapshots_user_fk", version);
   checkForeignKey(tables.career_paths, "user_id", userIds, "career_paths_user_fk", version);
   checkForeignKey(tables.career_milestones, "path_id", pathIds, "career_milestones_path_fk", version);
+
+  const danglingRetrievalIds = tables.retrieval_eval.flatMap((row) => row.expected_card_ids.split("|").filter(Boolean)).filter((id) => !knowledgeCardIds.has(id));
+  addCheck("retrieval_expected_card_fk", danglingRetrievalIds.length === 0, danglingRetrievalIds.length ? `${danglingRetrievalIds.length} dangling references; example=${danglingRetrievalIds[0]}` : `${tables.retrieval_eval.length} retrieval cases reference current package cards`, { version });
+
+  const invalidKnowledgeEntities = tables.knowledge_cards.filter((row) => {
+    if (["skill_level", "trend_interpretation", "ethics_privacy"].includes(row.category)) return row.related_entity_type !== "skill" || !skillIds.has(row.related_entity_id);
+    if (row.category === "learning_resource") return row.related_entity_type !== "resource" || !resourceIds.has(row.related_entity_id);
+    if (!["role_skill", "role_adjacent_skill"].includes(row.category)) return true;
+    const [roleId, skillId] = row.related_entity_id.split("|");
+    return !roleIds.has(roleId) || !skillIds.has(skillId);
+  });
+  addCheck("knowledge_entity_fk", invalidKnowledgeEntities.length === 0, invalidKnowledgeEntities.length ? `${invalidKnowledgeEntities.length} invalid knowledge-card entities` : `${tables.knowledge_cards.length} knowledge-card entities resolve`, { version });
+
+  const directCards = tables.knowledge_cards.filter((row) => row.category === "role_skill");
+  const adjacentCards = tables.knowledge_cards.filter((row) => row.category === "role_adjacent_skill");
+  const invalidDirectCards = directCards.filter((row) => row.related_entity_type !== "role_skill" || !directRoleSkillPairs.has(row.related_entity_id));
+  const invalidAdjacentCards = adjacentCards.filter((row) => row.related_entity_type !== "role_skill_candidate" || directRoleSkillPairs.has(row.related_entity_id));
+  const invalidAdjacentMetadata = adjacentCards.filter((row) => row.origin !== "synthetic" || !boolean(row.is_synthetic) || row.source_ids !== "SRC-SYNTH" || row.claim_level !== "synthetic" || row.verification_status !== "not_applicable" || row.license_scope !== "team_generated" || !row.content.includes("不参与当前岗位匹配评分"));
+  addCheck("knowledge_direct_role_relations", invalidDirectCards.length === 0, invalidDirectCards.length ? `${invalidDirectCards.length} direct role cards lack scoring relations` : `${directCards.length} direct role cards map to role_skills`, { version });
+  addCheck("knowledge_adjacent_role_relations", invalidAdjacentCards.length === 0, invalidAdjacentCards.length ? `${invalidAdjacentCards.length} adjacent cards overlap or have invalid relations` : `${adjacentCards.length} adjacent role cards are outside role_skills`, { version });
+  addCheck("knowledge_adjacent_metadata", invalidAdjacentMetadata.length === 0, invalidAdjacentMetadata.length ? `${invalidAdjacentMetadata.length} adjacent cards have invalid provenance/disclaimer` : `${adjacentCards.length} adjacent cards are synthetic and excluded from scoring`, { version });
+  const directByRole = counts(directCards.map((row) => ({ role_id: row.related_entity_id.split("|")[0] })), "role_id");
+  const adjacentByRole = counts(adjacentCards.map((row) => ({ role_id: row.related_entity_id.split("|")[0] })), "role_id");
+  const expectedDirectPerRole = knowledgeMixExpected.role_skill / roleIds.size;
+  const expectedAdjacentPerRole = knowledgeMixExpected.role_adjacent_skill / roleIds.size;
+  addCheck("knowledge_role_balance", [...roleIds].every((roleId) => directByRole[roleId] === expectedDirectPerRole && adjacentByRole[roleId] === expectedAdjacentPerRole), `direct=${JSON.stringify(directByRole)}, adjacent=${JSON.stringify(adjacentByRole)}`, { version });
 
   const roleWeights = sumBy(tables.role_skills, "role_id", "weight");
   addCheck("role_weights", [...roleWeights.values()].every((value) => Math.abs(value - 1) < 0.00001), JSON.stringify(Object.fromEntries(roleWeights)), { version });
@@ -272,6 +339,8 @@ function checkPackage(pkg, fullTestUserIds, fullTestJobIds) {
     }
   }
   addCheck("source_registry_fk", invalidSourceLinks === 0, invalidSourceLinks ? `${invalidSourceLinks} unknown source references` : "all source_ids resolve", { version });
+  const invalidExpectedSources = tables.retrieval_eval.flatMap((row) => row.expected_source_ids.split("|").filter(Boolean)).filter((sourceId) => !sourceIds.has(sourceId));
+  addCheck("retrieval_expected_source_fk", invalidExpectedSources.length === 0, invalidExpectedSources.length ? `${invalidExpectedSources.length} unknown expected sources` : "all retrieval expected_source_ids resolve", { version });
 }
 
 async function main() {
@@ -345,8 +414,12 @@ async function main() {
   addCheck("no_pii_patterns", piiHits === 0, piiHits ? `${piiHits} PII-like patterns found` : "no phone, ID, email or long account-number patterns found");
 
   const reviewTemplate = await readCsv(path.join(TEMPLATE_DIR, "golden_manual_review_template.csv"));
-  addCheck("golden_manual_review_template", reviewTemplate.rows.length === 12, `${reviewTemplate.rows.length} review rows prepared`);
-  const signedReviews = reviewTemplate.rows.filter((row) => row.status === "approved" && row.reviewer && row.review_date).length;
+  addCheck("golden_manual_review_template", reviewTemplate.rows.length === 12, `${reviewTemplate.rows.length} blank template rows prepared`);
+  const manualReview = await readCsv(path.join(REVIEW_DIR, "golden_manual_review.csv"));
+  const expectedGoldenIds = new Set(goldenResults.map((row) => row.user_id));
+  const manualReviewIds = manualReview.rows.map((row) => row.user_id);
+  addCheck("golden_manual_review_record", manualReview.rows.length === 12 && new Set(manualReviewIds).size === 12 && manualReviewIds.every((id) => expectedGoldenIds.has(id)), `${manualReview.rows.length} human-review records with ${new Set(manualReviewIds).size} unique users`);
+  const signedReviews = manualReview.rows.filter((row) => row.status === "approved" && row.reviewer && row.review_date).length;
   addCheck("golden_manual_signoff", signedReviews === 12, `${signedReviews}/12 signed; team signoff is required before competition freeze`, { severity: "warning" });
 
   const checksumLines = [...afterHashes.entries()].map(([name, hash]) => `${hash}  ${name}`).join("\n");

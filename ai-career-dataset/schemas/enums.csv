@@ -28,3 +28,9 @@ resource_type,public_catalog_topic_card,基于公开目录派生的主题卡，�
 resource_type,synthetic_project,模拟实践项目
 resource_type,synthetic_assessment,模拟测评或训练
 resource_type,synthetic_guide,模拟或参考派生指南
+knowledge_card_category,skill_level,技能等级与证据卡
+knowledge_card_category,learning_resource,学习资源检索卡
+knowledge_card_category,role_skill,有直接岗位技能关系并参与匹配评分
+knowledge_card_category,role_adjacent_skill,合成相邻能力扩展，不参与匹配评分
+knowledge_card_category,trend_interpretation,模拟趋势解释卡
+knowledge_card_category,ethics_privacy,伦理与隐私边界卡

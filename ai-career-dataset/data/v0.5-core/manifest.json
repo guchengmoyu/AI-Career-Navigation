@@ -1,8 +1,8 @@
 {
   "dataset_name": "AI职业导航比赛模拟数据",
   "dataset_version": "v0.5-core",
-  "schema_version": "1.1.0",
-  "generated_at": "2026-09-05T00:00:00+08:00",
+  "schema_version": "1.2.0",
+  "generated_at": "2026-09-13T00:00:00+08:00",
   "random_seed": 20260905,
   "all_operational_records_are_synthetic": false,
   "user_job_event_records_are_synthetic": true,

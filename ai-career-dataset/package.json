@@ -1,6 +1,6 @@
 {
   "name": "ai-career-competition-dataset",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "description": "A02 AI职业导航比赛模拟数据生成、校验与交付工程",

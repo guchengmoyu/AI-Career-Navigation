@@ -1,6 +1,6 @@
 # 黄金案例人工复核说明
 
-自动检查不能替代参赛团队签字。请打开 `templates/golden_manual_review_template.csv`，由至少一名未参与该案例编写的团队成员逐条完成以下检查。
+自动检查不能替代参赛团队签字。`templates/golden_manual_review_template.csv` 是生成器维护的空白模板；请将人工结果填写到 `reviews/golden_manual_review.csv`。生成器不会覆盖人工记录。由至少一名未参与该案例编写的团队成员逐条完成以下检查。
 
 ## 每个用户必须确认
 
@@ -18,3 +18,4 @@
 - `reviewer`、`review_date` 和三项判断列必须填写。
 - 通过时把 `status` 改为 `approved`；发现问题时改为 `changes_required` 并填写 `review_notes`。
 - 12 条全部为 `approved` 后，才可以把数据版本标记为最终冻结。
+- 不要直接在模板中签字；人工复核的唯一正式记录是 `reviews/golden_manual_review.csv`。

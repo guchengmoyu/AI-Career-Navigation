@@ -9,8 +9,8 @@ const SCHEMA_DIR = path.join(ROOT, "schemas");
 const REPORT_DIR = path.join(ROOT, "reports");
 const TEMPLATE_DIR = path.join(ROOT, "templates");
 
-const SCHEMA_VERSION = "1.1.0";
-const DATASET_GENERATED_AT = "2026-09-05T00:00:00+08:00";
+const SCHEMA_VERSION = "1.2.0";
+const DATASET_GENERATED_AT = "2026-09-13T00:00:00+08:00";
 const SOURCE_VERIFIED_AT = "2026-09-05";
 const REFERENCE_DATE = new Date("2026-09-05T00:00:00+08:00");
 const RANDOM_SEED = 20260905;
@@ -1150,13 +1150,19 @@ for (const role of roles) {
     const mapping = mappings.get(skill.skill_id);
     knowledgeCards.push({
       knowledge_card_id: `KC-ROLE-${role.role_id.slice(5)}-${skill.skill_id.slice(-3)}`,
-      category: "role_skill",
+      category: mapping ? "role_skill" : "role_adjacent_skill",
       title: `${role.name}与${skill.name}`,
-      content: mapping ? `${skill.name}是${role.name}的${mapping.is_core ? "核心" : "支撑"}能力，参考目标分${mapping.required_score}，岗位权重${round(mapping.weight * 100, 2)}%。` : `${skill.name}不是${role.name}首版评分的直接能力项，可作为相邻能力或后续扩展。`,
-      keywords: `${role.name}|${skill.name}|岗位匹配|能力差距`,
-      related_entity_type: "role_skill",
+      content: mapping
+        ? `${skill.name}是${role.name}的${mapping.is_core ? "核心" : "支撑"}能力，参考目标分${mapping.required_score}，岗位权重${round(mapping.weight * 100, 2)}%。`
+        : `${skill.name}是${role.name}的合成相邻能力扩展，不属于当前直接评分能力项，不参与当前岗位匹配评分；仅用于知识检索、路线探索或后续岗位模型扩展。`,
+      keywords: mapping
+        ? `${role.name}|${skill.name}|岗位匹配|能力差距`
+        : `${role.name}|${skill.name}|相邻能力|不参与评分`,
+      related_entity_type: mapping ? "role_skill" : "role_skill_candidate",
       related_entity_id: `${role.role_id}|${skill.skill_id}`,
-      ...metadata("derived", true, "SRC-ONET|SRC-ESCO|SRC-SYNTH", 0.88),
+      ...(mapping
+        ? metadata("derived", true, "SRC-ONET|SRC-ESCO|SRC-SYNTH", 0.88)
+        : metadata("synthetic", true, "SRC-SYNTH", 0.75)),
     });
   }
 }
@@ -1188,7 +1194,7 @@ for (let index = 0; index < 200; index += 1) {
   const card = knowledgeCards[(index * 37) % knowledgeCards.length];
   retrievalEvaluation.push({
     retrieval_case_id: `RETR-${pad(index + 1)}`,
-    query: card.category === "skill_level" ? `如何判断${card.title}，需要哪些证据？` : card.category === "learning_resource" ? `${card.title}适合什么水平，预计需要多长时间？` : card.category === "role_skill" ? `${card.title}在岗位匹配中如何体现？` : `${card.title}应如何向用户解释？`,
+    query: card.category === "skill_level" ? `如何判断${card.title}，需要哪些证据？` : card.category === "learning_resource" ? `${card.title}适合什么水平，预计需要多长时间？` : ["role_skill", "role_adjacent_skill"].includes(card.category) ? `${card.title}在岗位匹配中如何体现？` : `${card.title}应如何向用户解释？`,
     expected_card_ids: card.knowledge_card_id,
     expected_source_ids: card.source_ids,
     top_k: 5,
@@ -1267,6 +1273,8 @@ const fieldDescriptions = {
   license_scope: "许可或可重用范围",
   is_market_fact: "是否可解释为真实市场事实；模拟岗位和趋势恒为false",
   data_split: "数据用途划分：golden、dev或test",
+  related_entity_type: "知识卡关联实体类型；直接岗位能力为role_skill，相邻能力为role_skill_candidate",
+  related_entity_id: "知识卡关联实体ID；岗位能力使用role_id|skill_id复合值",
   user_id: "稳定的匿名模拟用户ID",
   skill_id: "原子技能ID",
   role_id: "目标岗位ID",
@@ -1279,6 +1287,10 @@ const fieldDescriptions = {
   url: "公开来源URL；模拟内部资源为空",
   input_skill_scores_json: "独立评测输入的技能分快照JSON",
   expected_primary_rank: "黄金用户目标岗位的预期排名",
+};
+
+const tableFieldDescriptions = {
+  "knowledge_cards.category": "知识卡类别；role_skill参与直接评分，role_adjacent_skill仅用于扩展检索且不参与评分",
 };
 
 function inferType(value) {
@@ -1336,7 +1348,7 @@ function buildDataDictionary() {
         data_type: inferType(example),
         required: field === primaryKey || !tableRows.some((row) => row[field] === null || row[field] === undefined || row[field] === ""),
         primary_key: field === primaryKey,
-        description: fieldDescriptions[field] ?? field.replaceAll("_", " "),
+        description: tableFieldDescriptions[`${tableName}.${field}`] ?? fieldDescriptions[field] ?? field.replaceAll("_", " "),
         example: typeof example === "object" ? JSON.stringify(example) : example,
       });
     }
@@ -1375,6 +1387,18 @@ function validateInMemory() {
   check("trends_count", trendSnapshots.length === 720, `expected 720, actual ${trendSnapshots.length}`);
   check("scenarios_count", scenarioCases.length === 150, `expected 150, actual ${scenarioCases.length}`);
   check("knowledge_cards_count", knowledgeCards.length === 1200, `expected 1200, actual ${knowledgeCards.length}`);
+  const knowledgeCategoryCounts = Object.fromEntries(
+    ["skill_level", "learning_resource", "role_skill", "role_adjacent_skill", "trend_interpretation", "ethics_privacy"]
+      .map((category) => [category, knowledgeCards.filter((row) => row.category === category).length]),
+  );
+  check("knowledge_category_mix", JSON.stringify(knowledgeCategoryCounts) === JSON.stringify({
+    skill_level: 300,
+    learning_resource: 600,
+    role_skill: 54,
+    role_adjacent_skill: 126,
+    trend_interpretation: 60,
+    ethics_privacy: 60,
+  }), `knowledge category mix=${JSON.stringify(knowledgeCategoryCounts)}`);
   check("retrieval_eval_count", retrievalEvaluation.length === 200, "retrieval eval must equal 200");
   check("matching_eval_count", matchingEvaluation.length === 300, "matching eval must equal 300");
   check("path_eval_count", pathEvaluation.length === 60, "path eval must equal 60");
@@ -1398,10 +1422,14 @@ function validateInMemory() {
   const userIds = new Set(users.map((row) => row.user_id));
   const jobIds = new Set(jobs.map((row) => row.job_id));
   const resourceIds = new Set(resources.map((row) => row.resource_id));
+  const roleSkillPairIds = new Set(roleSkills.map((row) => `${row.role_id}|${row.skill_id}`));
   check("role_skill_fk", roleSkills.every((row) => skillIds.has(row.skill_id)), "role_skills contains unknown skill");
   check("user_score_fk", userSkillScores.every((row) => userIds.has(row.user_id) && skillIds.has(row.skill_id)), "user_skill_scores contains unknown ID");
   check("job_skill_fk", jobSkills.every((row) => jobIds.has(row.job_id) && skillIds.has(row.skill_id)), "job_skills contains unknown ID");
   check("resource_skill_fk", resourceSkills.every((row) => resourceIds.has(row.resource_id) && skillIds.has(row.skill_id)), "resource_skills contains unknown ID");
+  check("knowledge_role_skill_relation", knowledgeCards.filter((row) => row.category === "role_skill").every((row) => row.related_entity_type === "role_skill" && roleSkillPairIds.has(row.related_entity_id)), "role_skill card lacks a direct scoring relationship");
+  check("knowledge_adjacent_relation", knowledgeCards.filter((row) => row.category === "role_adjacent_skill").every((row) => row.related_entity_type === "role_skill_candidate" && !roleSkillPairIds.has(row.related_entity_id)), "role_adjacent_skill card overlaps a direct scoring relationship");
+  check("knowledge_adjacent_metadata", knowledgeCards.filter((row) => row.category === "role_adjacent_skill").every((row) => row.origin === "synthetic" && row.is_synthetic === true && row.source_ids === "SRC-SYNTH" && row.claim_level === "synthetic" && row.verification_status === "not_applicable" && row.license_scope === "team_generated" && row.content.includes("不参与当前岗位匹配评分")), "role_adjacent_skill metadata or disclaimer is invalid");
   check("score_range", userSkillScores.every((row) => row.current_score >= 0 && row.current_score <= 100), "skill score outside 0-100");
   check("fairness_delta", fairnessEvaluation.every((row) => row.expected_score_delta === 0 && row.base_expected_score === row.variant_expected_score), "fairness pair changed score");
   const piiText = users.map((row) => `${row.career_goal} ${row.current_challenge}`).join(" ");
@@ -1430,16 +1458,111 @@ function selectUsersForVersion(version) {
   return users;
 }
 
-function selectResourcesForVersion(version) {
+function selectResourcesForVersion(version, evaluationRows) {
   if (version === "v1.0-full") return resources;
   const mix = version === "v0.2-seed"
     ? { verified_course_metadata: 6, public_catalog_topic_card: 12, synthetic_project: 24, synthetic_assessment: 12, synthetic_guide: 6 }
     : { verified_course_metadata: 12, public_catalog_topic_card: 28, synthetic_project: 100, synthetic_assessment: 40, synthetic_guide: 20 };
-  return Object.entries(mix).flatMap(([resourceType, count]) => resources.filter((row) => row.resource_type === resourceType).slice(0, count));
+  const requiredResourceIds = new Set(evaluationRows
+    .map((row) => knowledgeCards.find((card) => card.knowledge_card_id === row.expected_card_ids))
+    .filter((card) => card?.category === "learning_resource")
+    .map((card) => card.related_entity_id));
+  return Object.entries(mix).flatMap(([resourceType, count]) => {
+    const pool = resources.filter((row) => row.resource_type === resourceType);
+    const required = pool.filter((row) => requiredResourceIds.has(row.resource_id));
+    if (required.length > count) throw new Error(`${version} ${resourceType} required resources exceed quota`);
+    const requiredIds = new Set(required.map((row) => row.resource_id));
+    return [...required, ...pool.filter((row) => !requiredIds.has(row.resource_id)).slice(0, count - required.length)];
+  });
 }
 
 function takeLatestTrendMonths(monthCount) {
   return skills.flatMap((skill) => trendSnapshots.filter((row) => row.skill_id === skill.skill_id).slice(-monthCount));
+}
+
+const KNOWLEDGE_MIX_BY_VERSION = {
+  "v0.2-seed": { skill_level: 90, learning_resource: 60, role_skill: 9, role_adjacent_skill: 21, trend_interpretation: 10, ethics_privacy: 10 },
+  "v0.5-core": { skill_level: 250, learning_resource: 200, role_skill: 27, role_adjacent_skill: 63, trend_interpretation: 30, ethics_privacy: 30 },
+  "v1.0-full": { skill_level: 300, learning_resource: 600, role_skill: 54, role_adjacent_skill: 126, trend_interpretation: 60, ethics_privacy: 60 },
+};
+const KNOWLEDGE_CATEGORY_ORDER = ["skill_level", "learning_resource", "role_skill", "role_adjacent_skill", "trend_interpretation", "ethics_privacy"];
+
+function fillRoundRobin(pool, selected, quota, groupKey) {
+  const selectedIds = new Set(selected.map((row) => row.knowledge_card_id));
+  if (!groupKey) {
+    for (const row of pool) {
+      if (selected.length >= quota) break;
+      if (!selectedIds.has(row.knowledge_card_id)) {
+        selected.push(row);
+        selectedIds.add(row.knowledge_card_id);
+      }
+    }
+    return;
+  }
+  const groups = new Map();
+  for (const row of pool) {
+    const key = groupKey(row);
+    if (!groups.has(key)) groups.set(key, []);
+    if (!selectedIds.has(row.knowledge_card_id)) groups.get(key).push(row);
+  }
+  while (selected.length < quota) {
+    let added = false;
+    for (const rows of groups.values()) {
+      const row = rows.shift();
+      if (!row) continue;
+      selected.push(row);
+      selectedIds.add(row.knowledge_card_id);
+      added = true;
+      if (selected.length >= quota) break;
+    }
+    if (!added) break;
+  }
+}
+
+function selectRoleKnowledgeCards(pool, required, quota, category) {
+  const perRoleQuota = quota / roleIds.length;
+  if (!Number.isInteger(perRoleQuota)) throw new Error(`${category} quota must divide evenly by roles`);
+  const selected = [...required];
+  const selectedIds = new Set(selected.map((row) => row.knowledge_card_id));
+  for (const roleId of roleIds) {
+    const requiredForRole = selected.filter((row) => row.related_entity_id.startsWith(`${roleId}|`));
+    if (requiredForRole.length > perRoleQuota) throw new Error(`${category} required cards exceed quota for ${roleId}`);
+    const candidates = pool.filter((row) => row.related_entity_id.startsWith(`${roleId}|`) && !selectedIds.has(row.knowledge_card_id));
+    for (const row of candidates.slice(0, perRoleQuota - requiredForRole.length)) {
+      selected.push(row);
+      selectedIds.add(row.knowledge_card_id);
+    }
+  }
+  return selected;
+}
+
+function selectKnowledgeCardsForVersion(version, evaluationRows, selectedResourceIds) {
+  if (version === "v1.0-full") return knowledgeCards;
+  const mix = KNOWLEDGE_MIX_BY_VERSION[version];
+  const requiredIds = new Set(evaluationRows.flatMap((row) => row.expected_card_ids.split("|").filter(Boolean)));
+  const result = [];
+  for (const category of KNOWLEDGE_CATEGORY_ORDER) {
+    const quota = mix[category];
+    const pool = knowledgeCards.filter((row) => row.category === category && (category !== "learning_resource" || selectedResourceIds.has(row.related_entity_id)));
+    const required = pool.filter((row) => requiredIds.has(row.knowledge_card_id));
+    const missingRequired = [...requiredIds].filter((id) => knowledgeCards.find((row) => row.knowledge_card_id === id)?.category === category && !pool.some((row) => row.knowledge_card_id === id));
+    if (missingRequired.length > 0) throw new Error(`${version} ${category} expected cards unavailable: ${missingRequired.join(",")}`);
+    if (required.length > quota) throw new Error(`${version} ${category} required cards exceed quota`);
+    let selected;
+    if (["role_skill", "role_adjacent_skill"].includes(category)) {
+      selected = selectRoleKnowledgeCards(pool, required, quota, category);
+    } else {
+      selected = [...required];
+      const groupKey = category === "skill_level" || category === "trend_interpretation" || category === "ethics_privacy"
+        ? (row) => row.related_entity_id
+        : null;
+      fillRoundRobin(pool, selected, quota, groupKey);
+    }
+    if (selected.length !== quota) throw new Error(`${version} ${category} expected ${quota} cards, selected ${selected.length}`);
+    result.push(...selected);
+  }
+  if (![...requiredIds].every((id) => result.some((row) => row.knowledge_card_id === id))) throw new Error(`${version} has dangling retrieval expected_card_ids`);
+  return result;
 }
 
 function buildVersion(version) {
@@ -1448,11 +1571,12 @@ function buildVersion(version) {
     "v0.5-core": { jobsPerRole: 100, eventsPerUser: 40, scenariosPerModule: 20, trendMonths: 6, knowledge: 600, retrieval: 100, matching: 300, paths: 60, dialogue: 75, fairness: 50, security: 50 },
     "v1.0-full": { jobsPerRole: 500, eventsPerUser: 40, scenariosPerModule: 50, trendMonths: 12, knowledge: 1200, retrieval: 200, matching: 300, paths: 60, dialogue: 150, fairness: 100, security: 100 },
   }[version];
+  const selectedRetrieval = retrievalEvaluation.slice(0, config.retrieval);
   const selectedUsers = selectUsersForVersion(version);
   const selectedUserIds = new Set(selectedUsers.map((row) => row.user_id));
   const selectedJobs = takeByGroup(jobs, "role_id", config.jobsPerRole, roleIds);
   const selectedJobIds = new Set(selectedJobs.map((row) => row.job_id));
-  const selectedResources = selectResourcesForVersion(version);
+  const selectedResources = selectResourcesForVersion(version, selectedRetrieval);
   const selectedResourceIds = new Set(selectedResources.map((row) => row.resource_id));
   const selectedResourcesBySkill = new Map(skills.map((skill) => [
     skill.skill_id,
@@ -1460,6 +1584,7 @@ function buildVersion(version) {
   ]));
   const selectedJobsByRole = new Map(roleIds.map((roleId) => [roleId, selectedJobs.filter((job) => job.role_id === roleId).map((job) => job.job_id)]));
   const selectedScenarios = takeByGroup(scenarioCases, "module_id", config.scenariosPerModule, scenarioModules.map((row) => row.module_id));
+  const selectedKnowledgeCards = selectKnowledgeCardsForVersion(version, selectedRetrieval, selectedResourceIds);
   const selectedEvents = [];
   for (const user of selectedUsers) {
     const userEvents = growthEvents.filter((row) => row.user_id === user.user_id).slice(0, config.eventsPerUser);
@@ -1494,8 +1619,8 @@ function buildVersion(version) {
     career_paths: careerPaths.filter((row) => selectedUserIds.has(row.user_id)),
     career_milestones: careerMilestones.filter((row) => careerPaths.filter((pathRow) => selectedUserIds.has(pathRow.user_id)).some((pathRow) => pathRow.path_id === row.path_id)),
     golden_expected_results: goldenExpectedResults.filter((row) => selectedUserIds.has(row.user_id)),
-    knowledge_cards: knowledgeCards.slice(0, config.knowledge),
-    retrieval_eval: retrievalEvaluation.slice(0, config.retrieval),
+    knowledge_cards: selectedKnowledgeCards,
+    retrieval_eval: selectedRetrieval,
     matching_eval: matchingEvaluation.slice(0, config.matching),
     path_eval: pathEvaluation.slice(0, config.paths),
     dialogue_eval: dialogueEvaluation.slice(0, config.dialogue),
@@ -1600,6 +1725,7 @@ async function writeSchemas() {
     ["work_mode", "onsite", "现场"], ["work_mode", "hybrid", "混合"], ["work_mode", "remote", "远程"],
     ["risk_level", "low", "常规"], ["risk_level", "medium", "需要关注"], ["risk_level", "high", "需要明确保护或人工处理"], ["risk_level", "critical", "必须阻止越权或伤害"],
     ["resource_type", "verified_course_metadata", "已核验官方课程或课程专题页元数据"], ["resource_type", "public_catalog_topic_card", "基于公开目录派生的主题卡，不是官方课程"], ["resource_type", "synthetic_project", "模拟实践项目"], ["resource_type", "synthetic_assessment", "模拟测评或训练"], ["resource_type", "synthetic_guide", "模拟或参考派生指南"],
+    ["knowledge_card_category", "skill_level", "技能等级与证据卡"], ["knowledge_card_category", "learning_resource", "学习资源检索卡"], ["knowledge_card_category", "role_skill", "有直接岗位技能关系并参与匹配评分"], ["knowledge_card_category", "role_adjacent_skill", "合成相邻能力扩展，不参与匹配评分"], ["knowledge_card_category", "trend_interpretation", "模拟趋势解释卡"], ["knowledge_card_category", "ethics_privacy", "伦理与隐私边界卡"],
   ].map(([enum_name, value, description]) => ({ enum_name, value, description }));
   await writeCsv(path.join(SCHEMA_DIR, "enums.csv"), enumRows);
 }
