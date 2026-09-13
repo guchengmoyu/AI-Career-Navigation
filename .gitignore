@@ -1,0 +1,41 @@
+# ========================================
+# AI-Career-Navigation 仓库忽略规则
+# ========================================
+
+# ---- Agent / 工具中间产物（不纳入版本管理）----
+.workbuddy/
+
+# ---- 数据生成产物（可由脚本确定性复现，体积大）----
+# 生成命令: node ai-career-dataset/scripts/generate_dataset.mjs
+ai-career-dataset/data/v1.0-full/
+ai-career-dataset/data/v0.5-core/
+ai-career-dataset/data/v0.2-seed/
+
+# ---- 一次性临时脚本与中间文件（下划线前缀，交付前清理）----
+# 例：_hittest_queries.json / _mkhitqueries.py / _hittest_results.json
+_*
+
+# ---- 自动化脚本运行痕迹（截图 / 临时日志）----
+*.png
+*.log
+/tmp/
+
+# ---- 例外：报告交付截图（企业专项材料②引用的证据截图，保留）----
+!知识库构建/截图/*.png
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# ---- Node ----
+node_modules/
+npm-debug.log*
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
