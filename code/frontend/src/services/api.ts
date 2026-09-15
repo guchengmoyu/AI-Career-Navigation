@@ -1,154 +1,135 @@
-/**
- * API 服务层
- *
- * 当前使用 mock 数据，后续接入 MCP 工具 API 后替换为真实请求。
- * MCP 工具通过百宝箱平台调用，前端直接请求 MCP 服务的 REST 接口。
- */
-
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api/v1'
+export const DEMO_USER_ID = import.meta.env.VITE_DEMO_USER_ID || 'USER-G001'
 
-// 通用请求封装
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
     ...options,
   })
-  if (!res.ok) {
-    throw new Error(`API Error: ${res.status} ${res.statusText}`)
-  }
-  const json = await res.json()
+  const json = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(json.error?.message || `API Error: ${res.status} ${res.statusText}`)
   return json.data ?? json
 }
 
-// ========== 职业画像 ==========
-
-export interface DimensionScores {
-  professional_skill: number
-  soft_skill: number
-  leadership: number
-  innovation: number
-  learning_ability: number
+export interface DimensionResult {
+  dimension_id: string
+  name: string
+  score: number
+  evidence_count: number
+  confidence: number
+  top_skills: { skill_id: string; name: string; score: number }[]
 }
 
 export interface CareerProfile {
-  profile_id: number
+  user_id: string
+  persona_code: string
   overall_score: number
-  dimension_scores: DimensionScores
+  dimensions: DimensionResult[]
   strengths: string[]
-  weaknesses: string[]
-  recommended_directions: { position: string; match_score: number }[]
+  improvement_priorities: string[]
+  role_matches: { role_id: string; name: string; match_score: number; rank: number }[]
+  disclaimer: string
 }
 
 export const profileApi = {
-  /** 计算职业画像 — 对应 MCP 工具 calculate_career_profile */
-  calculate: (userId: string, questionnaire: Record<string, unknown>) =>
-    request<CareerProfile>('/profile/calculate', {
-      method: 'POST',
-      body: JSON.stringify({ user_id: userId, questionnaire }),
-    }),
-
-  /** 获取用户画像 — 对应 MCP 工具 get_career_profile */
-  get: (userId: string) =>
-    request<CareerProfile>(`/profile/${userId}`),
+  calculate: (userId: string) => request<CareerProfile>('/profile/calculate', {
+    method: 'POST', body: JSON.stringify({ user_id: userId }),
+  }),
+  get: (userId: string) => request<CareerProfile>(`/profile/${userId}`),
 }
 
-// ========== 学习路径 ==========
-
-export interface LearningPath {
-  path_id: number
+export interface PathTask {
+  task_id: string
   title: string
+  task_type: string
+  difficulty: string
+  estimated_hours: number
+  skill_id: string
+  resource_id: string | null
+  provider: string | null
+  resource_url: string | null
+  status: string
+}
+
+export interface GeneratedPath {
+  path_id: string
+  branch_type: 'fast_gap' | 'project_driven'
+  title: string
+  horizon_years: number
+  weekly_hours: number
+  total_estimated_hours: number
+  phases: { phase_order: number; title: string; duration_months: number; milestones: string[]; tasks: PathTask[] }[]
+}
+
+export interface LearningPathResult {
+  target_role_name: string
   gap_analysis: {
-    critical_gaps: { skill: string; current: number; target: number; gap: number }[]
-    minor_gaps: { skill: string; current: number; target: number; gap: number }[]
+    critical_gaps: { skill_id: string; skill_name: string; current_score: number; required_score: number; gap: number; priority_score: number }[]
+    minor_gaps: { skill_id: string; skill_name: string; current_score: number; required_score: number; gap: number; priority_score: number }[]
   }
-  phases: {
-    phase_order: number
-    title: string
-    duration: number
-    milestones: string[]
-    tasks: {
-      task_order: number
-      title: string
-      task_type: string
-      difficulty: string
-      estimated_hours: number
-      platform: string
-    }[]
-  }[]
+  branches: GeneratedPath[]
+  disclaimer: string
 }
 
 export const pathApi = {
-  /** 生成学习路径 — 对应 MCP 工具 generate_learning_path */
-  generate: (params: {
-    user_id: string
-    target_position: string
-    target_industry?: string
-    target_time_years?: number
-    weekly_hours?: number
-    priority?: 'speed' | 'depth' | 'balanced'
-  }) =>
-    request<LearningPath>('/path/generate', {
-      method: 'POST',
-      body: JSON.stringify(params),
-    }),
+  generate: (params: { user_id: string; target_role_id: string; horizon_years?: number; weekly_hours?: number; priority?: 'speed' | 'depth' | 'balanced' }) =>
+    request<LearningPathResult>('/path/generate', { method: 'POST', body: JSON.stringify(params) }),
 }
-
-// ========== 场景模拟 ==========
 
 export interface Scenario {
   scenario_id: string
-  scenario_type: string
+  module_id: string
+  module_name: string
   difficulty: string
-  estimated_duration: number
+  target_role_id: string
   title: string
+  context: string
   initial_prompt: string
+  privacy_focus: string
 }
 
 export interface ScenarioEvaluation {
   scenario_id: string
   overall_score: number
-  dimensions: Record<string, { score: number; feedback: string }>
+  dimensions: Record<string, { score: number; max_score: number }>
   highlights: string[]
   improvement_suggestions: string[]
+  red_flag_hits: string[]
+  update_applied: boolean
 }
 
 export const scenarioApi = {
-  /** 获取场景列表 */
-  list: (params?: { scenario_type?: string; difficulty?: string }) => {
-    const query = new URLSearchParams(params as Record<string, string>).toString()
-    return request<Scenario[]>(`/scenario?${query}`)
-  },
-
-  /** 开始场景模拟 — 对应 MCP 工具 startScenario */
-  start: (scenarioId: string, userId: string) =>
-    request<{ session_id: string; initial_prompt: string }>('/scenario/start', {
-      method: 'POST',
-      body: JSON.stringify({ scenario_id: scenarioId, user_id: userId }),
-    }),
-
-  /** 评估场景表现 — 对应 MCP 工具 evaluateScenario */
-  evaluate: (sessionId: string) =>
-    request<ScenarioEvaluation>('/scenario/evaluate', {
-      method: 'POST',
-      body: JSON.stringify({ session_id: sessionId }),
-    }),
+  list: (userId = DEMO_USER_ID) => request<{ scenarios: Scenario[] }>(`/scenario?user_id=${userId}`),
+  start: (scenarioId: string, userId: string) => request<{ session_id: string; scenario: Scenario }>('/scenario/start', {
+    method: 'POST', body: JSON.stringify({ scenario_id: scenarioId, user_id: userId }),
+  }),
+  evaluate: (sessionId: string, userId: string, responseText: string) => request<ScenarioEvaluation>('/scenario/evaluate', {
+    method: 'POST', body: JSON.stringify({ session_id: sessionId, user_id: userId, response_text: responseText }),
+  }),
 }
-
-// ========== 进度管理 ==========
 
 export interface GrowthEvent {
   event_id: string
   event_type: string
+  event_time: string
+  score_delta: number
+  points_earned?: number
+  detail: string
+  status: string
+}
+
+export interface ProgressSummary {
+  total_learning_hours: number
+  completed_tasks: number
+  streak_days: number
   points_earned: number
-  occurred_at: string
-  payload: Record<string, unknown>
+  recent_events: GrowthEvent[]
+  active_path: null | { path_id: string; title: string; completed_tasks: number; total_tasks: number; progress_percent: number }
+  persistence_mode: string
+  disclaimer: string
 }
 
 export const progressApi = {
-  /** 获取成长事件列表 — 对应 MCP 工具 getGrowthEvents */
-  getEvents: (userId: string, limit = 20) =>
-    request<GrowthEvent[]>(`/progress/${userId}/events?limit=${limit}`),
+  getEvents: (userId: string, limit = 20) => request<{ events: GrowthEvent[] }>(`/progress/${userId}/events?limit=${limit}`),
+  getSummary: (userId: string) => request<ProgressSummary>(`/progress/${userId}/summary`),
 }

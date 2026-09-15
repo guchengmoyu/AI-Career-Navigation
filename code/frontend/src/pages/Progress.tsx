@@ -1,104 +1,34 @@
-import { Row, Col, Card, Statistic, Table, Tag } from 'antd'
-import { FireOutlined, BookOutlined, ClockCircleOutlined } from '@ant-design/icons'
+import { useEffect, useState } from 'react'
+import { Alert, Card, Col, Row, Spin, Statistic, Table, Tag } from 'antd'
+import { BookOutlined, ClockCircleOutlined, FireOutlined } from '@ant-design/icons'
 import HeatMapChart from '../components/charts/HeatMapChart'
+import { DEMO_USER_ID, progressApi, type ProgressSummary } from '../services/api'
 
-// TODO: 替换为 MCP 工具 getGrowthEvents 的实际返回数据
-const mockStats = {
-  totalHours: 128,
-  completedTasks: 12,
-  streakDays: 7,
+const eventColors: Record<string, string> = { task_completed: 'blue', course_completed: 'cyan', project_completed: 'purple', skill_practice: 'green', inactivity: 'orange' }
+
+function ProgressPage() {
+  const [summary, setSummary] = useState<ProgressSummary | null>(null)
+  const [error, setError] = useState('')
+  useEffect(() => { progressApi.getSummary(DEMO_USER_ID).then(setSummary).catch((reason: Error) => setError(reason.message)) }, [])
+  if (error) return <Alert type="error" showIcon message="进度加载失败" description={error} />
+  if (!summary) return <Spin tip="正在汇总成长进度" fullscreen />
+  const columns = [
+    { title: '日期', dataIndex: 'event_time', key: 'date', width: 120, render: (value: string) => value.slice(0, 10) },
+    { title: '类型', dataIndex: 'event_type', key: 'type', width: 160, render: (value: string) => <Tag color={eventColors[value] || 'default'}>{value}</Tag> },
+    { title: '内容', dataIndex: 'detail', key: 'detail' },
+    { title: '积分', key: 'points', width: 80, render: (_: unknown, event: ProgressSummary['recent_events'][number]) => `+${event.points_earned || Math.max(0, event.score_delta * 2)}` },
+  ]
+  return <div className="page-container">
+    <h1 className="page-title">学习进度</h1>
+    <Alert type="warning" showIcon message="演示状态可能随容器重启清空" description={`${summary.disclaimer} 当前存储：${summary.persistence_mode}`} style={{ marginBottom: 16 }} />
+    <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+      <Col xs={8}><Card><Statistic title="累计学习时长" value={summary.total_learning_hours} suffix="小时" prefix={<ClockCircleOutlined />} /></Card></Col>
+      <Col xs={8}><Card><Statistic title="完成任务" value={summary.completed_tasks} suffix="项" prefix={<BookOutlined />} /></Card></Col>
+      <Col xs={8}><Card><Statistic title="连续学习" value={summary.streak_days} suffix="天" prefix={<FireOutlined />} /></Card></Col>
+    </Row>
+    <Card title="学习活跃度（近12周）" style={{ marginBottom: 24 }}><HeatMapChart events={summary.recent_events} /></Card>
+    <Card title="近期成长事件"><Table dataSource={summary.recent_events} columns={columns} rowKey="event_id" pagination={false} size="small" /></Card>
+  </div>
 }
 
-const mockRecentEvents = [
-  { date: '2025-10-10', type: 'task', title: '完成 Python 进阶课程', points: 15 },
-  { date: '2025-10-09', type: 'chat', title: '与 AI 讨论机器学习方案', points: 5 },
-  { date: '2025-10-08', type: 'scenario', title: '远程协作场景训练', points: 20 },
-  { date: '2025-10-07', type: 'manual', title: '阅读《深度学习》笔记', points: 10 },
-  { date: '2025-10-06', type: 'task', title: 'SQL 刷题 10 道', points: 10 },
-]
-
-const typeColors: Record<string, string> = {
-  task: 'blue',
-  chat: 'cyan',
-  scenario: 'purple',
-  manual: 'green',
-}
-
-const columns = [
-  { title: '日期', dataIndex: 'date', key: 'date', width: 120 },
-  {
-    title: '类型',
-    dataIndex: 'type',
-    key: 'type',
-    width: 100,
-    render: (t: string) => <Tag color={typeColors[t]}>{t}</Tag>,
-  },
-  { title: '内容', dataIndex: 'title', key: 'title' },
-  {
-    title: '积分',
-    dataIndex: 'points',
-    key: 'points',
-    width: 80,
-    render: (p: number) => <span style={{ color: 'var(--color-primary)', fontWeight: 600 }}>+{p}</span>,
-  },
-]
-
-function Progress() {
-  return (
-    <div className="page-container">
-      <h1 className="page-title">学习进度</h1>
-
-      {/* 统计卡片 */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={8}>
-          <Card className="card">
-            <Statistic
-              title="累计学习时长"
-              value={mockStats.totalHours}
-              suffix="小时"
-              prefix={<ClockCircleOutlined style={{ color: 'var(--color-primary)' }} />}
-            />
-          </Card>
-        </Col>
-        <Col xs={8}>
-          <Card className="card">
-            <Statistic
-              title="完成任务"
-              value={mockStats.completedTasks}
-              suffix="项"
-              prefix={<BookOutlined style={{ color: 'var(--color-success)' }} />}
-            />
-          </Card>
-        </Col>
-        <Col xs={8}>
-          <Card className="card">
-            <Statistic
-              title="连续学习"
-              value={mockStats.streakDays}
-              suffix="天"
-              prefix={<FireOutlined style={{ color: 'var(--color-warning)' }} />}
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      {/* 热力图 */}
-      <Card className="card" title="学习活跃度（近 12 周）" style={{ marginBottom: 24 }}>
-        <HeatMapChart height={200} />
-      </Card>
-
-      {/* 近期事件 */}
-      <Card className="card" title="近期成长事件">
-        <Table
-          dataSource={mockRecentEvents}
-          columns={columns}
-          rowKey="date"
-          pagination={false}
-          size="small"
-        />
-      </Card>
-    </div>
-  )
-}
-
-export default Progress
+export default ProgressPage
