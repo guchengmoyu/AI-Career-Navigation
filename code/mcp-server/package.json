@@ -2,6 +2,22 @@
   "name": "a02-career-navigation-mcp",
   "version": "0.1.0",
   "description": "A02 AI career navigation MCP server with four explainable tools",
+  "keywords": [
+    "mcp",
+    "career-navigation",
+    "career-profile",
+    "learning-path",
+    "a02"
+  ],
+  "homepage": "https://github.com/guchengmoyu/AI-Career-Navigation#readme",
+  "bugs": {
+    "url": "https://github.com/guchengmoyu/AI-Career-Navigation/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guchengmoyu/AI-Career-Navigation.git",
+    "directory": "code/mcp-server"
+  },
   "type": "module",
   "main": "dist/cli.js",
   "bin": {
@@ -46,5 +62,8 @@
   },
   "license": "UNLICENSED",
   "private": false,
-  "publishConfig": { "access": "public" }
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }
