@@ -1,0 +1,50 @@
+{
+  "name": "a02-career-navigation-mcp",
+  "version": "0.1.0",
+  "description": "A02 AI career navigation MCP server with four explainable tools",
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "a02-career-navigation-mcp": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "data/runtime-data.json",
+    "data/runtime-data.sha256",
+    "db",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22 <23"
+  },
+  "scripts": {
+    "build:data": "node scripts/build-runtime-data.mjs",
+    "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
+    "start": "node dist/cli.js",
+    "start:rest": "node dist/rest.js",
+    "dev:rest": "tsx src/rest.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "npm run build && npm test",
+    "db:import": "node dist/db/import.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.22.0",
+    "cors": "2.8.5",
+    "express": "5.1.0",
+    "mysql2": "3.15.3",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@types/cors": "2.8.19",
+    "@types/express": "5.0.5",
+    "@types/node": "22.19.1",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
+  },
+  "license": "UNLICENSED",
+  "private": false,
+  "publishConfig": { "access": "public" }
+}
