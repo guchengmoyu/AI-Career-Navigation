@@ -93,7 +93,8 @@ export class CareerService {
       dataset_version: this.data.metadata.dataset_version,
       dataset_commit: this.data.metadata.dataset_commit,
       disclaimer: this.data.metadata.disclaimer,
-      persistence_mode: this.store.mode === "local_file" ? "local_file_ephemeral" : "memory_ephemeral",
+      persistence_mode: "ephemeral",
+      persistence_backend: this.store.mode,
     };
   }
 

@@ -13,7 +13,7 @@ describe("MCP contract", () => {
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
     const service = new CareerService(new OverlayStore(join(tmpdir(), "a02-career-mcp-protocol-tests", `${randomUUID()}.json`)));
     const server = await createMcpServer(service);
-    const client = new Client({ name: "a02-test-client", version: "0.1.0" });
+    const client = new Client({ name: "a02-test-client", version: "0.1.1" });
     await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
     const listed = await client.listTools();
     expect(listed.tools.map((tool) => tool.name).sort()).toEqual([
@@ -25,6 +25,7 @@ describe("MCP contract", () => {
     const result = await client.callTool({ name: "calculate_career_profile", arguments: { user_id: "USER-G001" } });
     expect(result.isError).not.toBe(true);
     expect((result.structuredContent as { dimensions: unknown[] }).dimensions).toHaveLength(8);
+    expect(result.structuredContent).toMatchObject({ persistence_mode: "ephemeral", persistence_backend: "local_file" });
 
     const path = await client.callTool({ name: "generate_career_path", arguments: { user_id: "USER-G001", target_role_id: "ROLE-AI-ALG", horizon_years: 3, weekly_hours: 10 } });
     expect(path.isError).not.toBe(true);

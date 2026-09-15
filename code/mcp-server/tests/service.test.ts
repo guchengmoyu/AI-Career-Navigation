@@ -13,6 +13,12 @@ describe("career profile", () => {
   it("returns eight explainable dimensions for all demo users", async () => {
     const app = service();
     await app.init();
+    const sample = app.calculateCareerProfile({ user_id: "USER-G001" });
+    expect(sample).toMatchObject({
+      persistence_mode: "ephemeral",
+      persistence_backend: "local_file",
+      calculation_version: "a02-mcp-0.1.1",
+    });
     for (const user of app.data.users.filter((item) => item.data_split !== "test")) {
       const profile = app.calculateCareerProfile({ user_id: user.user_id });
       expect(profile.dimensions).toHaveLength(8);

@@ -60,10 +60,10 @@ Write operations require an `idempotency_key`. A repeated key returns the origin
 After the package is published and synchronized to `npmmirror.com`, create a plugin in TBox, select **连接 MCP 服务**, and use:
 
 ```text
-npx -y a02-career-navigation-mcp@0.1.0
+npx -y a02-career-navigation-mcp@0.1.1
 ```
 
-Debug all four tools before publishing the plugin. The hosted stdio process uses a temporary local overlay; `persistence_mode` therefore contains `ephemeral`. It must not be presented as durable user storage.
+Debug all four tools before publishing the plugin. Every response reports `persistence_mode=ephemeral`; `persistence_backend` identifies whether the current process is using a temporary local file or the in-memory fallback. It must not be presented as durable user storage.
 
 ## Runtime data
 

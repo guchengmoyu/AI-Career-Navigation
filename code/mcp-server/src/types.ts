@@ -1,5 +1,5 @@
 export const SCHEMA_VERSION = "1.2.0";
-export const CALCULATION_VERSION = "a02-mcp-0.1.0";
+export const CALCULATION_VERSION = "a02-mcp-0.1.1";
 
 export interface Metadata {
   schema_version: string;

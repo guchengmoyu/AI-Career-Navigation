@@ -26,7 +26,7 @@ function toolFailure(error: unknown) {
 
 export async function createMcpServer(service = new CareerService()): Promise<McpServer> {
   await service.init();
-  const server = new McpServer({ name: "a02-career-navigation-mcp", version: "0.1.0" });
+  const server = new McpServer({ name: "a02-career-navigation-mcp", version: "0.1.1" });
 
   server.registerTool("calculate_career_profile", {
     title: "职业画像计算",

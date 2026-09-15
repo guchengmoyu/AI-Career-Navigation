@@ -9,7 +9,7 @@ export async function createRestApp(service = new CareerService()) {
   app.use(cors({ origin: allowed }));
   app.use(express.json({ limit: "100kb" }));
 
-  app.get("/api/health", (_request, response) => response.json({ status: "ok", service: "a02-career-navigation-mcp", version: "0.1.0", schema_version: "1.2.0" }));
+  app.get("/api/health", (_request, response) => response.json({ status: "ok", service: "a02-career-navigation-mcp", version: "0.1.1", schema_version: "1.2.0" }));
   app.post("/api/v1/profile/calculate", asyncHandler(async (request, response) => response.json({ data: service.calculateCareerProfile(request.body) })));
   app.get("/api/v1/profile/:userId", asyncHandler(async (request, response) => response.json({ data: service.calculateCareerProfile({ user_id: String(request.params.userId) }) })));
   app.post("/api/v1/path/generate", asyncHandler(async (request, response) => response.json({ data: service.generateCareerPath(request.body) })));

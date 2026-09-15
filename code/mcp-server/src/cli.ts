@@ -4,4 +4,4 @@ import { createMcpServer } from "./server.js";
 
 const server = await createMcpServer();
 await server.connect(new StdioServerTransport());
-console.error("a02-career-navigation-mcp 0.1.0 running on stdio");
+console.error("a02-career-navigation-mcp 0.1.1 running on stdio");

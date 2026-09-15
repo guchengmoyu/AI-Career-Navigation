@@ -1,6 +1,6 @@
 {
   "name": "a02-career-navigation-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A02 AI career navigation MCP server with four explainable tools",
   "keywords": [
     "mcp",

@@ -40,6 +40,6 @@
 
 - 注册并登录 npm，检查包名可用性。
 - 发布 npm 前运行 `npm pack --dry-run`和 MCP Inspector。
-- 等待 npmmirror 同步后，在百宝箱使用 `npx -y a02-career-navigation-mcp@0.1.0`。
+- 等待 npmmirror 同步后，在百宝箱使用 `npx -y a02-career-navigation-mcp@0.1.1`。
 - 四个工具逐个调试通过后再发布插件。
 - 黄金用户仍为 `pending_team_signoff`，不能在 README、PR 或答辩材料中写成已签字冻结。
