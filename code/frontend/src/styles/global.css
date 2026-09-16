@@ -96,11 +96,216 @@ body {
   }
 }
 
+/* 首页问候卡：用极浅的主色渐变区分于普通卡片，突出"陪伴感"（文档 3.3） */
+.hero-card {
+  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 60%);
+  border: 1px solid #e3f0ff;
+}
+
+/* 统计卡撑满等高，避免一行内卡片高低不齐 */
+.card .ant-statistic {
+  margin-bottom: 0;
+}
+
+/* 同一行内的卡片等高（RadarChart 与"综合解读"并排时常一边高一边矮，
+   会导致下方出现突兀空白）。antd 的 Row 默认 align=top，
+   这里让它拉伸子项、再由卡片自身撑满高度。 */
+.row-equal-height > .ant-col {
+  display: flex;
+}
+
+.row-equal-height .ant-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 卡片主体占据剩余空间，使并排卡片底部对齐 */
+.row-equal-height .ant-card > .ant-card-body {
+  flex: 1;
+}
+
+/* 统计卡：左侧一道彩色细边强化区分度（颜色由 CSS 变量按卡设置） */
+.stat-card-tone {
+  border-inline-start: 3px solid var(--tone-color, var(--color-primary));
+}
+
+/* 统计数字统一放大加粗，配合彩色更醒目 */
+.stat-card-tone .ant-statistic-content {
+  font-weight: 700;
+}
+
+/* 统计卡内容垂直居中：三张卡副文案有无不一致（如"任务进度"多一行小字），
+   会导致数字基线高低不齐。让 body 成为纵向 flex 并居中，视觉更整齐。 */
+.stat-card-tone > .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 归位校验（设计文档 1.2：卡片内元素保持居中对齐）：
+   同一行里有的卡多一行小字（"连续学习 7 天"/"累计积分 320"），
+   会把该卡的数字整体顶上去，与同行其余卡片数字不在一条水平线上。
+   这里给所有统计卡预留等高的副文案槽位：
+   - 有副文案的卡正常放入槽位；
+   - 没有副文案的卡用空槽位占位。
+   数字之上的内容（标题 + 数字）因此天然居中，符合"文字仍在居中位置"的要求。
+   槽位高度 = 12px 字号 × 1.5 行高 + 上间距 4px = 22px。 */
+.stat-card-tone .stat-sub {
+  display: flex;
+  align-items: center;
+  min-height: 22px;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+/* 数字块与副文案槽位作为一个整体居中 */
+.stat-card-tone > .ant-card-body > .ant-statistic {
+  flex: 0 0 auto;
+}
+
+/* 图标与数字基线对齐（antd 默认 prefix 图标偏上） */
+.stat-card-tone .ant-statistic-content-prefix {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-end: 8px;
+}
+
+/* 让卡片标题与内容间距统一（antd 默认在小屏偏紧） */
+.card .ant-card-head {
+  min-height: 48px;
+  padding: 0 var(--content-padding);
+}
+
+.card .ant-card-body {
+  padding: 20px var(--content-padding);
+}
+
 .page-title {
   font-size: 24px;
   font-weight: 600;
   color: var(--color-text-primary);
   margin-bottom: 24px;
+}
+
+/* 页头：标题与右侧操作位同一行（文档 3.4 的 [重新测评] [分享]） */
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.page-head .page-title {
+  margin-bottom: 0;
+}
+
+/* 维度条目：色点 + 名称 + 分数 + 进度条 */
+.dim-item {
+  padding: 12px;
+  border-radius: var(--radius-btn);
+  background: var(--color-bg-subtle);
+}
+
+.dim-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.dim-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-inline-end: 6px;
+  vertical-align: middle;
+}
+
+.dim-item-meta {
+  margin-top: 4px;
+}
+
+/* 差距分析行：技能名与分数两端对齐 */
+.gap-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+
+.gap-row:last-child {
+  border-bottom: none;
+}
+
+/* 场景列表项：加大点击热区并给出选中态 */
+.scenario-item {
+  cursor: pointer;
+  padding: 12px !important;
+  border-radius: var(--radius-btn);
+  transition: background 0.2s ease;
+}
+
+.scenario-item:hover {
+  background: var(--color-bg-subtle);
+}
+
+.scenario-item-active {
+  background: #e6f4ff;
+  border-inline-start: 3px solid var(--color-primary);
+}
+
+/* 对话区：限制高度并可滚动，避免长对话把输入框挤出视口 */
+.chat-area {
+  min-height: 260px;
+  max-height: 420px;
+  overflow: auto;
+  padding: 4px;
+}
+
+.chat-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+  /* 气泡出现 200ms（文档 4.3） */
+  animation: bubble-in 0.2s ease-out;
+}
+
+.chat-row-user {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: 560px;
+  padding: 8px 12px;
+  border-radius: var(--radius-card);
+  background: var(--color-bg-subtle);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.bubble-user {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 卡片通用样式 */
