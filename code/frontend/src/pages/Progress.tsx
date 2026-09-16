@@ -22,9 +22,9 @@ function ProgressPage() {
     <h1 className="page-title">学习进度</h1>
     <Alert type="warning" showIcon message="演示状态可能随容器重启清空" description={`${summary.disclaimer} 当前存储：${summary.persistence_mode}`} style={{ marginBottom: 16 }} />
     <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-      <Col xs={8}><Card><Statistic title="累计学习时长" value={summary.total_learning_hours} suffix="小时" prefix={<ClockCircleOutlined />} /></Card></Col>
-      <Col xs={8}><Card><Statistic title="完成任务" value={summary.completed_tasks} suffix="项" prefix={<BookOutlined />} /></Card></Col>
-      <Col xs={8}><Card><Statistic title="连续学习" value={summary.streak_days} suffix="天" prefix={<FireOutlined />} /></Card></Col>
+      <Col xs={24} sm={8}><Card><Statistic title="累计学习时长" value={summary.total_learning_hours} suffix="小时" prefix={<ClockCircleOutlined />} /></Card></Col>
+      <Col xs={24} sm={8}><Card><Statistic title="完成任务" value={summary.completed_tasks} suffix="项" prefix={<BookOutlined />} /></Card></Col>
+      <Col xs={24} sm={8}><Card><Statistic title="连续学习" value={summary.streak_days} suffix="天" prefix={<FireOutlined />} /></Card></Col>
     </Row>
     <Card title="学习活跃度（近12周）" style={{ marginBottom: 24 }}><HeatMapChart events={summary.recent_events} /></Card>
     <Card title="近期成长事件"><Table dataSource={summary.recent_events} columns={columns} rowKey="event_id" pagination={false} size="small" /></Card>
