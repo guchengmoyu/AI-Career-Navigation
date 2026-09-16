@@ -1,190 +1,48 @@
-import { useState } from 'react'
-import { Row, Col, Card, List, Tag, Button, Input, Typography, Space, Avatar } from 'antd'
-import {
-  VideoCameraOutlined,
-  RobotOutlined,
-  UserOutlined,
-  SendOutlined,
-} from '@ant-design/icons'
+import { useEffect, useState } from 'react'
+import { Alert, Avatar, Button, Card, Col, Input, List, Progress, Row, Space, Spin, Tag, Typography } from 'antd'
+import { RobotOutlined, SendOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons'
+import { DEMO_USER_ID, scenarioApi, type Scenario, type ScenarioEvaluation } from '../services/api'
 
-const { Text, Paragraph } = Typography
+const { Paragraph, Text } = Typography
 const { TextArea } = Input
+interface Message { role: 'user' | 'assistant'; content: string }
+const moduleColors: Record<string, string> = { 'SCN-REMOTE': 'blue', 'SCN-AI-OFFICE': 'purple', 'SCN-CROSS-ROLE': 'cyan' }
 
-// TODO: 替换为 MCP 工具 getScenario 的实际返回数据
-const mockScenarios = [
-  {
-    id: 'SCN-REMOTE-001',
-    title: '远程团队晨会沟通',
-    type: 'remote_collab',
-    difficulty: 'medium',
-    duration: '15 分钟',
-    description: '你是一名远程团队成员，需要在晨会中汇报项目进度并协调跨时区任务。',
-  },
-  {
-    id: 'SCN-AI-001',
-    title: '使用 AI 工具完成代码审查',
-    type: 'ai_assisted',
-    difficulty: 'hard',
-    duration: '20 分钟',
-    description: '你需要借助 AI 代码审查工具，分析一段遗留代码并提出重构建议。',
-  },
-  {
-    id: 'SCN-CROSS-001',
-    title: '与产品经理沟通需求',
-    type: 'cross_role',
-    difficulty: 'easy',
-    duration: '10 分钟',
-    description: '产品经理提出了一个模糊需求，你需要通过提问澄清技术实现细节。',
-  },
-]
-
-const typeMap: Record<string, { label: string; color: string }> = {
-  remote_collab: { label: '远程协作', color: 'blue' },
-  ai_assisted: { label: 'AI 辅助办公', color: 'purple' },
-  cross_role: { label: '跨岗位沟通', color: 'cyan' },
-}
-
-const diffMap: Record<string, { label: string; color: string }> = {
-  easy: { label: '入门', color: 'green' },
-  medium: { label: '进阶', color: 'orange' },
-  hard: { label: '挑战', color: 'red' },
-}
-
-interface Message {
-  role: 'user' | 'assistant'
-  content: string
-}
-
-function Scenario() {
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+function ScenarioPage() {
+  const [scenarios, setScenarios] = useState<Scenario[]>([])
+  const [selected, setSelected] = useState<Scenario | null>(null)
+  const [sessionId, setSessionId] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
-  const [inputValue, setInputValue] = useState('')
-
-  const selectedScenario = mockScenarios.find((s) => s.id === selectedId)
-
-  const handleSend = () => {
-    if (!inputValue.trim()) return
-    setMessages((prev) => [
-      ...prev,
-      { role: 'user', content: inputValue },
-      { role: 'assistant', content: '（场景模拟引擎响应占位 — 接入 MCP startScenario 后替换）' },
-    ])
-    setInputValue('')
+  const [evaluation, setEvaluation] = useState<ScenarioEvaluation | null>(null)
+  const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  useEffect(() => { scenarioApi.list().then((result) => setScenarios(result.scenarios)).catch((reason: Error) => setError(reason.message)).finally(() => setLoading(false)) }, [])
+  const choose = async (scenario: Scenario) => {
+    setError(''); setEvaluation(null); setMessages([]); setSelected(scenario)
+    try { const result = await scenarioApi.start(scenario.scenario_id, DEMO_USER_ID); setSessionId(result.session_id); setMessages([{ role: 'assistant', content: result.scenario.initial_prompt }]) }
+    catch (reason) { setError((reason as Error).message) }
   }
-
-  return (
-    <div className="page-container">
-      <h1 className="page-title">场景训练</h1>
-
-      <Row gutter={[16, 16]}>
-        {/* 左侧：场景列表 */}
-        <Col xs={24} lg={8}>
-          <Card className="card" title="训练场景">
-            <List
-              dataSource={mockScenarios}
-              renderItem={(item) => (
-                <List.Item
-                  style={{
-                    cursor: 'pointer',
-                    background: selectedId === item.id ? 'var(--color-bg-page)' : 'transparent',
-                    borderRadius: 'var(--radius-btn)',
-                    padding: '12px',
-                    transition: 'background 0.2s',
-                  }}
-                  onClick={() => { setSelectedId(item.id); setMessages([]) }}
-                >
-                  <List.Item.Meta
-                    avatar={<VideoCameraOutlined style={{ fontSize: 20, color: 'var(--color-primary)' }} />}
-                    title={item.title}
-                    description={
-                      <Space size={4}>
-                        <Tag color={typeMap[item.type].color}>{typeMap[item.type].label}</Tag>
-                        <Tag color={diffMap[item.difficulty].color}>{diffMap[item.difficulty].label}</Tag>
-                        <Text type="secondary">{item.duration}</Text>
-                      </Space>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
-          </Card>
-        </Col>
-
-        {/* 右侧：对话区域 */}
-        <Col xs={24} lg={16}>
-          <Card
-            className="card"
-            title={selectedScenario ? selectedScenario.title : '选择一个场景开始训练'}
-            style={{ height: 'calc(100vh - 180px)', display: 'flex', flexDirection: 'column' }}
-            styles={{ body: { flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' } }}
-          >
-            {selectedScenario ? (
-              <>
-                <Paragraph type="secondary" style={{ marginBottom: 16 }}>
-                  {selectedScenario.description}
-                </Paragraph>
-
-                {/* 消息列表 */}
-                <div style={{ flex: 1, overflow: 'auto', marginBottom: 16, padding: '0 4px' }}>
-                  {messages.length === 0 ? (
-                    <div style={{ textAlign: 'center', color: 'var(--color-text-tertiary)', marginTop: 80 }}>
-                      <RobotOutlined style={{ fontSize: 48, marginBottom: 16 }} />
-                      <div>发送消息开始场景模拟</div>
-                    </div>
-                  ) : (
-                    messages.map((msg, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          display: 'flex',
-                          justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                          marginBottom: 12,
-                        }}
-                      >
-                        <Space align="start" direction={msg.role === 'user' ? 'horizontal' : 'horizontal'}>
-                          {msg.role === 'assistant' && <Avatar icon={<RobotOutlined />} style={{ background: 'var(--color-primary)' }} />}
-                          <div style={{
-                            maxWidth: 400,
-                            padding: '8px 12px',
-                            borderRadius: 'var(--radius-card)',
-                            background: msg.role === 'user' ? 'var(--color-primary)' : 'var(--color-bg-page)',
-                            color: msg.role === 'user' ? '#fff' : 'var(--color-text-primary)',
-                          }}>
-                            {msg.content}
-                          </div>
-                          {msg.role === 'user' && <Avatar icon={<UserOutlined />} style={{ background: 'var(--color-success)' }} />}
-                        </Space>
-                      </div>
-                    ))
-                  )}
-                </div>
-
-                {/* 输入框 */}
-                <Space.Compact style={{ width: '100%' }}>
-                  <TextArea
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    placeholder="输入你的回复..."
-                    autoSize={{ minRows: 1, maxRows: 3 }}
-                    onPressEnter={(e) => { if (!e.shiftKey) { e.preventDefault(); handleSend() } }}
-                    style={{ flex: 1 }}
-                  />
-                  <Button type="primary" icon={<SendOutlined />} onClick={handleSend}>
-                    发送
-                  </Button>
-                </Space.Compact>
-              </>
-            ) : (
-              <div style={{ textAlign: 'center', color: 'var(--color-text-tertiary)', marginTop: 120 }}>
-                <VideoCameraOutlined style={{ fontSize: 64, marginBottom: 16 }} />
-                <div>从左侧选择一个训练场景</div>
-              </div>
-            )}
-          </Card>
-        </Col>
-      </Row>
-    </div>
-  )
+  const send = async () => {
+    if (!input.trim() || !sessionId) return
+    const answer = input; setInput(''); setMessages((current) => [...current, { role: 'user', content: answer }])
+    try {
+      const result = await scenarioApi.evaluate(sessionId, DEMO_USER_ID, answer); setEvaluation(result)
+      setMessages((current) => [...current, { role: 'assistant', content: `评估完成：${result.overall_score} 分。${result.improvement_suggestions.join('；') || '已覆盖主要行动要点。'}` }])
+    } catch (reason) { setError((reason as Error).message) }
+  }
+  if (loading) return <Spin tip="正在加载训练场景" fullscreen />
+  return <div className="page-container">
+    <h1 className="page-title">场景训练</h1>{error && <Alert type="error" message={error} closable style={{ marginBottom: 12 }} />}
+    <Row gutter={[16, 16]}>
+      <Col xs={24} lg={8}><Card title="训练场景"><List dataSource={scenarios} renderItem={(item) => <List.Item onClick={() => void choose(item)} style={{ cursor: 'pointer', background: selected?.scenario_id === item.scenario_id ? 'var(--color-bg-page)' : 'transparent', padding: 12 }}><List.Item.Meta avatar={<VideoCameraOutlined />} title={item.title} description={<Space><Tag color={moduleColors[item.module_id]}>{item.module_name}</Tag><Tag>{item.difficulty}</Tag></Space>} /></List.Item>} /></Card></Col>
+      <Col xs={24} lg={16}><Card title={selected?.title || '选择一个场景开始训练'}>
+        {selected ? <><Paragraph type="secondary">{selected.context}</Paragraph><div style={{ minHeight: 260, maxHeight: 420, overflow: 'auto' }}>{messages.map((message, index) => <div key={index} style={{ display: 'flex', justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 12 }}><Space align="start">{message.role === 'assistant' && <Avatar icon={<RobotOutlined />} />}<div style={{ maxWidth: 560, padding: '8px 12px', background: message.role === 'user' ? '#1677FF' : '#F5F5F5', color: message.role === 'user' ? '#fff' : undefined, borderRadius: 8 }}>{message.content}</div>{message.role === 'user' && <Avatar icon={<UserOutlined />} />}</Space></div>)}</div>
+          {evaluation && <Alert type={evaluation.overall_score >= 80 ? 'success' : 'warning'} message={`综合得分 ${evaluation.overall_score}`} description={<><Progress percent={evaluation.overall_score} /><Text>能力变化仅为建议，尚未写入画像。</Text></>} style={{ marginBottom: 12 }} />}
+          <Space.Compact style={{ width: '100%' }}><TextArea value={input} onChange={(event) => setInput(event.target.value)} placeholder="说明你会确认什么、如何行动、如何保护隐私并复盘" autoSize={{ minRows: 2, maxRows: 5 }} /><Button type="primary" icon={<SendOutlined />} onClick={() => void send()} disabled={Boolean(evaluation)}>提交评估</Button></Space.Compact></> : <div style={{ textAlign: 'center', padding: 80 }}><VideoCameraOutlined style={{ fontSize: 56 }} /><div>从左侧选择一个训练场景</div></div>}
+      </Card></Col>
+    </Row>
+  </div>
 }
 
-export default Scenario
+export default ScenarioPage
