@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Alert, Card, Col, List, Progress, Row, Skeleton, Space, Tag, Typography } from 'antd'
+import { Alert, Card, Col, List, message, Progress, Row, Skeleton, Space, Tag, Typography } from 'antd'
 import { ReloadOutlined, ShareAltOutlined } from '@ant-design/icons'
 import RadarChart from '../components/charts/RadarChart'
 import { DEMO_USER_ID, profileApi, type CareerProfile } from '../services/api'
@@ -20,6 +20,9 @@ function fmtScore(value: number): string {
 function Profile() {
   const [profile, setProfile] = useState<CareerProfile | null>(null)
   const [error, setError] = useState('')
+  /* antd 6 的 message 需要挂一个 contextHolder 才能继承 ConfigProvider 的主题与中文语境，
+     直接用静态 `message.xxx` 会告警且拿不到主题。 */
+  const [messageApi, contextHolder] = message.useMessage()
 
   useEffect(() => {
     profileApi.get(DEMO_USER_ID).then(setProfile).catch((reason: Error) => setError(reason.message))
@@ -32,6 +35,7 @@ function Profile() {
 
   return (
     <div className="page-container">
+      {contextHolder}
       {/* 页头：标题 + 操作位（文档 3.4：[重新测评] [分享]） */}
       <div className="page-head">
         <h1 className="page-title" style={{ marginBottom: 0 }}>
@@ -44,7 +48,25 @@ function Profile() {
           <a onClick={() => window.location.reload()}>
             <ReloadOutlined /> 重新测评
           </a>
-          <a onClick={() => void navigator.clipboard?.writeText(window.location.href)}>
+          <a
+            onClick={() => {
+              /* 原来的实现是 `void navigator.clipboard?.writeText(...)`：
+                 一是复制成功后**没有任何反馈**（用户以为按钮坏了），
+                 二是剪贴板 API 在非 HTTPS / 无权限时**静默失败**，同样毫无提示。
+                 这里补上两条：成功给成功提示，失败则兜底为"手动复制"提示框。 */
+              const copy = async () => {
+                try {
+                  /* navigator.clipboard 在非安全上下文（http 且非 localhost）下为 undefined */
+                  if (!navigator.clipboard) throw new Error('clipboard unavailable')
+                  await navigator.clipboard.writeText(window.location.href)
+                  messageApi.success('画像链接已复制到剪贴板')
+                } catch {
+                  messageApi.warning('当前环境不支持自动复制，请手动复制地址栏链接')
+                }
+              }
+              void copy()
+            }}
+          >
             <ShareAltOutlined /> 分享
           </a>
         </Space>

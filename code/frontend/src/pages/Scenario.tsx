@@ -103,13 +103,22 @@ function ScenarioPage() {
 
   if (loading) return <div className="page-container"><Skeleton active paragraph={{ rows: 10 }} /></div>
 
-  /* 模块筛选：全部 / 各模块短标签 */
-  const moduleOptions = ['全部', ...new Set(scenarios.map((item) => item.module_id))]
+  /* 模块筛选：全部 / 各模块短标签。
+     module_id 与展示短标签不是同一个字符串（SCN-REMOTE → 远程协作），
+     所以必须把 { label, value } 成对交给 Segmented，让它自己负责回传 value。
+     ⚠️ 曾经的写法是 options 只给展示串、onChange 里再反查 module_id，
+        反查用 `find(key => key === '全部' || ...)` —— 「全部」排在数组第一位，
+        它的第一段条件恒为 true，于是 find 永远返回「全部」，
+        三个模块标签全成了 no-op（点击后高亮与列表都不动）。改回成对声明后不再需要反查。 */
+  const moduleOptions = [
+    { label: '全部', value: '全部' },
+    ...Array.from(new Set(scenarios.map((item) => item.module_id))).map((id) => ({
+      label: moduleMeta[id]?.short ?? id,
+      value: id,
+    })),
+  ]
   const visible = scenarios.filter(
-    (item) =>
-      moduleFilter === '全部' ||
-      item.module_id === moduleFilter ||
-      moduleMeta[item.module_id]?.short === moduleFilter,
+    (item) => moduleFilter === '全部' || item.module_id === moduleFilter,
   )
 
   return (
@@ -118,18 +127,12 @@ function ScenarioPage() {
 
       {error && <Alert type="error" message={error} closable style={{ marginBottom: 12 }} />}
 
-      {/* 模块筛选（文档 3.6 顶部标签行） */}
+      {/* 模块筛选（文档 3.6 顶部标签行）。
+          onValueChange 直接拿到的就是 module_id（或 '全部'），无需再反查。 */}
       <Segmented
-        options={moduleOptions.map((key) =>
-          key === '全部' ? '全部' : moduleMeta[key]?.short ?? key,
-        )}
-        value={moduleFilter === '全部' ? '全部' : moduleMeta[moduleFilter]?.short ?? moduleFilter}
-        onChange={(value) => {
-          const matched = moduleOptions.find(
-            (key) => key === '全部' || (moduleMeta[key]?.short ?? key) === value,
-          )
-          setModuleFilter(matched ?? '全部')
-        }}
+        options={moduleOptions}
+        value={moduleFilter}
+        onChange={(value) => setModuleFilter(String(value))}
         style={{ marginBottom: 16 }}
       />
 

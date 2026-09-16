@@ -136,7 +136,7 @@ function Path() {
               <>
                 {/* 三张统计卡与首页同款配色语言：主色蓝 / 成长绿 / 激励橙 */}
                 <Row gutter={[16, 16]} style={{ marginBottom: 16 }} className="row-equal-height">
-                  <Col xs={24} sm={8}>
+                  <Col xs={24} sm={12} lg={8}>
                     <Card
                       className="card stat-card-tone"
                       style={{ '--tone-color': 'var(--color-primary)' } as React.CSSProperties}
@@ -152,7 +152,7 @@ function Path() {
                       <div className="stat-sub" aria-hidden="true" />
                     </Card>
                   </Col>
-                  <Col xs={24} sm={8}>
+                  <Col xs={24} sm={12} lg={8}>
                     <Card
                       className="card stat-card-tone"
                       style={{ '--tone-color': 'var(--color-success)' } as React.CSSProperties}
@@ -167,7 +167,7 @@ function Path() {
                       <div className="stat-sub" aria-hidden="true" />
                     </Card>
                   </Col>
-                  <Col xs={24} sm={8}>
+                  <Col xs={24} sm={24} lg={8}>
                     <Card
                       className="card stat-card-tone"
                       style={{ '--tone-color': 'var(--color-warning)' } as React.CSSProperties}

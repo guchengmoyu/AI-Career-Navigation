@@ -48,6 +48,9 @@
   --sidebar-width-collapsed: 64px;
   --header-height: 56px;
 
+  /* 移动端底部 Tab 栏高度（文档 3.10） */
+  --tabbar-height: 56px;
+
   /* 内容区：大屏放宽上限，小屏自适应留白 */
   --content-max-width: 1600px;
   --content-padding: 24px;
@@ -90,9 +93,178 @@ body {
   margin: 0 auto;
 }
 
+/* ============================================================
+   移动端底部 Tab 栏（设计文档 3.10 / 5.2：手机 375-767px，
+   侧边栏 → 底部 Tab 栏，卡片单列堆叠）
+   ============================================================ */
+.mobile-tabbar {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-tabbar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    height: var(--tabbar-height);
+    background: var(--color-bg-card);
+    border-top: 1px solid var(--color-border-secondary);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+    /* 刘海屏安全区：底部 Tab 需避开 Home Indicator */
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .mobile-tabbar-item {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--color-text-tertiary);
+    font-size: 12px;
+    /* 触控热区 ≥44px（移动端可点性） */
+    min-height: 44px;
+    padding: 4px 0;
+    transition: color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-tabbar-item:active {
+    background: var(--color-bg-subtle);
+  }
+
+  .mobile-tabbar-item.is-active {
+    color: var(--color-primary);
+  }
+
+  .mobile-tabbar-icon {
+    font-size: 20px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .mobile-tabbar-label {
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- 手机（375-767px）：单列布局 ---------- */
 @media (max-width: 767px) {
   .page-container {
     padding: 16px;
+    /* 给底部 Tab 栏让位，避免最后一张卡片被遮住 */
+    padding-bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom, 0) + 16px);
+  }
+
+  /* 标题降一级，避免窄屏文字过大 */
+  .page-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  /* 卡片内边距收紧，提升窄屏信息密度 */
+  .card .ant-card-body {
+    padding: 16px;
+  }
+
+  .card .ant-card-head {
+    padding: 0 16px;
+    min-height: 44px;
+  }
+
+  /* 卡片圆角与阴影在移动端减弱，观感更轻 */
+  .card {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  /* 统计卡：窄屏下三张卡纵排后高度不再需要拉伸，
+     否则最后一张会留下大片空白 */
+  .stat-card-tone > .ant-card-body {
+    justify-content: flex-start;
+  }
+
+  /* 页头操作位在窄屏换行后靠左，不要两端顶死 */
+  .page-head {
+    align-items: flex-start;
+  }
+
+  /* 对话气泡：限制最大宽度，避免长句把气泡顶出视口 */
+  .bubble {
+    max-width: 82vw;
+  }
+
+  /* 对话区在移动端放宽可视高度（全屏感，文档 3.10「对话界面全屏展示」） */
+  .chat-area {
+    min-height: 300px;
+    max-height: 56vh;
+  }
+
+  /* 差距分析行：窄屏允许换行，避免技能名被压成竖排 */
+  .gap-row {
+    flex-wrap: wrap;
+  }
+}
+
+/* 表格横向滚动：antd 的 Table 在窄屏会撑破卡片（实测 375px 下右边缘溢出到 716px）。
+   根因是 .ant-table-wrapper 本身没有收缩下限，宽表会把父级一起顶宽。
+   这里给卡片内的表格建立独立的滚动容器：
+   - min-width: 0 让 flex/grid 子项可以被压缩（默认 min-width:auto 会拒绝收缩）
+   - max-width: 100% 约束在卡片内容宽度内
+   - overflow-x: auto 让滚动发生在卡片内部而不是整页
+   注意：这条规则对所有断点生效，桌面端宽度足够时不会出现滚动条。 */
+.card .ant-table-wrapper {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* 防止表格把卡片顶宽 */
+.card > .ant-card-body {
+  min-width: 0;
+}
+
+/* ---------- 平板（768-1023px）：双列布局，可折叠侧栏 ---------- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .page-container {
+    padding: 20px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .card .ant-card-body {
+    padding: 18px 20px;
+  }
+
+  .bubble {
+    max-width: 70vw;
+  }
+}
+
+/* ---------- 大屏（≥1440px）：放宽内容区 ---------- */
+@media (min-width: 1440px) {
+  :root {
+    --content-padding: 32px;
+  }
+}
+
+/* 尊重系统「减少动态效果」偏好（无障碍） */
+@media (prefers-reduced-motion: reduce) {
+  .chat-row,
+  .mobile-tabbar-item {
+    animation: none;
+    transition: none;
   }
 }
 
@@ -171,6 +343,29 @@ body {
   display: inline-flex;
   align-items: center;
   margin-inline-end: 8px;
+}
+
+/* 统计卡的平板适配（768-1023px）。
+   背景：三张统计卡在 768px 若按 sm=8 三列排，每张仅约 165px 宽，
+   "奖杯图标 + 39.6分"放不下 → 数字与单位被折行、标题被省略号截断（实测）。
+   解法：改为 **两列 + 第三张整行**（Col sm=12 / sm=24），既符合设计文档 5.2
+   "平板双列"的要求，又没有"第三张孤零零挂在第二行左侧"的空档。
+   因每张卡宽度翻倍（约 340px），此处只需轻微收紧内边距即可保持单行。 */
+@media (max-width: 1023px) {
+  .stat-card-tone > .ant-card-body {
+    padding: 16px 16px;
+  }
+  .stat-card-tone .ant-statistic-title {
+    /* 标题单行，过长省略（卡宽充足时不会触发） */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .stat-card-tone .stat-sub {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 /* 让卡片标题与内容间距统一（antd 默认在小屏偏紧） */

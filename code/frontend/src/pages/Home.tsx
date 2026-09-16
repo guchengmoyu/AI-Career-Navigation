@@ -95,7 +95,7 @@ function Home() {
           三张卡用不同功能色区分：奖杯-主色蓝（能力/成就）、时钟-成长绿（时间投入）、火苗-激励橙（活跃度）。
           颜色取自设计文档 1.2 既有的色板，不引入体系外的新色。 */}
       <Row gutter={[16, 16]} style={{ marginBottom: 16 }} className="row-equal-height">
-        <Col xs={24} sm={8}>
+        <Col xs={24} sm={12} lg={8}>
           <Card
             className="card stat-card-tone"
             style={{ '--tone-color': 'var(--color-primary)' } as React.CSSProperties}
@@ -112,7 +112,7 @@ function Home() {
             <div className="stat-sub" aria-hidden="true" />
           </Card>
         </Col>
-        <Col xs={24} sm={8}>
+        <Col xs={24} sm={12} lg={8}>
           <Card className="card stat-card-tone" style={{ '--tone-color': 'var(--color-success)' } as React.CSSProperties}>
             <Statistic
               title="累计学习时长"
@@ -124,7 +124,7 @@ function Home() {
             <div className="stat-sub">连续学习 {progress.streak_days} 天</div>
           </Card>
         </Col>
-        <Col xs={24} sm={8}>
+        <Col xs={24} sm={24} lg={8}>
           <Card className="card stat-card-tone" style={{ '--tone-color': 'var(--color-warning)' } as React.CSSProperties}>
             <Statistic
               title="任务进度"
