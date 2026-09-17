@@ -16,7 +16,8 @@ import {
   Tag,
   Typography,
 } from 'antd'
-import { ArrowUpOutlined, RobotOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons'
+import { ArrowUpOutlined, FileTextOutlined, RobotOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import { DEMO_USER_ID, scenarioApi, type Scenario, type ScenarioEvaluation } from '../services/api'
 
 const { Paragraph, Text } = Typography
@@ -47,6 +48,7 @@ function fmtScore(value: number): string {
 }
 
 function ScenarioPage() {
+  const navigate = useNavigate()
   const [scenarios, setScenarios] = useState<Scenario[]>([])
   const [selected, setSelected] = useState<Scenario | null>(null)
   const [sessionId, setSessionId] = useState('')
@@ -220,6 +222,25 @@ function ScenarioPage() {
                           </div>
                         )}
                         <Text>能力变化仅为建议，尚未写入画像。</Text>
+                        {/* 评估报告页入口。评估结果**只存在于内存**（服务端不落库），
+                            所以必须把整个对象通过路由 state 带过去；
+                            刷新报告页会丢失，那边有对应的降级空态兜底。 */}
+                        <div style={{ marginTop: 8 }}>
+                          <Button
+                            size="small"
+                            icon={<FileTextOutlined />}
+                            onClick={() =>
+                              navigate(`/evaluation/${evaluation.scenario_id}`, {
+                                state: {
+                                  evaluation,
+                                  scenarioTitle: selected?.title ?? '',
+                                },
+                              })
+                            }
+                          >
+                            查看完整报告
+                          </Button>
+                        </div>
                       </>
                     }
                     style={{ marginBottom: 12 }}

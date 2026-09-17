@@ -295,6 +295,9 @@ body {
 /* 卡片主体占据剩余空间，使并排卡片底部对齐 */
 .row-equal-height .ant-card > .ant-card-body {
   flex: 1;
+  /* 同时变成纵向 flex 容器，内部需要撑满的图表容器才能拿到剩余高度 */
+  display: flex;
+  flex-direction: column;
 }
 
 /* 统计卡：左侧一道彩色细边强化区分度（颜色由 CSS 变量按卡设置） */
@@ -423,8 +426,41 @@ body {
   vertical-align: middle;
 }
 
+/* 维度条目的辅助说明（如「达成率 33.3%」） */
 .dim-item-meta {
   margin-top: 4px;
+}
+
+/* 雷达图容器：在等高卡片内撑满剩余高度，使图表随卡片一起长高，
+   而不是固定像素高、卡片被拉高后下方留一大块空白。
+   min-height 是「图表可读」的下限；调低它会直接压低整行高度，
+   从而减少右侧「本次成绩」卡片底部的空白（两卡等高，行高由较高者决定）。 */
+.radar-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+}
+
+.radar-box > div {
+  flex: 1;
+}
+
+/* 「本次成绩」卡片里的两块标签区（已覆盖 / 待改进）。
+   卡片在 lg 档与雷达图等高，而雷达图内容天然更高，所以这里必然剩余一段高度。
+   实测四种分配方式后取最优（trailingSpace 越小、留白越均匀越好）：
+     仅末块 flex = 132px → 两块均分 = 73px → 末块居中 = 76px → 两块均分+居中 = 47px
+   即让两块各占一半、内容在各自区域内垂直居中，留白被摊到两段上下，
+   不会在卡片底部堆成一坨。注意本行仍保持等高（A 方案：接受留白但求均匀）。 */
+.score-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.score-block + .score-block {
+  margin-top: 12px;
 }
 
 /* 差距分析行：技能名与分数两端对齐 */

@@ -104,6 +104,22 @@ export interface Scenario {
   privacy_focus: string
 }
 
+/** 场景评估的**五个**维度。
+ *  ⚠️ 这五个 key 与画像的 8 个 DIM-01..08 是**两套完全不同的体系** ——
+ *  同名不同源，绝不能拿去喂 RadarChart（那个组件假定 8 个维度且 max 均为 100）。
+ *  每个维度的满分也不一致（25/20/20/20/15），画图前必须按 max_score 归一化，
+ *  否则「反思 15/15」会看起来比「任务完成 25/25」小一圈。
+ *  来源：`service.ts` 的返回对象字面量（唯一权威，无类型导出）。 */
+export const EVALUATION_DIMENSIONS = [
+  { key: 'task_completion', label: '任务完成', maxScore: 25 },
+  { key: 'clarification', label: '需求澄清', maxScore: 20 },
+  { key: 'evidence_and_privacy', label: '证据与隐私', maxScore: 20 },
+  { key: 'collaboration', label: '协作沟通', maxScore: 20 },
+  { key: 'reflection', label: '反思复盘', maxScore: 15 },
+] as const
+
+export type EvaluationDimensionKey = (typeof EVALUATION_DIMENSIONS)[number]['key']
+
 export interface ScenarioEvaluation {
   scenario_id: string
   overall_score: number
@@ -112,6 +128,20 @@ export interface ScenarioEvaluation {
   improvement_suggestions: string[]
   red_flag_hits: string[]
   update_applied: boolean
+  /* ↓ 以下字段服务端**一直在返回**，此前类型里全部漏声明（实测 `evaluate` 的响应
+       共 26 个字段）。评估报告页要用，故一并补上。 */
+  /** 命中的预期行为（`highlights` 就是它的前 3 条加「已覆盖：」前缀） */
+  matched_expected_actions: string[]
+  /** 未覆盖的预期行为 —— 「改进建议」的主要来源 */
+  missing_expected_actions: string[]
+  /** 红旗行为扣分，`Math.min(30, 命中数 × 10)` */
+  penalty: number
+  /** 用户回答的前 300 字回显 */
+  evidence_excerpt: string
+  /** 仅**建议**的画像增量，并未落库（见 update_applied 恒为 false） */
+  proposed_profile_updates: { dimension_id: string; suggested_delta: number; reason: string }[]
+  /** 评分口径说明，用于向用户解释分数怎么来的 */
+  evaluation_rule: string
 }
 
 export const scenarioApi = {
