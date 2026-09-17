@@ -477,6 +477,27 @@ body {
   border-bottom: none;
 }
 
+/* 任务行：勾选框 + 主内容 + 右侧状态标签。
+   用 flex 而非 inline：勾选框与多行标题需要顶对齐，且状态标签要能靠右。
+   `align-items: flex-start` 保证标题折行时勾选框仍停在第一行，不会跑到中间。 */
+.task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.task-row .ant-checkbox-wrapper,
+.task-row .ant-checkbox {
+  /* 勾选框自身在 Timeline 的较小行高里会略偏上，微调使其与首行文字视觉居中 */
+  margin-top: 2px;
+  flex: none;
+}
+
+.task-row-main {
+  flex: 1;
+  min-width: 0;
+}
+
 /* 场景列表项：加大点击热区并给出选中态 */
 .scenario-item {
   cursor: pointer;

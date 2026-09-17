@@ -3,6 +3,7 @@ import {
   Alert,
   Button,
   Card,
+  Checkbox,
   Col,
   Collapse,
   Descriptions,
@@ -14,11 +15,14 @@ import {
   Row,
   Skeleton,
   Space,
+  Spin,
   Statistic,
   Tabs,
   Tag,
   Timeline,
+  Tooltip,
   Typography,
+  message,
 } from 'antd'
 import {
   BookOutlined,
@@ -31,9 +35,12 @@ import {
 import {
   DEMO_USER_ID,
   PATH_ROLE_OPTIONS,
+  makeIdempotencyKey,
   pathApi,
+  progressApi,
   type LearningPathResult,
   type PathTask,
+  type TaskStatus,
 } from '../services/api'
 
 const { Text } = Typography
@@ -71,6 +78,14 @@ const branchLabels: Record<string, string> = {
   project_driven: '项目驱动路线',
 }
 
+/* 任务状态的中文标签。服务端 `update_task` 只接受这三个值
+   （实测传未知值会被 zod 拦成 400），故这里与 TaskStatus 一一对应。 */
+const taskStatusLabels: Record<TaskStatus, string> = {
+  pending: '未开始',
+  in_progress: '进行中',
+  completed: '已完成',
+}
+
 function Path() {
   const [result, setResult] = useState<LearningPathResult | null>(null)
   const [error, setError] = useState('')
@@ -79,6 +94,39 @@ function Path() {
   const [targetRoleId, setTargetRoleId] = useState(DEFAULT_ROLE_ID)
   const [regenerating, setRegenerating] = useState(false)
   const [regenError, setRegenError] = useState('')
+
+  /* ── 以下是"写入侧"状态（A 档第 2 项：接三个写接口中的两个）───────────────
+     服务端的进度是**可写但易失**的（`persistence_mode` 实测为 `local_file_ephemeral`，
+     容器重启即回到初始快照），所以：
+     1. 页面**不出现"永久保存"字样**，只描述"本次演示会话内生效"；
+     2. 激活与勾选都以**服务端返回值为准**覆盖本地状态（见 activatePath / toggleTask），
+        不做"本地先斩后奏"，避免页面进度和真实进度漂移。 */
+
+  /** 当前已激活的 path_id。null = 还没有激活任何路径。
+   *  ⚠️ 它不是"用户选了哪条路线"，而是"服务端认哪条"。未激活时任务勾选框必须禁用，
+   *  否则 `update_task` 必然 404（`未在激活路径中找到任务`）。 */
+  const [activePathId, setActivePathId] = useState<string | null>(null)
+  /** 正在激活中的 path_id（按钮转圈用） */
+  const [activatingId, setActivatingId] = useState<string | null>(null)
+  /** 正在提交状态变更的任务 id 集合（勾选框转圈用；用 Set 支持并发点多个任务） */
+  const [savingTaskIds, setSavingTaskIds] = useState<Set<string>>(new Set())
+
+  /** 任务状态的本地覆盖层：`task_id -> status`。
+   *  为什么需要它：`pathApi.generate` 返回的任务状态是**生成那一刻**的快照，
+   *  用户勾选完成之后若只改 result 里的对象会破坏"不可变"，而重新 generate 又会
+   *  把两条路线整套换掉、失去当前视图。故用一个薄薄的覆盖层记录最新状态。
+   *  权威来源优先级：服务端返回值 > 覆盖层 > generate 快照。 */
+  const [taskStatusOverride, setTaskStatusOverride] = useState<Record<string, TaskStatus>>({})
+
+  /** 读取某个任务的**当前生效状态**（含本地覆盖） */
+  const statusOf = useCallback(
+    (task: PathTask): TaskStatus => {
+      const local = taskStatusOverride[task.task_id]
+      if (local) return local
+      return (task.status as TaskStatus) ?? 'pending'
+    },
+    [taskStatusOverride],
+  )
 
   /* 首次加载与"重新生成"走同一条链路，避免两处出现不一致的默认参数。
      `interactive` 用来区分两件事：
@@ -99,6 +147,44 @@ function Path() {
           priority: DEFAULT_PRIORITY,
         })
         setResult(data)
+
+        /* ⚠️ 服务端的 active_path 是**跨页面/跨刷新存活**的（存在服务端内存里），
+           而 activePathId 是本组件状态。若不回读，就会出现：
+           后端明明已激活某条路径、刷新后页面却显示"尚未生效"、勾选框全灰 ——
+           用户被迫重复激活一遍。这里主动从 summary 对齐一次。
+           （生成新路径后旧的 active_path 可能已失效，故必须重新读而不是沿用旧值。） */
+        try {
+          const summary = await progressApi.getSummary(DEMO_USER_ID)
+          const serverActiveId = summary.active_path?.path_id ?? null
+          /* 只有当服务端认的路径确实是本条结果里的某一条时才算数 */
+          const belongsHere = data.branches.some((branch) => branch.path_id === serverActiveId)
+          setActivePathId(belongsHere ? serverActiveId : null)
+
+          /* 已激活的那条路线，其任务状态要**以服务端为准**：
+             summary.active_path 只有计数，拿不到逐任务状态，
+             所以这里按 path_id 再激活一次（幂等，不会重复推进度）把完整结构取回来。
+             ⚠️ 用固定的幂等 key 前缀 + path_id，保证重复刷新不会产生副作用。 */
+          if (belongsHere && serverActiveId) {
+            const activated = await progressApi.activatePath(
+              DEMO_USER_ID,
+              serverActiveId,
+              `resync-${serverActiveId}`,
+            )
+            setTaskStatusOverride(
+              Object.fromEntries(
+                (activated.active_path?.phases ?? [])
+                  .flatMap((phase) => phase.tasks)
+                  .map((task) => [task.task_id, (task.status as TaskStatus) ?? 'pending']),
+              ),
+            )
+          }
+        } catch {
+          /* 回读失败不影响主流程（路径已显示），退化为"未激活"即可 */
+          setActivePathId(null)
+        }
+        /* 覆盖层清空：generate 返回的是新的权威快照，本地覆盖已无意义。
+           注意覆盖层的键是新 task_id，与旧键不冲突，但留着是脏数据。 */
+        setTaskStatusOverride({})
         if (interactive) setDialogOpen(false)
       } catch (reason) {
         const message = (reason as Error).message
@@ -129,6 +215,73 @@ function Path() {
       return
     }
     void loadPath(targetRoleId, true)
+  }
+
+  /* ── 写接口 1/2：激活路径 ──────────────────────────────────────────────
+     这是更新任务的**前置条件**。激活成功后：
+     - 记下 activePathId（勾选框据此启用）；
+     - 用服务端回吐的整条路径**覆盖本地任务状态**（那里是最新且权威的）；
+     - 清空覆盖层，因为服务端数据已经是新的基准了。 */
+  const activatePath = async (pathId: string) => {
+    setActivatingId(pathId)
+    try {
+      const data = await progressApi.activatePath(
+        DEMO_USER_ID,
+        pathId,
+        makeIdempotencyKey('activate'),
+      )
+      setActivePathId(data.active_path?.path_id ?? pathId)
+      /* 服务端返回的是完整 branch 结构（含每个 task 的 status）→ 用它作为新的权威基准 */
+      setTaskStatusOverride(
+        Object.fromEntries(
+          (data.active_path?.phases ?? [])
+            .flatMap((phase) => phase.tasks)
+            .map((task) => [task.task_id, (task.status as TaskStatus) ?? 'pending']),
+        ),
+      )
+      message.success('已设为当前路径，现在可以勾选任务完成情况了')
+    } catch (reason) {
+      /* 激活失败时**不**设置 activePathId —— 保持勾选框禁用，
+         否则用户会对着必然 404 的勾选框一顿点。 */
+      message.error(`激活失败：${(reason as Error).message}`)
+    } finally {
+      setActivatingId(null)
+    }
+  }
+
+  /* ── 写接口 2/2：更新任务状态 ─────────────────────────────────────────
+     乐观更新 + 失败回滚：先改本地让勾选立刻响应，请求失败再改回去并报错。
+     之所以敢乐观：勾选框是幂等语义的（再点一次就是反过来），且失败会明确回滚。 */
+  const toggleTask = async (task: PathTask, nextChecked: boolean) => {
+    const nextStatus: TaskStatus = nextChecked ? 'completed' : 'pending'
+    const prevStatus = statusOf(task)
+    if (prevStatus === nextStatus) return
+
+    setTaskStatusOverride((prev) => ({ ...prev, [task.task_id]: nextStatus }))
+    setSavingTaskIds((prev) => new Set(prev).add(task.task_id))
+    try {
+      await progressApi.updateTask(
+        DEMO_USER_ID,
+        task.task_id,
+        nextStatus,
+        makeIdempotencyKey(`task-${task.task_id}`),
+      )
+    } catch (reason) {
+      setTaskStatusOverride((prev) => {
+        const next = { ...prev }
+        /* 回滚到操作前的状态；若等于 generate 快照的值就干脆删掉这个覆盖键 */
+        if (prevStatus === ((task.status as TaskStatus) ?? 'pending')) delete next[task.task_id]
+        else next[task.task_id] = prevStatus
+        return next
+      })
+      message.error(`保存失败：${(reason as Error).message}`)
+    } finally {
+      setSavingTaskIds((prev) => {
+        const next = new Set(prev)
+        next.delete(task.task_id)
+        return next
+      })
+    }
   }
 
   if (error) return <Alert type="error" showIcon message="路径生成失败" description={error} />
@@ -208,16 +361,54 @@ function Path() {
 
       <Tabs
         items={result.branches.map((branch) => {
-          /* 顶部总进度（文档 3.5）：按已完成任务数 / 总任务数计算 */
+          /* 顶部总进度（文档 3.5）：按已完成任务数 / 总任务数计算。
+             `statusOf` 让本地刚勾选的状态立刻反映到进度条上。 */
           const allTasks = branch.phases.flatMap((phase) => phase.tasks)
-          const doneTasks = allTasks.filter((task) => task.status === 'completed').length
+          const doneTasks = allTasks.filter((task) => statusOf(task) === 'completed').length
           const totalHours = branch.total_estimated_hours
+          const isActiveBranch = activePathId === branch.path_id
 
           return {
             key: branch.path_id,
-            label: branchLabels[branch.branch_type] ?? branch.title,
+            label: (
+              /* 已激活的那条路线在 Tab 上打标，用户切走后回来也能一眼认出哪条在生效 */
+              <Space size={4}>
+                <span>{branchLabels[branch.branch_type] ?? branch.title}</span>
+                {isActiveBranch && <Tag color="green">当前</Tag>}
+              </Space>
+            ),
             children: (
               <>
+                {/* 激活入口：不激活就没法更新任务（服务端会 404），
+                    所以这一步必须显式、可见，不能让用户点勾选框才发现"没反应"。 */}
+                <Alert
+                  type={isActiveBranch ? 'success' : 'warning'}
+                  showIcon
+                  message={
+                    isActiveBranch
+                      ? '这条路线是当前生效路径'
+                      : '这条路线尚未生效'
+                  }
+                  description={
+                    isActiveBranch
+                      ? '可以勾选任务完成了，进度会反映到「学习进度」页（仅本次演示会话内，容器重启后回到初始状态）。'
+                      : '设为当前路径后才能勾选任务完成情况；同一时刻只有一条路线生效。'
+                  }
+                  action={
+                    isActiveBranch ? undefined : (
+                      <Button
+                        type="primary"
+                        size="small"
+                        loading={activatingId === branch.path_id}
+                        onClick={() => void activatePath(branch.path_id)}
+                      >
+                        设为当前路径
+                      </Button>
+                    )
+                  }
+                  style={{ marginBottom: 16 }}
+                />
+
                 {/* 三张统计卡与首页同款配色语言：主色蓝 / 成长绿 / 激励橙 */}
                 <Row gutter={[16, 16]} style={{ marginBottom: 16 }} className="row-equal-height">
                   <Col xs={24} sm={12} lg={8}>
@@ -286,7 +477,7 @@ function Path() {
 
                 {branch.phases.map((phase) => {
                   const phaseDone = phase.tasks.filter(
-                    (task) => task.status === 'completed',
+                    (task) => statusOf(task) === 'completed',
                   ).length
                   const isActive = phaseDone > 0 && phaseDone < phase.tasks.length
                   const isDone = phase.tasks.length > 0 && phaseDone === phase.tasks.length
@@ -330,28 +521,72 @@ function Path() {
                             label: `任务详情（${phaseDone}/${phase.tasks.length}）`,
                             children: (
                               <Timeline
-                                items={phase.tasks.map((task) => ({
-                                  dot:
-                                    task.status === 'completed' ? (
+                                items={phase.tasks.map((task) => {
+                                  const taskStatus = statusOf(task)
+                                  const isCompleted = taskStatus === 'completed'
+                                  /* 未激活路径时勾选框**禁用**：服务端此时必然返回
+                                     `404 TASK_NOT_FOUND`，与其让用户点了报错，
+                                     不如提前变灰并用 tooltip 说清原因。 */
+                                  const disabled = !isActiveBranch
+                                  return {
+                                    dot: isCompleted ? (
                                       <CheckCircleOutlined
                                         style={{ color: 'var(--color-success)' }}
                                       />
                                     ) : (
                                       taskIcon(task)
                                     ),
-                                  children: (
-                                    <div>
-                                      <Text strong>{task.title}</Text>
-                                      <Text type="secondary">
-                                        {'　'}
-                                        {task.estimated_hours}h · {task.skill_id}
-                                      </Text>
-                                      {task.provider && (
-                                        <Tag style={{ marginLeft: 8 }}>{task.provider}</Tag>
-                                      )}
-                                    </div>
-                                  ),
-                                }))}
+                                    children: (
+                                      <div className="task-row">
+                                        <Tooltip
+                                          title={
+                                            disabled ? '请先点上方「设为当前路径」' : undefined
+                                          }
+                                        >
+                                          <Checkbox
+                                            checked={isCompleted}
+                                            disabled={disabled}
+                                            onChange={(event) =>
+                                              void toggleTask(task, event.target.checked)
+                                            }
+                                            aria-label={`标记「${task.title}」为${
+                                              isCompleted ? '未开始' : '已完成'
+                                            }`}
+                                          />
+                                        </Tooltip>
+                                        <div className="task-row-main">
+                                          <Text
+                                            strong
+                                            delete={isCompleted}
+                                            type={isCompleted ? 'secondary' : undefined}
+                                          >
+                                            {task.title}
+                                          </Text>
+                                          <Text type="secondary">
+                                            {'　'}
+                                            {task.estimated_hours}h · {task.skill_id}
+                                          </Text>
+                                          {task.provider && (
+                                            <Tag style={{ marginLeft: 8 }}>{task.provider}</Tag>
+                                          )}
+                                          {savingTaskIds.has(task.task_id) && (
+                                            <Spin size="small" style={{ marginLeft: 8 }} />
+                                          )}
+                                        </div>
+                                        {/* 状态标签只在非 pending 时出现 —— 全部任务都挂一个
+                                            「未开始」会让列表变得很吵 */}
+                                        {taskStatus !== 'pending' && (
+                                          <Tag
+                                            color={isCompleted ? 'green' : 'blue'}
+                                            style={{ marginInlineStart: 'auto' }}
+                                          >
+                                            {taskStatusLabels[taskStatus]}
+                                          </Tag>
+                                        )}
+                                      </div>
+                                    ),
+                                  }
+                                })}
                               />
                             ),
                           },
@@ -369,7 +604,8 @@ function Path() {
       <Descriptions size="small" column={1} style={{ marginTop: 8 }}>
         <Descriptions.Item label="说明">
           <Text type="secondary">
-            路径由 MCP 服务按目标岗位与差距分析生成，仅作演示；任务状态来自模拟事件流。
+            路径由 MCP 服务按目标岗位与差距分析生成，仅作演示；
+            任务完成情况会写入演示会话（容器重启后回到初始状态）。
           </Text>
         </Descriptions.Item>
       </Descriptions>

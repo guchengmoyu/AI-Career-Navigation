@@ -11,6 +11,18 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return json.data ?? json
 }
 
+/** 写操作的幂等键。
+ *  服务端把它当"同一请求"的凭据：同 key 重放会直接返回上次结果并带 `idempotent_replay: true`，
+ *  不会重复计分/重复推进度。
+ *  ⚠️ 实测（09-17）服务端**不传 key 也会返回 200**（内部有兜底），
+ *  但前端**必须始终带上** —— 否则用户点"重试"时会把同一个事件算两次。
+ *  生成规则：调用方语义前缀 + 时间戳 + 随机段，保证"同一次用户操作重试沿用同一个 key"，
+ *  而"两次不同的操作"拿到不同 key。 */
+export function makeIdempotencyKey(scope: string): string {
+  const rand = Math.random().toString(36).slice(2, 10)
+  return `${scope}-${Date.now()}-${rand}`
+}
+
 export interface DimensionResult {
   dimension_id: string
   name: string
@@ -50,6 +62,12 @@ export interface PathTask {
   resource_url: string | null
   status: string
 }
+
+/** 服务端 `update_task` 入参里的状态枚举。
+ *  实测（09-17）三态均可写入，且**不是单向状态机** ——
+ *  completed 之后仍可改回 in_progress（换 idempotency_key 即可）。
+ *  未知值（如 "doing"）会被 zod 拦成 400，故前端只暴露这三个。 */
+export type TaskStatus = 'pending' | 'in_progress' | 'completed'
 
 export interface GeneratedPath {
   path_id: string
@@ -170,7 +188,29 @@ export interface ProgressSummary {
   streak_days: number
   points_earned: number
   recent_events: GrowthEvent[]
-  active_path: null | { path_id: string; title: string; completed_tasks: number; total_tasks: number; progress_percent: number }
+  active_path: ActivePath | null
+  persistence_mode: string
+  disclaimer: string
+}
+
+/** 已激活路径的精简视图（`summary.active_path`）。
+ *  ⚠️ 里程碑没有完成状态字段，所以这里只有任务粒度的计数。 */
+export interface ActivePath {
+  path_id: string
+  title: string
+  completed_tasks: number
+  total_tasks: number
+  progress_percent: number
+}
+
+/** `activate_path` 的返回：服务端回吐**整条已激活路径**（`active_path` 就是完整的 branch 结构，
+ *  含每个 task 的最新 `status`）。
+ *  → 这正是我们需要的"权威回读"：激活后不用自己猜哪些任务是完成的，
+ *    直接用返回值覆盖本地列表即可，不会和真实进度漂移。 */
+export interface ActivatePathResult {
+  user_id: string
+  action: string
+  active_path: GeneratedPath & { target_role_id?: string; target_role_name?: string }
   persistence_mode: string
   disclaimer: string
 }
@@ -178,4 +218,24 @@ export interface ProgressSummary {
 export const progressApi = {
   getEvents: (userId: string, limit = 20) => request<{ events: GrowthEvent[] }>(`/progress/${userId}/events?limit=${limit}`),
   getSummary: (userId: string) => request<ProgressSummary>(`/progress/${userId}/summary`),
+
+  /** 把某条路径设为"当前生效路径"。
+   *  这是 `update_task` 的**前置条件** —— 未激活就更新任务会得到
+   *  `404 TASK_NOT_FOUND`（"未在激活路径中找到任务…"），实测已验证。
+   *  `idempotency_key` 必须由调用方提供：同一次点击的重试要沿用同一个 key。 */
+  activatePath: (userId: string, pathId: string, idempotencyKey: string) =>
+    request<ActivatePathResult>('/progress/path/activate', {
+      method: 'POST',
+      body: JSON.stringify({ user_id: userId, path_id: pathId, idempotency_key: idempotencyKey }),
+    }),
+
+  /** 更新任务状态。⚠️ 路由是 **PATCH**（不是 POST），taskId 走 URL 路径。 */
+  updateTask: (userId: string, taskId: string, status: TaskStatus, idempotencyKey: string) =>
+    request<{ task_id: string; status: string; updated_at: string }>(
+      `/progress/tasks/${encodeURIComponent(taskId)}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ user_id: userId, status, idempotency_key: idempotencyKey }),
+      },
+    ),
 }
