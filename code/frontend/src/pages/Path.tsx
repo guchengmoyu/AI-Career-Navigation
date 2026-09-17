@@ -1,11 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
+  Button,
   Card,
   Col,
   Collapse,
   Descriptions,
+  Form,
+  Modal,
+  Popconfirm,
   Progress,
+  Radio,
   Row,
   Skeleton,
   Space,
@@ -23,7 +28,13 @@ import {
   ProjectOutlined,
   SettingOutlined,
 } from '@ant-design/icons'
-import { DEMO_USER_ID, pathApi, type LearningPathResult, type PathTask } from '../services/api'
+import {
+  DEMO_USER_ID,
+  PATH_ROLE_OPTIONS,
+  pathApi,
+  type LearningPathResult,
+  type PathTask,
+} from '../services/api'
 
 const { Text } = Typography
 
@@ -32,6 +43,19 @@ const { Text } = Typography
 function fmtScore(value: number): string {
   return Number(value.toFixed(1)).toString()
 }
+
+/* 「调整目标」的默认参数。
+   保持与首次加载完全一致，这样用户打开弹窗但不改动岗位时，
+   重新生成得到的路径与当前展示的一模一样 —— 不会出现"点了确定结果变了却又说不上哪里变了"。
+   ⚠️ horizon_years / weekly_hours / priority 三个参数**后端当前不生效**
+      （实测：horizon 传 1/3/5 阶段数恒为 3；weekly_hours 传 6/12/40 总时长恒为 45/125；
+      priority 传 speed/depth/balanced 结果完全相同），
+      因此弹窗里**不暴露这三个字段**，否则用户调完毫无变化，
+      反而制造新的"点了没反应"。 */
+const DEFAULT_ROLE_ID = 'ROLE-AI-ALG'
+const DEFAULT_HORIZON_YEARS = 3
+const DEFAULT_WEEKLY_HOURS = 12
+const DEFAULT_PRIORITY = 'balanced' as const
 
 const icons: Record<string, React.ReactNode> = {
   course: <BookOutlined />,
@@ -50,19 +74,62 @@ const branchLabels: Record<string, string> = {
 function Path() {
   const [result, setResult] = useState<LearningPathResult | null>(null)
   const [error, setError] = useState('')
+  /* 调整目标弹窗（文档 3.5：支持"调整目标"触发路径重新生成） */
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [targetRoleId, setTargetRoleId] = useState(DEFAULT_ROLE_ID)
+  const [regenerating, setRegenerating] = useState(false)
+  const [regenError, setRegenError] = useState('')
+
+  /* 首次加载与"重新生成"走同一条链路，避免两处出现不一致的默认参数。
+     `interactive` 用来区分两件事：
+     - 首次加载（false）：失败时占满页面显示错误，因为此时没有任何内容可看；
+     - 用户点确定后（true）：失败时保留旧路径、只在弹窗里提示，用户不至于"点了确定反而丢内容"。 */
+  const loadPath = useCallback(
+    async (roleId: string, interactive: boolean) => {
+      if (interactive) {
+        setRegenerating(true)
+        setRegenError('')
+      }
+      try {
+        const data = await pathApi.generate({
+          user_id: DEMO_USER_ID,
+          target_role_id: roleId,
+          horizon_years: DEFAULT_HORIZON_YEARS,
+          weekly_hours: DEFAULT_WEEKLY_HOURS,
+          priority: DEFAULT_PRIORITY,
+        })
+        setResult(data)
+        if (interactive) setDialogOpen(false)
+      } catch (reason) {
+        const message = (reason as Error).message
+        if (interactive) setRegenError(message)
+        else setError(message)
+      } finally {
+        if (interactive) setRegenerating(false)
+      }
+    },
+    [],
+  )
 
   useEffect(() => {
-    pathApi
-      .generate({
-        user_id: DEMO_USER_ID,
-        target_role_id: 'ROLE-AI-ALG',
-        horizon_years: 3,
-        weekly_hours: 12,
-        priority: 'balanced',
-      })
-      .then(setResult)
-      .catch((reason: Error) => setError(reason.message))
-  }, [])
+    void loadPath(DEFAULT_ROLE_ID, false)
+  }, [loadPath])
+
+  const openDialog = () => {
+    /* 打开时以**当前生效的目标岗位**为默认值：重新打开弹窗不会被上次的临时选择带偏 */
+    setTargetRoleId(result?.target_role_id ?? DEFAULT_ROLE_ID)
+    setRegenError('')
+    setDialogOpen(true)
+  }
+
+  const confirmTarget = () => {
+    if (targetRoleId === result?.target_role_id) {
+      /* 目标没变就别白跑一次接口（也避免用户以为"重新生成了"其实什么都没发生） */
+      setDialogOpen(false)
+      return
+    }
+    void loadPath(targetRoleId, true)
+  }
 
   if (error) return <Alert type="error" showIcon message="路径生成失败" description={error} />
   if (!result) return <div className="page-container"><Skeleton active paragraph={{ rows: 10 }} /></div>
@@ -74,9 +141,11 @@ function Path() {
         <h1 className="page-title" style={{ marginBottom: 0 }}>
           学习路径
         </h1>
-        <a>
-          <SettingOutlined /> 调整目标
-        </a>
+        {/* 用 Button 而非裸 <a>：既有明确的点击热区与键盘可达性，
+            也不再有"看起来能点、点了毫无反应"的观感问题 */}
+        <Button icon={<SettingOutlined />} onClick={openDialog}>
+          调整目标
+        </Button>
       </div>
 
       <Alert
@@ -84,6 +153,21 @@ function Path() {
         showIcon
         message={`目标岗位：${result.target_role_name}`}
         description={result.disclaimer}
+        /* 这里放一个"重新生成"，是为了让整页成为**本地可复现的闭环**：
+           运行期数据存在内存里，容器一重启服务端就回到初始快照，
+           停在空态时用户没有任何办法自己把内容调回来。
+           （正式环境接入持久化后此按钮可去掉，与下方说明一并处理。） */
+        action={
+          <Popconfirm
+            title="重新生成学习路径"
+            description="将按当前目标岗位重新生成两条路线，当前展示的路径会被替换。"
+            okText="重新生成"
+            cancelText="取消"
+            onConfirm={() => void loadPath(result.target_role_id, false)}
+          >
+            <Button size="small">重新生成</Button>
+          </Popconfirm>
+        }
         style={{ marginBottom: 16 }}
       />
 
@@ -289,6 +373,53 @@ function Path() {
           </Text>
         </Descriptions.Item>
       </Descriptions>
+
+      {/* 调整目标（文档 3.5）：选定新的目标岗位后重新生成两条路线。
+          只暴露「岗位」一个字段 —— 其余三个参数后端暂未生效，放上来只会制造"调了没反应"。 */}
+      <Modal
+        title="调整目标"
+        open={dialogOpen}
+        okText="重新生成路径"
+        cancelText="取消"
+        confirmLoading={regenerating}
+        onOk={confirmTarget}
+        onCancel={() => setDialogOpen(false)}
+      >
+        {regenError && (
+          <Alert
+            type="error"
+            showIcon
+            message="重新生成失败"
+            description={regenError}
+            style={{ marginBottom: 16 }}
+          />
+        )}
+
+        <Form layout="vertical">
+          <Form.Item label="目标岗位" style={{ marginBottom: 8 }}>
+            <Radio.Group
+              value={targetRoleId}
+              onChange={(event) => setTargetRoleId(String(event.target.value))}
+            >
+              <Space direction="vertical">
+                {PATH_ROLE_OPTIONS.map((role) => (
+                  <Radio key={role.role_id} value={role.role_id}>
+                    {role.name}
+                    <Text type="secondary" style={{ fontSize: 12, marginInlineStart: 8 }}>
+                      {role.role_id}
+                    </Text>
+                  </Radio>
+                ))}
+              </Space>
+            </Radio.Group>
+          </Form.Item>
+        </Form>
+
+        <Text type="secondary" style={{ fontSize: 12 }}>
+          切换岗位会按该岗位的能力要求重新做差距分析，并生成「快速补差」与「项目驱动」两条路线。
+          （当前可选项为数据集内置的 3 个岗位，岗位列表接口尚未提供。）
+        </Text>
+      </Modal>
     </div>
   )
 }

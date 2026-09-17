@@ -16,7 +16,7 @@ import {
   Tag,
   Typography,
 } from 'antd'
-import { RobotOutlined, SendOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons'
+import { ArrowUpOutlined, RobotOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons'
 import { DEMO_USER_ID, scenarioApi, type Scenario, type ScenarioEvaluation } from '../services/api'
 
 const { Paragraph, Text } = Typography
@@ -226,22 +226,38 @@ function ScenarioPage() {
                   />
                 )}
 
-                <Space.Compact style={{ width: '100%' }}>
+                {/* 输入区：整块圆角矩形容器（像 WorkBuddy / 各种 agent 工具的输入框）——
+                    容器自身就是那个"矩形框"，内部上边是文字输入区、右下角是圆形发送键。
+                    结构 = 容器 padding 10px 12px + 列向 flex(输入框 → 8px 间距 → 按钮行右对齐)。
+                    ⚠️ TextArea 要**去掉 antd 自带的边框与底色**（variant="borderless"），
+                       否则会在容器里再画一个方框，出现"框中框"。
+                    ⚠️ 圆形按钮 32×32：用 `shape="circle"` + `size="middle"`（antd 默认即是 32px），
+                       **不要写 width/height** —— 之前 `Space.Compact` 那条
+                       `.ant-space-compact > .ant-btn { height: 100% }` 会把它压扁成竖椭圆；
+                       现在容器是普通 div、按钮只受 antd 自身规则约束，圆形才立得住。
+                    ⚠️ 图标用 ArrowUpOutlined（向上箭头 = 发送），不是 SendOutlined（纸飞机）。
+                       按钮无文字 → 必须补 `aria-label`，否则屏幕阅读器读不出用途。 */}
+                <div className="composer">
                   <TextArea
+                    className="composer-input"
                     value={input}
                     onChange={(event) => setInput(event.target.value)}
                     placeholder="说明你会确认什么、如何行动、如何保护隐私并复盘"
                     autoSize={{ minRows: 2, maxRows: 5 }}
+                    variant="borderless"
                   />
-                  <Button
-                    type="primary"
-                    icon={<SendOutlined />}
-                    onClick={() => void send()}
-                    disabled={Boolean(evaluation)}
-                  >
-                    提交评估
-                  </Button>
-                </Space.Compact>
+                  <div className="composer-actions">
+                    <Button
+                      type="primary"
+                      shape="circle"
+                      icon={<ArrowUpOutlined />}
+                      onClick={() => void send()}
+                      disabled={Boolean(evaluation)}
+                      aria-label="提交评估"
+                      title="提交评估"
+                    />
+                  </div>
+                </div>
               </>
             ) : (
               <Empty

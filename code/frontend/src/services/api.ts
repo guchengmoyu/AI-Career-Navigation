@@ -62,6 +62,10 @@ export interface GeneratedPath {
 }
 
 export interface LearningPathResult {
+  /* 回显实际生效的目标岗位。服务端确实返回该字段
+     （service.generateCareerPath 的 `target_role_id: role.role_id`），
+     此前类型里漏声明了，导致前端无法回读"当前目标岗位是谁"。 */
+  target_role_id: string
   target_role_name: string
   gap_analysis: {
     critical_gaps: { skill_id: string; skill_name: string; current_score: number; required_score: number; gap: number; priority_score: number }[]
@@ -70,6 +74,18 @@ export interface LearningPathResult {
   branches: GeneratedPath[]
   disclaimer: string
 }
+
+/** 「调整目标」可用的岗位选项。
+ *  后端**没有岗位列表接口**（`/role`、`/roles`、`/role/list` 实测均 404），
+ *  数据集里一共只有这 3 个岗位（roles count = 3）。
+ *  唯一的替代来源是 `profile.role_matches`，但它是按匹配分排序后 slice 的，
+ *  实测只返回 3 条中的 2 条（`ROLE-AI-APP` 会漏掉），用它做选项会让用户选不到全部岗位，
+ *  故此处显式维护；后端补上岗位列表接口后应改为动态获取。 */
+export const PATH_ROLE_OPTIONS = [
+  { role_id: 'ROLE-AI-ALG', name: 'AI算法工程师' },
+  { role_id: 'ROLE-AI-APP', name: 'AI应用开发工程师' },
+  { role_id: 'ROLE-DATA', name: '数据分析师' },
+]
 
 export const pathApi = {
   generate: (params: { user_id: string; target_role_id: string; horizon_years?: number; weekly_hours?: number; priority?: 'speed' | 'depth' | 'balanced' }) =>

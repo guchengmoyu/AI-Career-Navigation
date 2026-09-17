@@ -492,6 +492,43 @@ body {
   color: #fff;
 }
 
+/* 输入区：整块圆角矩形容器，内部上边是文字输入区、右下角是圆形发送键
+   （WorkBuddy / 各种 agent 工具的输入框形态）。
+   输入框本身去掉了 antd 边框（variant="borderless"），由容器提供唯一的边框与圆角。 */
+.composer {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  /* 用 12px（与 --radius-modal 同档）而非胶囊圆角：输入框会长到 5 行，
+     过大的圆角在多行时会让左右两侧显得"鼓"，12px 在 2 行/5 行下都稳。 */
+  border-radius: 12px;
+  background: var(--color-bg-card);
+  transition: border-color 0.2s;
+}
+
+.composer:focus-within {
+  border-color: var(--color-primary);
+}
+
+/* 输入框填满容器宽度；!important 用于压掉 antd 的 textarea 宽度计算，
+   避免出现横向滚动条 */
+.composer-input {
+  width: 100% !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 按钮行：只放一个圆形按钮，靠 flex-end 压到右下角。
+   注意不是绝对定位 —— 按钮占 32px 真实高度，容器因此自然留出底部空间，
+   省掉手算 padding-bottom，换行/缩放时也不会压到文字。 */
+.composer-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
 @keyframes bubble-in {
   from {
     opacity: 0;
