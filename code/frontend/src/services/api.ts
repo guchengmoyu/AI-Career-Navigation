@@ -1,154 +1,241 @@
-/**
- * API 服务层
- *
- * 当前使用 mock 数据，后续接入 MCP 工具 API 后替换为真实请求。
- * MCP 工具通过百宝箱平台调用，前端直接请求 MCP 服务的 REST 接口。
- */
-
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api/v1'
+export const DEMO_USER_ID = import.meta.env.VITE_DEMO_USER_ID || 'USER-G001'
 
-// 通用请求封装
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
     ...options,
   })
-  if (!res.ok) {
-    throw new Error(`API Error: ${res.status} ${res.statusText}`)
-  }
-  const json = await res.json()
+  const json = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(json.error?.message || `API Error: ${res.status} ${res.statusText}`)
   return json.data ?? json
 }
 
-// ========== 职业画像 ==========
+/** 写操作的幂等键。
+ *  服务端把它当"同一请求"的凭据：同 key 重放会直接返回上次结果并带 `idempotent_replay: true`，
+ *  不会重复计分/重复推进度。
+ *  ⚠️ 实测（09-17）服务端**不传 key 也会返回 200**（内部有兜底），
+ *  但前端**必须始终带上** —— 否则用户点"重试"时会把同一个事件算两次。
+ *  生成规则：调用方语义前缀 + 时间戳 + 随机段，保证"同一次用户操作重试沿用同一个 key"，
+ *  而"两次不同的操作"拿到不同 key。 */
+export function makeIdempotencyKey(scope: string): string {
+  const rand = Math.random().toString(36).slice(2, 10)
+  return `${scope}-${Date.now()}-${rand}`
+}
 
-export interface DimensionScores {
-  professional_skill: number
-  soft_skill: number
-  leadership: number
-  innovation: number
-  learning_ability: number
+export interface DimensionResult {
+  dimension_id: string
+  name: string
+  score: number
+  evidence_count: number
+  confidence: number
+  top_skills: { skill_id: string; name: string; score: number }[]
 }
 
 export interface CareerProfile {
-  profile_id: number
+  user_id: string
+  persona_code: string
   overall_score: number
-  dimension_scores: DimensionScores
+  dimensions: DimensionResult[]
   strengths: string[]
-  weaknesses: string[]
-  recommended_directions: { position: string; match_score: number }[]
+  improvement_priorities: string[]
+  role_matches: { role_id: string; name: string; match_score: number; rank: number }[]
+  disclaimer: string
 }
 
 export const profileApi = {
-  /** 计算职业画像 — 对应 MCP 工具 calculate_career_profile */
-  calculate: (userId: string, questionnaire: Record<string, unknown>) =>
-    request<CareerProfile>('/profile/calculate', {
-      method: 'POST',
-      body: JSON.stringify({ user_id: userId, questionnaire }),
-    }),
-
-  /** 获取用户画像 — 对应 MCP 工具 get_career_profile */
-  get: (userId: string) =>
-    request<CareerProfile>(`/profile/${userId}`),
+  calculate: (userId: string) => request<CareerProfile>('/profile/calculate', {
+    method: 'POST', body: JSON.stringify({ user_id: userId }),
+  }),
+  get: (userId: string) => request<CareerProfile>(`/profile/${userId}`),
 }
 
-// ========== 学习路径 ==========
-
-export interface LearningPath {
-  path_id: number
+export interface PathTask {
+  task_id: string
   title: string
-  gap_analysis: {
-    critical_gaps: { skill: string; current: number; target: number; gap: number }[]
-    minor_gaps: { skill: string; current: number; target: number; gap: number }[]
-  }
-  phases: {
-    phase_order: number
-    title: string
-    duration: number
-    milestones: string[]
-    tasks: {
-      task_order: number
-      title: string
-      task_type: string
-      difficulty: string
-      estimated_hours: number
-      platform: string
-    }[]
-  }[]
+  task_type: string
+  difficulty: string
+  estimated_hours: number
+  skill_id: string
+  resource_id: string | null
+  provider: string | null
+  resource_url: string | null
+  status: string
 }
+
+/** 服务端 `update_task` 入参里的状态枚举。
+ *  实测（09-17）三态均可写入，且**不是单向状态机** ——
+ *  completed 之后仍可改回 in_progress（换 idempotency_key 即可）。
+ *  未知值（如 "doing"）会被 zod 拦成 400，故前端只暴露这三个。 */
+export type TaskStatus = 'pending' | 'in_progress' | 'completed'
+
+export interface GeneratedPath {
+  path_id: string
+  branch_type: 'fast_gap' | 'project_driven'
+  title: string
+  horizon_years: number
+  weekly_hours: number
+  total_estimated_hours: number
+  phases: { phase_order: number; title: string; duration_months: number; milestones: string[]; tasks: PathTask[] }[]
+}
+
+export interface LearningPathResult {
+  /* 回显实际生效的目标岗位。服务端确实返回该字段
+     （service.generateCareerPath 的 `target_role_id: role.role_id`），
+     此前类型里漏声明了，导致前端无法回读"当前目标岗位是谁"。 */
+  target_role_id: string
+  target_role_name: string
+  gap_analysis: {
+    critical_gaps: { skill_id: string; skill_name: string; current_score: number; required_score: number; gap: number; priority_score: number }[]
+    minor_gaps: { skill_id: string; skill_name: string; current_score: number; required_score: number; gap: number; priority_score: number }[]
+  }
+  branches: GeneratedPath[]
+  disclaimer: string
+}
+
+/** 「调整目标」可用的岗位选项。
+ *  后端**没有岗位列表接口**（`/role`、`/roles`、`/role/list` 实测均 404），
+ *  数据集里一共只有这 3 个岗位（roles count = 3）。
+ *  唯一的替代来源是 `profile.role_matches`，但它是按匹配分排序后 slice 的，
+ *  实测只返回 3 条中的 2 条（`ROLE-AI-APP` 会漏掉），用它做选项会让用户选不到全部岗位，
+ *  故此处显式维护；后端补上岗位列表接口后应改为动态获取。 */
+export const PATH_ROLE_OPTIONS = [
+  { role_id: 'ROLE-AI-ALG', name: 'AI算法工程师' },
+  { role_id: 'ROLE-AI-APP', name: 'AI应用开发工程师' },
+  { role_id: 'ROLE-DATA', name: '数据分析师' },
+]
 
 export const pathApi = {
-  /** 生成学习路径 — 对应 MCP 工具 generate_learning_path */
-  generate: (params: {
-    user_id: string
-    target_position: string
-    target_industry?: string
-    target_time_years?: number
-    weekly_hours?: number
-    priority?: 'speed' | 'depth' | 'balanced'
-  }) =>
-    request<LearningPath>('/path/generate', {
-      method: 'POST',
-      body: JSON.stringify(params),
-    }),
+  generate: (params: { user_id: string; target_role_id: string; horizon_years?: number; weekly_hours?: number; priority?: 'speed' | 'depth' | 'balanced' }) =>
+    request<LearningPathResult>('/path/generate', { method: 'POST', body: JSON.stringify(params) }),
 }
-
-// ========== 场景模拟 ==========
 
 export interface Scenario {
   scenario_id: string
-  scenario_type: string
+  module_id: string
+  module_name: string
   difficulty: string
-  estimated_duration: number
+  target_role_id: string
   title: string
+  context: string
   initial_prompt: string
+  privacy_focus: string
 }
+
+/** 场景评估的**五个**维度。
+ *  ⚠️ 这五个 key 与画像的 8 个 DIM-01..08 是**两套完全不同的体系** ——
+ *  同名不同源，绝不能拿去喂 RadarChart（那个组件假定 8 个维度且 max 均为 100）。
+ *  每个维度的满分也不一致（25/20/20/20/15），画图前必须按 max_score 归一化，
+ *  否则「反思 15/15」会看起来比「任务完成 25/25」小一圈。
+ *  来源：`service.ts` 的返回对象字面量（唯一权威，无类型导出）。 */
+export const EVALUATION_DIMENSIONS = [
+  { key: 'task_completion', label: '任务完成', maxScore: 25 },
+  { key: 'clarification', label: '需求澄清', maxScore: 20 },
+  { key: 'evidence_and_privacy', label: '证据与隐私', maxScore: 20 },
+  { key: 'collaboration', label: '协作沟通', maxScore: 20 },
+  { key: 'reflection', label: '反思复盘', maxScore: 15 },
+] as const
+
+export type EvaluationDimensionKey = (typeof EVALUATION_DIMENSIONS)[number]['key']
 
 export interface ScenarioEvaluation {
   scenario_id: string
   overall_score: number
-  dimensions: Record<string, { score: number; feedback: string }>
+  dimensions: Record<string, { score: number; max_score: number }>
   highlights: string[]
   improvement_suggestions: string[]
+  red_flag_hits: string[]
+  update_applied: boolean
+  /* ↓ 以下字段服务端**一直在返回**，此前类型里全部漏声明（实测 `evaluate` 的响应
+       共 26 个字段）。评估报告页要用，故一并补上。 */
+  /** 命中的预期行为（`highlights` 就是它的前 3 条加「已覆盖：」前缀） */
+  matched_expected_actions: string[]
+  /** 未覆盖的预期行为 —— 「改进建议」的主要来源 */
+  missing_expected_actions: string[]
+  /** 红旗行为扣分，`Math.min(30, 命中数 × 10)` */
+  penalty: number
+  /** 用户回答的前 300 字回显 */
+  evidence_excerpt: string
+  /** 仅**建议**的画像增量，并未落库（见 update_applied 恒为 false） */
+  proposed_profile_updates: { dimension_id: string; suggested_delta: number; reason: string }[]
+  /** 评分口径说明，用于向用户解释分数怎么来的 */
+  evaluation_rule: string
 }
 
 export const scenarioApi = {
-  /** 获取场景列表 */
-  list: (params?: { scenario_type?: string; difficulty?: string }) => {
-    const query = new URLSearchParams(params as Record<string, string>).toString()
-    return request<Scenario[]>(`/scenario?${query}`)
-  },
-
-  /** 开始场景模拟 — 对应 MCP 工具 startScenario */
-  start: (scenarioId: string, userId: string) =>
-    request<{ session_id: string; initial_prompt: string }>('/scenario/start', {
-      method: 'POST',
-      body: JSON.stringify({ scenario_id: scenarioId, user_id: userId }),
-    }),
-
-  /** 评估场景表现 — 对应 MCP 工具 evaluateScenario */
-  evaluate: (sessionId: string) =>
-    request<ScenarioEvaluation>('/scenario/evaluate', {
-      method: 'POST',
-      body: JSON.stringify({ session_id: sessionId }),
-    }),
+  list: (userId = DEMO_USER_ID) => request<{ scenarios: Scenario[] }>(`/scenario?user_id=${userId}`),
+  start: (scenarioId: string, userId: string) => request<{ session_id: string; scenario: Scenario }>('/scenario/start', {
+    method: 'POST', body: JSON.stringify({ scenario_id: scenarioId, user_id: userId }),
+  }),
+  evaluate: (sessionId: string, userId: string, responseText: string) => request<ScenarioEvaluation>('/scenario/evaluate', {
+    method: 'POST', body: JSON.stringify({ session_id: sessionId, user_id: userId, response_text: responseText }),
+  }),
 }
-
-// ========== 进度管理 ==========
 
 export interface GrowthEvent {
   event_id: string
   event_type: string
+  event_time: string
+  score_delta: number
+  points_earned?: number
+  detail: string
+  status: string
+}
+
+export interface ProgressSummary {
+  total_learning_hours: number
+  completed_tasks: number
+  streak_days: number
   points_earned: number
-  occurred_at: string
-  payload: Record<string, unknown>
+  recent_events: GrowthEvent[]
+  active_path: ActivePath | null
+  persistence_mode: string
+  disclaimer: string
+}
+
+/** 已激活路径的精简视图（`summary.active_path`）。
+ *  ⚠️ 里程碑没有完成状态字段，所以这里只有任务粒度的计数。 */
+export interface ActivePath {
+  path_id: string
+  title: string
+  completed_tasks: number
+  total_tasks: number
+  progress_percent: number
+}
+
+/** `activate_path` 的返回：服务端回吐**整条已激活路径**（`active_path` 就是完整的 branch 结构，
+ *  含每个 task 的最新 `status`）。
+ *  → 这正是我们需要的"权威回读"：激活后不用自己猜哪些任务是完成的，
+ *    直接用返回值覆盖本地列表即可，不会和真实进度漂移。 */
+export interface ActivatePathResult {
+  user_id: string
+  action: string
+  active_path: GeneratedPath & { target_role_id?: string; target_role_name?: string }
+  persistence_mode: string
+  disclaimer: string
 }
 
 export const progressApi = {
-  /** 获取成长事件列表 — 对应 MCP 工具 getGrowthEvents */
-  getEvents: (userId: string, limit = 20) =>
-    request<GrowthEvent[]>(`/progress/${userId}/events?limit=${limit}`),
+  getEvents: (userId: string, limit = 20) => request<{ events: GrowthEvent[] }>(`/progress/${userId}/events?limit=${limit}`),
+  getSummary: (userId: string) => request<ProgressSummary>(`/progress/${userId}/summary`),
+
+  /** 把某条路径设为"当前生效路径"。
+   *  这是 `update_task` 的**前置条件** —— 未激活就更新任务会得到
+   *  `404 TASK_NOT_FOUND`（"未在激活路径中找到任务…"），实测已验证。
+   *  `idempotency_key` 必须由调用方提供：同一次点击的重试要沿用同一个 key。 */
+  activatePath: (userId: string, pathId: string, idempotencyKey: string) =>
+    request<ActivatePathResult>('/progress/path/activate', {
+      method: 'POST',
+      body: JSON.stringify({ user_id: userId, path_id: pathId, idempotency_key: idempotencyKey }),
+    }),
+
+  /** 更新任务状态。⚠️ 路由是 **PATCH**（不是 POST），taskId 走 URL 路径。 */
+  updateTask: (userId: string, taskId: string, status: TaskStatus, idempotencyKey: string) =>
+    request<{ task_id: string; status: string; updated_at: string }>(
+      `/progress/tasks/${encodeURIComponent(taskId)}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ user_id: userId, status, idempotency_key: idempotencyKey }),
+      },
+    ),
 }

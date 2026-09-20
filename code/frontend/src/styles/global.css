@@ -1,4 +1,5 @@
 /* ========== AI 职业导航设计规范 ========== */
+/* 依据：设计文档/10_UI设计文档.md（2.1 全局布局 / 1.3 色彩体系 / 5.2 响应式断点） */
 
 :root {
   /* 主色 */
@@ -17,15 +18,21 @@
   --color-text-secondary: #595959;
   --color-text-tertiary: #8C8C8C;
   --color-border: #D9D9D9;
+  --color-border-secondary: #F0F0F0;
   --color-bg-card: #FFFFFF;
   --color-bg-page: #F5F7FA;
+  --color-bg-subtle: #FAFAFA;
 
-  /* 能力维度色 */
-  --color-dim-professional: #1677FF;  /* 专业技能 */
-  --color-dim-soft: #52C41A;          /* 软技能 */
-  --color-dim-leadership: #FAAD14;    /* 领导力 */
-  --color-dim-innovation: #722ED1;    /* 创新力 */
-  --color-dim-learning: #13C2C2;      /* 学习力 */
+  /* 能力维度调色板：契约已改为 8 维（DIM-01..DIM-08）且由接口动态返回维度，
+     故不再按旧的 5 维语义命名，改为一组可循环取用的中性调色板。 */
+  --dim-palette-1: #1677FF;
+  --dim-palette-2: #13C2C2;
+  --dim-palette-3: #52C41A;
+  --dim-palette-4: #FAAD14;
+  --dim-palette-5: #FA8C16;
+  --dim-palette-6: #EB2F96;
+  --dim-palette-7: #722ED1;
+  --dim-palette-8: #2F54EB;
 
   /* 圆角 */
   --radius-card: 8px;
@@ -36,9 +43,17 @@
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
 
-  /* 布局 */
-  --sidebar-width: 220px;
+  /* 布局（与 10_UI设计文档.md 2.1 对齐：侧栏 200 / 折叠 64） */
+  --sidebar-width: 200px;
+  --sidebar-width-collapsed: 64px;
   --header-height: 56px;
+
+  /* 移动端底部 Tab 栏高度（文档 3.10） */
+  --tabbar-height: 56px;
+
+  /* 内容区：大屏放宽上限，小屏自适应留白 */
+  --content-max-width: 1600px;
+  --content-padding: 24px;
 }
 
 /* 全局重置 */
@@ -60,19 +75,310 @@ body {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* 页面通用容器 */
+/* 页面通用容器：不再写死 1400px —— 大屏跟随 --content-max-width，
+   中等视口铺满可用宽度，避免"内容单薄 + 两侧大片留白"的观感。 */
 .page-container {
-  padding: 24px;
-  max-width: 1400px;
+  padding: var(--content-padding);
+  max-width: var(--content-max-width);
   margin: 0 auto;
+}
+
+/* ============================================================
+   移动端底部 Tab 栏（设计文档 3.10 / 5.2：手机 375-767px，
+   侧边栏 → 底部 Tab 栏，卡片单列堆叠）
+   ============================================================ */
+.mobile-tabbar {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-tabbar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    height: var(--tabbar-height);
+    background: var(--color-bg-card);
+    border-top: 1px solid var(--color-border-secondary);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+    /* 刘海屏安全区：底部 Tab 需避开 Home Indicator */
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .mobile-tabbar-item {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--color-text-tertiary);
+    font-size: 12px;
+    /* 触控热区 ≥44px（移动端可点性） */
+    min-height: 44px;
+    padding: 4px 0;
+    transition: color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-tabbar-item:active {
+    background: var(--color-bg-subtle);
+  }
+
+  .mobile-tabbar-item.is-active {
+    color: var(--color-primary);
+  }
+
+  .mobile-tabbar-icon {
+    font-size: 20px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .mobile-tabbar-label {
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- 手机（375-767px）：单列布局 ---------- */
+@media (max-width: 767px) {
+  .page-container {
+    padding: 16px;
+    /* 给底部 Tab 栏让位，避免最后一张卡片被遮住 */
+    padding-bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom, 0) + 16px);
+  }
+
+  /* 标题降一级，避免窄屏文字过大 */
+  .page-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  /* 卡片内边距收紧，提升窄屏信息密度 */
+  .card .ant-card-body {
+    padding: 16px;
+  }
+
+  .card .ant-card-head {
+    padding: 0 16px;
+    min-height: 44px;
+  }
+
+  /* 卡片圆角与阴影在移动端减弱，观感更轻 */
+  .card {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  /* 统计卡：窄屏下三张卡纵排后高度不再需要拉伸，
+     否则最后一张会留下大片空白 */
+  .stat-card-tone > .ant-card-body {
+    justify-content: flex-start;
+  }
+
+  /* 页头操作位在窄屏换行后靠左，不要两端顶死 */
+  .page-head {
+    align-items: flex-start;
+  }
+
+  /* 对话气泡：限制最大宽度，避免长句把气泡顶出视口 */
+  .bubble {
+    max-width: 82vw;
+  }
+
+  /* 对话区在移动端放宽可视高度（全屏感，文档 3.10「对话界面全屏展示」） */
+  .chat-area {
+    min-height: 300px;
+    max-height: 56vh;
+  }
+
+  /* 差距分析行：窄屏允许换行，避免技能名被压成竖排 */
+  .gap-row {
+    flex-wrap: wrap;
+  }
+}
+
+/* 表格横向滚动：antd 的 Table 在窄屏会撑破卡片（实测 375px 下右边缘溢出到 716px）。
+   根因是 .ant-table-wrapper 本身没有收缩下限，宽表会把父级一起顶宽。
+   这里给卡片内的表格建立独立的滚动容器：
+   - min-width: 0 让 flex/grid 子项可以被压缩（默认 min-width:auto 会拒绝收缩）
+   - max-width: 100% 约束在卡片内容宽度内
+   - overflow-x: auto 让滚动发生在卡片内部而不是整页
+   注意：这条规则对所有断点生效，桌面端宽度足够时不会出现滚动条。 */
+.card .ant-table-wrapper {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* 防止表格把卡片顶宽 */
+.card > .ant-card-body {
+  min-width: 0;
+}
+
+/* ---------- 平板（768-1023px）：双列布局，可折叠侧栏 ---------- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .page-container {
+    padding: 20px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .card .ant-card-body {
+    padding: 18px 20px;
+  }
+
+  .bubble {
+    max-width: 70vw;
+  }
+}
+
+/* ---------- 大屏（≥1440px）：放宽内容区 ---------- */
+@media (min-width: 1440px) {
+  :root {
+    --content-padding: 32px;
+  }
+}
+
+/* 尊重系统「减少动态效果」偏好（无障碍） */
+@media (prefers-reduced-motion: reduce) {
+  .chat-row,
+  .mobile-tabbar-item {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* 首页问候卡：用极浅的主色渐变区分于普通卡片，突出"陪伴感"（文档 3.3） */
+.hero-card {
+  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 60%);
+  border: 1px solid #e3f0ff;
+}
+
+/* 统计卡撑满等高，避免一行内卡片高低不齐 */
+.card .ant-statistic {
+  margin-bottom: 0;
+}
+
+/* 同一行内的卡片等高（RadarChart 与"综合解读"并排时常一边高一边矮，
+   会导致下方出现突兀空白）。antd 的 Row 默认 align=top，
+   这里让它拉伸子项、再由卡片自身撑满高度。 */
+.row-equal-height > .ant-col {
+  display: flex;
+}
+
+.row-equal-height .ant-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 卡片主体占据剩余空间，使并排卡片底部对齐 */
+.row-equal-height .ant-card > .ant-card-body {
+  flex: 1;
+  /* 同时变成纵向 flex 容器，内部需要撑满的图表容器才能拿到剩余高度 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 统计卡：左侧一道彩色细边强化区分度（颜色由 CSS 变量按卡设置） */
+.stat-card-tone {
+  border-inline-start: 3px solid var(--tone-color, var(--color-primary));
+}
+
+/* 统计数字统一放大加粗，配合彩色更醒目 */
+.stat-card-tone .ant-statistic-content {
+  font-weight: 700;
+}
+
+/* 统计卡内容垂直居中：三张卡副文案有无不一致（如"任务进度"多一行小字），
+   会导致数字基线高低不齐。让 body 成为纵向 flex 并居中，视觉更整齐。 */
+.stat-card-tone > .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 归位校验（设计文档 1.2：卡片内元素保持居中对齐）：
+   同一行里有的卡多一行小字（"连续学习 7 天"/"累计积分 320"），
+   会把该卡的数字整体顶上去，与同行其余卡片数字不在一条水平线上。
+   这里给所有统计卡预留等高的副文案槽位：
+   - 有副文案的卡正常放入槽位；
+   - 没有副文案的卡用空槽位占位。
+   数字之上的内容（标题 + 数字）因此天然居中，符合"文字仍在居中位置"的要求。
+   槽位高度 = 12px 字号 × 1.5 行高 + 上间距 4px = 22px。 */
+.stat-card-tone .stat-sub {
+  display: flex;
+  align-items: center;
+  min-height: 22px;
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+/* 数字块与副文案槽位作为一个整体居中 */
+.stat-card-tone > .ant-card-body > .ant-statistic {
+  flex: 0 0 auto;
+}
+
+/* 图标与数字基线对齐（antd 默认 prefix 图标偏上） */
+.stat-card-tone .ant-statistic-content-prefix {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-end: 8px;
+}
+
+/* 统计卡的平板适配（768-1023px）。
+   背景：三张统计卡在 768px 若按 sm=8 三列排，每张仅约 165px 宽，
+   "奖杯图标 + 39.6分"放不下 → 数字与单位被折行、标题被省略号截断（实测）。
+   解法：改为 **两列 + 第三张整行**（Col sm=12 / sm=24），既符合设计文档 5.2
+   "平板双列"的要求，又没有"第三张孤零零挂在第二行左侧"的空档。
+   因每张卡宽度翻倍（约 340px），此处只需轻微收紧内边距即可保持单行。 */
+@media (max-width: 1023px) {
+  .stat-card-tone > .ant-card-body {
+    padding: 16px 16px;
+  }
+  .stat-card-tone .ant-statistic-title {
+    /* 标题单行，过长省略（卡宽充足时不会触发） */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .stat-card-tone .stat-sub {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* 让卡片标题与内容间距统一（antd 默认在小屏偏紧） */
+.card .ant-card-head {
+  min-height: 48px;
+  padding: 0 var(--content-padding);
+}
+
+.card .ant-card-body {
+  padding: 20px var(--content-padding);
 }
 
 .page-title {
@@ -80,6 +386,215 @@ body {
   font-weight: 600;
   color: var(--color-text-primary);
   margin-bottom: 24px;
+}
+
+/* 页头：标题与右侧操作位同一行（文档 3.4 的 [重新测评] [分享]） */
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.page-head .page-title {
+  margin-bottom: 0;
+}
+
+/* 维度条目：色点 + 名称 + 分数 + 进度条 */
+.dim-item {
+  padding: 12px;
+  border-radius: var(--radius-btn);
+  background: var(--color-bg-subtle);
+}
+
+.dim-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.dim-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-inline-end: 6px;
+  vertical-align: middle;
+}
+
+/* 维度条目的辅助说明（如「达成率 33.3%」） */
+.dim-item-meta {
+  margin-top: 4px;
+}
+
+/* 雷达图容器：在等高卡片内撑满剩余高度，使图表随卡片一起长高，
+   而不是固定像素高、卡片被拉高后下方留一大块空白。
+   min-height 是「图表可读」的下限；调低它会直接压低整行高度，
+   从而减少右侧「本次成绩」卡片底部的空白（两卡等高，行高由较高者决定）。 */
+.radar-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+}
+
+.radar-box > div {
+  flex: 1;
+}
+
+/* 「本次成绩」卡片里的两块标签区（已覆盖 / 待改进）。
+   卡片在 lg 档与雷达图等高，而雷达图内容天然更高，所以这里必然剩余一段高度。
+   实测四种分配方式后取最优（trailingSpace 越小、留白越均匀越好）：
+     仅末块 flex = 132px → 两块均分 = 73px → 末块居中 = 76px → 两块均分+居中 = 47px
+   即让两块各占一半、内容在各自区域内垂直居中，留白被摊到两段上下，
+   不会在卡片底部堆成一坨。注意本行仍保持等高（A 方案：接受留白但求均匀）。 */
+.score-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.score-block + .score-block {
+  margin-top: 12px;
+}
+
+/* 差距分析行：技能名与分数两端对齐 */
+.gap-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+
+.gap-row:last-child {
+  border-bottom: none;
+}
+
+/* 任务行：勾选框 + 主内容 + 右侧状态标签。
+   用 flex 而非 inline：勾选框与多行标题需要顶对齐，且状态标签要能靠右。
+   `align-items: flex-start` 保证标题折行时勾选框仍停在第一行，不会跑到中间。 */
+.task-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.task-row .ant-checkbox-wrapper,
+.task-row .ant-checkbox {
+  /* 勾选框自身在 Timeline 的较小行高里会略偏上，微调使其与首行文字视觉居中 */
+  margin-top: 2px;
+  flex: none;
+}
+
+.task-row-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 场景列表项：加大点击热区并给出选中态 */
+.scenario-item {
+  cursor: pointer;
+  padding: 12px !important;
+  border-radius: var(--radius-btn);
+  transition: background 0.2s ease;
+}
+
+.scenario-item:hover {
+  background: var(--color-bg-subtle);
+}
+
+.scenario-item-active {
+  background: #e6f4ff;
+  border-inline-start: 3px solid var(--color-primary);
+}
+
+/* 对话区：限制高度并可滚动，避免长对话把输入框挤出视口 */
+.chat-area {
+  min-height: 260px;
+  max-height: 420px;
+  overflow: auto;
+  padding: 4px;
+}
+
+.chat-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+  /* 气泡出现 200ms（文档 4.3） */
+  animation: bubble-in 0.2s ease-out;
+}
+
+.chat-row-user {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: 560px;
+  padding: 8px 12px;
+  border-radius: var(--radius-card);
+  background: var(--color-bg-subtle);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.bubble-user {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* 输入区：整块圆角矩形容器，内部上边是文字输入区、右下角是圆形发送键
+   （WorkBuddy / 各种 agent 工具的输入框形态）。
+   输入框本身去掉了 antd 边框（variant="borderless"），由容器提供唯一的边框与圆角。 */
+.composer {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  /* 用 12px（与 --radius-modal 同档）而非胶囊圆角：输入框会长到 5 行，
+     过大的圆角在多行时会让左右两侧显得"鼓"，12px 在 2 行/5 行下都稳。 */
+  border-radius: 12px;
+  background: var(--color-bg-card);
+  transition: border-color 0.2s;
+}
+
+.composer:focus-within {
+  border-color: var(--color-primary);
+}
+
+/* 输入框填满容器宽度；!important 用于压掉 antd 的 textarea 宽度计算，
+   避免出现横向滚动条 */
+.composer-input {
+  width: 100% !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 按钮行：只放一个圆形按钮，靠 flex-end 压到右下角。
+   注意不是绝对定位 —— 按钮占 32px 真实高度，容器因此自然留出底部空间，
+   省掉手算 padding-bottom，换行/缩放时也不会压到文字。 */
+.composer-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 卡片通用样式 */
