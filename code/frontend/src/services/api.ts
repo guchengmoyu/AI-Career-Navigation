@@ -1,154 +1,102 @@
-/**
- * API 服务层
- *
- * 当前使用 mock 数据，后续接入 MCP 工具 API 后替换为真实请求。
- * MCP 工具通过百宝箱平台调用，前端直接请求 MCP 服务的 REST 接口。
- */
+/* ─────────────────────────────────────────────────────────────────────────
+   P1 · HTTP 客户端层（重写）
+
+   只有本文件允许引用 `import.meta.env` 与 fetch —— 它属于**容器侧**
+   （src/App.tsx），P2 打 UMD 时不会被打进任何页面卡片包。
+
+   与旧版的差异：
+   - 类型与纯常量全部移到 ./types.ts（页面只能 import types.ts）；
+   - 删除死代码 profileApi.calculate、progressApi.getEvents（全仓无调用方）。
+   ───────────────────────────────────────────────────────────────────────── */
+
+import type {
+  ActivatePathResult,
+  CareerProfile,
+  LearningPathResult,
+  ProgressSummary,
+  Scenario,
+  ScenarioEvaluation,
+  TaskStatus,
+} from './types'
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api/v1'
+export const DEMO_USER_ID = import.meta.env.VITE_DEMO_USER_ID || 'USER-G001'
 
-// 通用请求封装
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
+/* 带元信息的请求：除数据外还把服务端的降级标记 `fallback` 带回来。
+   背景：后端在数据库异常时**不返回 5xx**，而是 200 + MOCK 兜底
+   （`{"data": {...}, "fallback": true}`，其中 dimensions 是空数组）。
+   只取 `json.data` 的话，「这不是真数据」的信号就被丢掉了，页面会把 MOCK
+   当真数据渲染 → 画像页读 `sorted[0].name` 直接崩（顶层错误边界整页报错）。
+   因此 profile 必须走这个版本，把 fallback 透传给容器。 */
+async function requestWithMeta<T>(
+  path: string,
+  options?: RequestInit,
+): Promise<{ data: T; fallback: boolean }> {
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
     ...options,
   })
-  if (!res.ok) {
-    throw new Error(`API Error: ${res.status} ${res.statusText}`)
-  }
-  const json = await res.json()
-  return json.data ?? json
+  const json = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(json.error?.message || `API Error: ${res.status} ${res.statusText}`)
+  return { data: (json.data ?? json) as T, fallback: json.fallback === true }
 }
 
-// ========== 职业画像 ==========
-
-export interface DimensionScores {
-  professional_skill: number
-  soft_skill: number
-  leadership: number
-  innovation: number
-  learning_ability: number
+async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  return (await requestWithMeta<T>(path, options)).data
 }
 
-export interface CareerProfile {
-  profile_id: number
-  overall_score: number
-  dimension_scores: DimensionScores
-  strengths: string[]
-  weaknesses: string[]
-  recommended_directions: { position: string; match_score: number }[]
+/** 写操作的幂等键。
+ *  服务端把它当"同一请求"的凭据：同 key 重放会直接返回上次结果并带 `idempotent_replay: true`，
+ *  不会重复计分/重复推进度。
+ *  ⚠️ 实测（09-17）服务端**不传 key 也会返回 200**（内部有兜底），
+ *  但前端**必须始终带上** —— 否则用户点"重试"时会把同一个事件算两次。
+ *  生成规则：调用方语义前缀 + 时间戳 + 随机段，保证"同一次用户操作重试沿用同一个 key"，
+ *  而"两次不同的操作"拿到不同 key。 */
+export function makeIdempotencyKey(scope: string): string {
+  const rand = Math.random().toString(36).slice(2, 10)
+  return `${scope}-${Date.now()}-${rand}`
 }
 
 export const profileApi = {
-  /** 计算职业画像 — 对应 MCP 工具 calculate_career_profile */
-  calculate: (userId: string, questionnaire: Record<string, unknown>) =>
-    request<CareerProfile>('/profile/calculate', {
-      method: 'POST',
-      body: JSON.stringify({ user_id: userId, questionnaire }),
-    }),
-
-  /** 获取用户画像 — 对应 MCP 工具 get_career_profile */
-  get: (userId: string) =>
-    request<CareerProfile>(`/profile/${userId}`),
-}
-
-// ========== 学习路径 ==========
-
-export interface LearningPath {
-  path_id: number
-  title: string
-  gap_analysis: {
-    critical_gaps: { skill: string; current: number; target: number; gap: number }[]
-    minor_gaps: { skill: string; current: number; target: number; gap: number }[]
-  }
-  phases: {
-    phase_order: number
-    title: string
-    duration: number
-    milestones: string[]
-    tasks: {
-      task_order: number
-      title: string
-      task_type: string
-      difficulty: string
-      estimated_hours: number
-      platform: string
-    }[]
-  }[]
+  /** 走 requestWithMeta：必须拿到 `fallback`，容器据此提示"当前是降级 MOCK 数据"。 */
+  get: (userId: string) => requestWithMeta<CareerProfile>(`/profile/${userId}`),
 }
 
 export const pathApi = {
-  /** 生成学习路径 — 对应 MCP 工具 generate_learning_path */
-  generate: (params: {
-    user_id: string
-    target_position: string
-    target_industry?: string
-    target_time_years?: number
-    weekly_hours?: number
-    priority?: 'speed' | 'depth' | 'balanced'
-  }) =>
-    request<LearningPath>('/path/generate', {
-      method: 'POST',
-      body: JSON.stringify(params),
-    }),
-}
-
-// ========== 场景模拟 ==========
-
-export interface Scenario {
-  scenario_id: string
-  scenario_type: string
-  difficulty: string
-  estimated_duration: number
-  title: string
-  initial_prompt: string
-}
-
-export interface ScenarioEvaluation {
-  scenario_id: string
-  overall_score: number
-  dimensions: Record<string, { score: number; feedback: string }>
-  highlights: string[]
-  improvement_suggestions: string[]
+  generate: (params: { user_id: string; target_role_id: string; horizon_years?: number; weekly_hours?: number; priority?: 'speed' | 'depth' | 'balanced' }) =>
+    request<LearningPathResult>('/path/generate', { method: 'POST', body: JSON.stringify(params) }),
 }
 
 export const scenarioApi = {
-  /** 获取场景列表 */
-  list: (params?: { scenario_type?: string; difficulty?: string }) => {
-    const query = new URLSearchParams(params as Record<string, string>).toString()
-    return request<Scenario[]>(`/scenario?${query}`)
-  },
-
-  /** 开始场景模拟 — 对应 MCP 工具 startScenario */
-  start: (scenarioId: string, userId: string) =>
-    request<{ session_id: string; initial_prompt: string }>('/scenario/start', {
-      method: 'POST',
-      body: JSON.stringify({ scenario_id: scenarioId, user_id: userId }),
-    }),
-
-  /** 评估场景表现 — 对应 MCP 工具 evaluateScenario */
-  evaluate: (sessionId: string) =>
-    request<ScenarioEvaluation>('/scenario/evaluate', {
-      method: 'POST',
-      body: JSON.stringify({ session_id: sessionId }),
-    }),
-}
-
-// ========== 进度管理 ==========
-
-export interface GrowthEvent {
-  event_id: string
-  event_type: string
-  points_earned: number
-  occurred_at: string
-  payload: Record<string, unknown>
+  list: (userId = DEMO_USER_ID) => request<{ scenarios: Scenario[] }>(`/scenario?user_id=${userId}`),
+  start: (scenarioId: string, userId: string) => request<{ session_id: string; scenario: Scenario }>('/scenario/start', {
+    method: 'POST', body: JSON.stringify({ scenario_id: scenarioId, user_id: userId }),
+  }),
+  evaluate: (sessionId: string, userId: string, responseText: string) => request<ScenarioEvaluation>('/scenario/evaluate', {
+    method: 'POST', body: JSON.stringify({ session_id: sessionId, user_id: userId, response_text: responseText }),
+  }),
 }
 
 export const progressApi = {
-  /** 获取成长事件列表 — 对应 MCP 工具 getGrowthEvents */
-  getEvents: (userId: string, limit = 20) =>
-    request<GrowthEvent[]>(`/progress/${userId}/events?limit=${limit}`),
+  getSummary: (userId: string) => request<ProgressSummary>(`/progress/${userId}/summary`),
+
+  /** 把某条路径设为"当前生效路径"。
+   *  这是 `update_task` 的**前置条件** —— 未激活就更新任务会得到
+   *  `404 TASK_NOT_FOUND`（"未在激活路径中找到任务…"），实测已验证。
+   *  `idempotency_key` 必须由调用方提供：同一次点击的重试要沿用同一个 key。 */
+  activatePath: (userId: string, pathId: string, idempotencyKey: string) =>
+    request<ActivatePathResult>('/progress/path/activate', {
+      method: 'POST',
+      body: JSON.stringify({ user_id: userId, path_id: pathId, idempotency_key: idempotencyKey }),
+    }),
+
+  /** 更新任务状态。⚠️ 路由是 **PATCH**（不是 POST），taskId 走 URL 路径。 */
+  updateTask: (userId: string, taskId: string, status: TaskStatus, idempotencyKey: string) =>
+    request<{ task_id: string; status: string; updated_at: string }>(
+      `/progress/tasks/${encodeURIComponent(taskId)}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ user_id: userId, status, idempotency_key: idempotencyKey }),
+      },
+    ),
 }

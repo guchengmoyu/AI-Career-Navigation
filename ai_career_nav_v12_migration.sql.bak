@@ -1,0 +1,777 @@
+-- ============================================================================
+-- ai_career_nav_v12 迁移脚本（先改结构，后迁移数据）
+-- ----------------------------------------------------------------------------
+-- 目标：把旧实库 dump `ai_career_nav.sql`（应用层结构 + 种子数据），
+--       按 MCP 规范结构 `schema_v1_2.sql` 重建为新库 `ai_career_nav_v12`，
+--       使三方同源：百宝箱总控（4 个 MCP 工具） + Flask 后端 API + React 前端
+--
+-- 执行前提（MySQL 8.0+，同一实例）：
+--   1) 已导入旧库：SOURCE 马力杯/ai_career_nav.sql  → 库名 ai_career_nav
+--   2) 本文件第一步创建新库并建结构（A.1 结构段 = mcp-server/db/schema_v1_2.sql
+--      原样；source of truth 仍是那份文件，schema 更新以其为准）
+--
+-- 执行顺序：
+--   PART A  结构（新库 + 规范表 + 前端扩展表）
+--   PART B  参考数据（维度/技能/角色/岗位/资源/趋势/知识卡/岗位技能要求）
+--   PART C  用户与画像（users / user_profiles / user_skills / career_profiles / 快照）
+--   PART D  路径（career_paths / career_milestones / path_tasks）
+--   PART E  场景（scenario_cases / scenario_sessions）
+--   PART F  成长事件（learning_records → growth_events）
+--   PART G  数据校验
+--
+-- 关键转换约定：
+--   * 用户键：bigint id → external_user_id
+--       id 1..12 (GOLD-00x)    → USER-G001 .. USER-G012  （USER-G001 = 总控演示用户）
+--       id 13..100 (BULK-Sxxx) → USER-BULK-S001 .. USER-BULK-S088
+--   * user_skills：技能名(skill_name) → skill_id（按 ref_skills.name 关联），
+--       并补 v1_2 衰减字段 evidence_age_days / half_life_days / decay_factor
+--   * 治理列（origin/is_synthetic/confidence/claim_level/verification_status/
+--     license_scope/is_market_fact/data_split/schema_version）统一填迁移默认值：
+--       origin='legacy_migration' is_synthetic=1 source_ids='ai_career_nav.sql'
+--       confidence=1.0000 claim_level='synthetic_demo' verification_status='verified'
+--       license_scope='internal_demo' is_market_fact=0 schema_version='v1.2'
+--   * 旧库表去向：
+--       learning_records → growth_events（MCP manage_progress 事件源）
+--       path_phases      → career_milestones（v1_2 里程碑模型）
+--   * 前端可视化扩展表保留：skill_snapshots、ref_trend_snapshots、ref_knowledge_cards
+-- ============================================================================
+
+-- ----------------------------------------------------------------------------
+-- PART A  结构
+-- ----------------------------------------------------------------------------
+
+CREATE DATABASE IF NOT EXISTS ai_career_nav_v12
+  DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE ai_career_nav_v12;
+SET NAMES utf8mb4;
+
+-- ==== A.1 规范结构（来源：AI-Career-Navigation-feature-a02-mcp-service/
+--         code/mcp-server/db/schema_v1_2.sql，原样复制，勿在此处单独修改）====
+
+CREATE TABLE IF NOT EXISTS users (
+  external_user_id VARCHAR(32) NOT NULL,
+  persona_code VARCHAR(32) NOT NULL,
+  is_golden TINYINT(1) NOT NULL DEFAULT 0,
+  stage ENUM('student','newcomer') NOT NULL,
+  consent_status VARCHAR(40) NOT NULL,
+  data_split ENUM('golden','dev','test') NOT NULL,
+  schema_version VARCHAR(20) NOT NULL,
+  origin VARCHAR(40) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL,
+  verification_status VARCHAR(40) NOT NULL, license_scope VARCHAR(80) NOT NULL,
+  is_market_fact TINYINT(1) NOT NULL DEFAULT 0,
+  source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  is_synthetic TINYINT(1) NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (external_user_id),
+  UNIQUE KEY uk_users_persona_code (persona_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='A02 anonymous synthetic users';
+
+CREATE TABLE IF NOT EXISTS user_profiles (
+  external_user_id VARCHAR(32) NOT NULL,
+  major VARCHAR(100), education_level VARCHAR(40), academic_or_job_status VARCHAR(100),
+  experience_months INT NOT NULL DEFAULT 0, weekly_learning_hours INT NOT NULL DEFAULT 10,
+  target_role_id VARCHAR(40), secondary_role_id VARCHAR(40), preferred_city VARCHAR(50),
+  preferred_work_mode VARCHAR(30), career_goal TEXT, current_challenge TEXT,
+  data_retention_days INT NOT NULL DEFAULT 365,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (external_user_id),
+  CONSTRAINT fk_user_profiles_user FOREIGN KEY (external_user_id) REFERENCES users(external_user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ref_dimensions (
+  dimension_id VARCHAR(20) NOT NULL, name VARCHAR(80) NOT NULL, description TEXT, display_order INT NOT NULL,
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL,
+  license_scope VARCHAR(80) NOT NULL, is_market_fact TINYINT(1) NOT NULL, data_split ENUM('golden','dev','test') NOT NULL,
+  schema_version VARCHAR(20) NOT NULL, source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  PRIMARY KEY (dimension_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ref_skills (
+  skill_id VARCHAR(40) NOT NULL, skill_key VARCHAR(80) NOT NULL, name VARCHAR(120) NOT NULL,
+  dimension_id VARCHAR(20) NOT NULL, definition TEXT, half_life_days INT NOT NULL,
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL,
+  license_scope VARCHAR(80) NOT NULL, is_market_fact TINYINT(1) NOT NULL, data_split ENUM('golden','dev','test') NOT NULL,
+  schema_version VARCHAR(20) NOT NULL, source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  PRIMARY KEY (skill_id), UNIQUE KEY uk_ref_skills_key (skill_key),
+  CONSTRAINT fk_ref_skills_dimension FOREIGN KEY (dimension_id) REFERENCES ref_dimensions(dimension_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ref_roles (
+  role_id VARCHAR(40) NOT NULL, name VARCHAR(100) NOT NULL, summary TEXT,
+  target_user_stage VARCHAR(60), typical_entry_level VARCHAR(200),
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL,
+  license_scope VARCHAR(80) NOT NULL, is_market_fact TINYINT(1) NOT NULL, data_split ENUM('golden','dev','test') NOT NULL,
+  schema_version VARCHAR(20) NOT NULL, source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  PRIMARY KEY (role_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ref_role_skills (
+  role_skill_id VARCHAR(100) NOT NULL, role_id VARCHAR(40) NOT NULL, skill_id VARCHAR(40) NOT NULL,
+  required_score DECIMAL(5,2) NOT NULL, importance_weight DECIMAL(9,6) NOT NULL,
+  is_core TINYINT(1) NOT NULL, rationale VARCHAR(200),
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL,
+  license_scope VARCHAR(80) NOT NULL, is_market_fact TINYINT(1) NOT NULL, data_split ENUM('golden','dev','test') NOT NULL,
+  schema_version VARCHAR(20) NOT NULL, source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  PRIMARY KEY (role_skill_id), UNIQUE KEY uk_role_skill (role_id, skill_id),
+  CONSTRAINT fk_role_skills_role FOREIGN KEY (role_id) REFERENCES ref_roles(role_id),
+  CONSTRAINT fk_role_skills_skill FOREIGN KEY (skill_id) REFERENCES ref_skills(skill_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS user_skills (
+  user_skill_id BIGINT NOT NULL AUTO_INCREMENT,
+  external_user_id VARCHAR(32) NOT NULL,
+  skill_id VARCHAR(40) NOT NULL,
+  current_score DECIMAL(5,2) NOT NULL,
+  observed_score DECIMAL(5,2) NOT NULL,
+  evidence_age_days INT NOT NULL,
+  half_life_days INT NOT NULL,
+  decay_factor DECIMAL(8,6) NOT NULL,
+  last_evidence_id VARCHAR(80),
+  confidence DECIMAL(5,4) NOT NULL,
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL, license_scope VARCHAR(80) NOT NULL,
+  is_market_fact TINYINT(1) NOT NULL, data_split ENUM('golden','dev','test') NOT NULL,
+  schema_version VARCHAR(20) NOT NULL, source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  PRIMARY KEY (user_skill_id), UNIQUE KEY uk_user_skill (external_user_id, skill_id),
+  CONSTRAINT fk_user_skills_user FOREIGN KEY (external_user_id) REFERENCES users(external_user_id),
+  CONSTRAINT fk_user_skills_skill FOREIGN KEY (skill_id) REFERENCES ref_skills(skill_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ref_jobs (
+  job_id VARCHAR(50) NOT NULL, role_id VARCHAR(40) NOT NULL, title VARCHAR(200) NOT NULL,
+  company_code VARCHAR(100), industry VARCHAR(80), city VARCHAR(50), work_mode VARCHAR(30), experience_level VARCHAR(30),
+  required_experience_months INT, education_level VARCHAR(50), salary_min_cny_month INT, salary_max_cny_month INT,
+  salary_is_simulated TINYINT(1) NOT NULL DEFAULT 1, summary TEXT, display_disclaimer VARCHAR(500),
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL,
+  license_scope VARCHAR(80) NOT NULL, is_market_fact TINYINT(1) NOT NULL DEFAULT 0,
+  source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  data_split ENUM('golden','dev','test') NOT NULL, schema_version VARCHAR(20) NOT NULL,
+  PRIMARY KEY (job_id),
+  CONSTRAINT fk_jobs_role FOREIGN KEY (role_id) REFERENCES ref_roles(role_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ref_job_skills (
+  job_skill_id VARCHAR(120) NOT NULL, job_id VARCHAR(50) NOT NULL, skill_id VARCHAR(40) NOT NULL,
+  required_score DECIMAL(5,2) NOT NULL, importance_weight DECIMAL(9,6) NOT NULL, requirement_type VARCHAR(30),
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL,
+  license_scope VARCHAR(80) NOT NULL, is_market_fact TINYINT(1) NOT NULL, data_split ENUM('golden','dev','test') NOT NULL,
+  schema_version VARCHAR(20) NOT NULL, source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  PRIMARY KEY (job_skill_id), UNIQUE KEY uk_job_skill (job_id, skill_id),
+  CONSTRAINT fk_job_skills_job FOREIGN KEY (job_id) REFERENCES ref_jobs(job_id),
+  CONSTRAINT fk_job_skills_skill FOREIGN KEY (skill_id) REFERENCES ref_skills(skill_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ref_resources (
+  resource_id VARCHAR(50) NOT NULL, resource_type VARCHAR(60) NOT NULL, title VARCHAR(240) NOT NULL,
+  provider VARCHAR(200), url VARCHAR(600), difficulty VARCHAR(30), estimated_hours DECIMAL(7,1), cost_type VARCHAR(30),
+  prerequisite_score INT, summary TEXT, origin VARCHAR(40), source_ids VARCHAR(300), claim_level VARCHAR(40),
+  verification_status VARCHAR(40), license_scope VARCHAR(80), is_synthetic TINYINT(1), is_market_fact TINYINT(1),
+  confidence DECIMAL(5,4) NOT NULL, source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  data_split ENUM('golden','dev','test') NOT NULL, schema_version VARCHAR(20) NOT NULL,
+  PRIMARY KEY (resource_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ref_resource_skills (
+  resource_skill_id VARCHAR(120) NOT NULL, resource_id VARCHAR(50) NOT NULL, skill_id VARCHAR(40) NOT NULL,
+  coverage_weight DECIMAL(9,6) NOT NULL, expected_score_gain DECIMAL(5,2) NOT NULL,
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL,
+  license_scope VARCHAR(80) NOT NULL, is_market_fact TINYINT(1) NOT NULL, data_split ENUM('golden','dev','test') NOT NULL,
+  schema_version VARCHAR(20) NOT NULL, source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  PRIMARY KEY (resource_skill_id), UNIQUE KEY uk_resource_skill (resource_id, skill_id),
+  CONSTRAINT fk_resource_skills_resource FOREIGN KEY (resource_id) REFERENCES ref_resources(resource_id),
+  CONSTRAINT fk_resource_skills_skill FOREIGN KEY (skill_id) REFERENCES ref_skills(skill_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS career_profiles (
+  profile_id BIGINT NOT NULL AUTO_INCREMENT, external_user_id VARCHAR(32) NOT NULL, profile_version INT NOT NULL,
+  overall_score DECIMAL(5,2) NOT NULL, dimension_scores JSON NOT NULL, strengths JSON, improvement_priorities JSON,
+  role_matches JSON, calculation_version VARCHAR(30) NOT NULL, formula_json JSON NOT NULL,
+  schema_version VARCHAR(20) NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (profile_id), UNIQUE KEY uk_profile_version (external_user_id, profile_version),
+  CONSTRAINT fk_profiles_user FOREIGN KEY (external_user_id) REFERENCES users(external_user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS career_paths (
+  path_id VARCHAR(160) NOT NULL, external_user_id VARCHAR(32) NOT NULL, branch_no INT NOT NULL,
+  branch_type VARCHAR(30) NOT NULL, target_role_id VARCHAR(40) NOT NULL, horizon_years INT NOT NULL,
+  weekly_hours_limit INT NOT NULL, objective TEXT NOT NULL, status VARCHAR(30) NOT NULL,
+  is_reference TINYINT(1) NOT NULL DEFAULT 0,
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL,
+  license_scope VARCHAR(80) NOT NULL, is_market_fact TINYINT(1) NOT NULL, data_split ENUM('golden','dev','test') NOT NULL,
+  schema_version VARCHAR(20) NOT NULL, source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  PRIMARY KEY (path_id),
+  CONSTRAINT fk_paths_user FOREIGN KEY (external_user_id) REFERENCES users(external_user_id),
+  CONSTRAINT fk_paths_role FOREIGN KEY (target_role_id) REFERENCES ref_roles(role_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS career_milestones (
+  milestone_id VARCHAR(180) NOT NULL, path_id VARCHAR(160) NOT NULL, sequence_no INT NOT NULL,
+  month_from_start INT NOT NULL, title VARCHAR(240) NOT NULL, target_skill_id VARCHAR(40),
+  target_score DECIMAL(5,2), deliverable VARCHAR(240), acceptance_rule TEXT,
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL,
+  license_scope VARCHAR(80) NOT NULL, is_market_fact TINYINT(1) NOT NULL, data_split ENUM('golden','dev','test') NOT NULL,
+  schema_version VARCHAR(20) NOT NULL, source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  PRIMARY KEY (milestone_id), UNIQUE KEY uk_path_milestone_sequence (path_id, sequence_no),
+  CONSTRAINT fk_milestones_path FOREIGN KEY (path_id) REFERENCES career_paths(path_id),
+  CONSTRAINT fk_milestones_skill FOREIGN KEY (target_skill_id) REFERENCES ref_skills(skill_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS path_tasks (
+  task_id VARCHAR(180) NOT NULL, path_id VARCHAR(160) NOT NULL, phase_order INT NOT NULL,
+  title VARCHAR(240) NOT NULL, task_type VARCHAR(60) NOT NULL, difficulty VARCHAR(30), estimated_hours DECIMAL(7,1),
+  skill_id VARCHAR(40), resource_id VARCHAR(50),
+  status ENUM('pending','in_progress','completed','skipped') NOT NULL DEFAULT 'pending',
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (task_id),
+  CONSTRAINT fk_path_tasks_path FOREIGN KEY (path_id) REFERENCES career_paths(path_id),
+  CONSTRAINT fk_path_tasks_skill FOREIGN KEY (skill_id) REFERENCES ref_skills(skill_id),
+  CONSTRAINT fk_path_tasks_resource FOREIGN KEY (resource_id) REFERENCES ref_resources(resource_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS scenario_cases (
+  scenario_id VARCHAR(60) NOT NULL, module_id VARCHAR(40) NOT NULL, module_name VARCHAR(80) NOT NULL,
+  difficulty ENUM('beginner','intermediate','advanced') NOT NULL, target_role_id VARCHAR(40) NOT NULL,
+  target_user_stage VARCHAR(40) NOT NULL, title VARCHAR(240) NOT NULL, context TEXT NOT NULL, initial_prompt TEXT NOT NULL,
+  expected_actions JSON NOT NULL, rubric_json JSON NOT NULL, red_flags JSON NOT NULL, privacy_focus VARCHAR(20) NOT NULL,
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL,
+  license_scope VARCHAR(80) NOT NULL, is_market_fact TINYINT(1) NOT NULL,
+  data_split ENUM('golden','dev','test') NOT NULL, schema_version VARCHAR(20) NOT NULL,
+  source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  PRIMARY KEY (scenario_id),
+  CONSTRAINT fk_scenario_role FOREIGN KEY (target_role_id) REFERENCES ref_roles(role_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS scenario_sessions (
+  session_id VARCHAR(80) NOT NULL, external_user_id VARCHAR(32) NOT NULL, scenario_id VARCHAR(60) NOT NULL,
+  status ENUM('in_progress','completed') NOT NULL, started_at DATETIME NOT NULL, completed_at DATETIME,
+  evaluation JSON,
+  PRIMARY KEY (session_id),
+  CONSTRAINT fk_sessions_user FOREIGN KEY (external_user_id) REFERENCES users(external_user_id),
+  CONSTRAINT fk_sessions_case FOREIGN KEY (scenario_id) REFERENCES scenario_cases(scenario_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS scenario_messages (
+  message_id BIGINT NOT NULL AUTO_INCREMENT, session_id VARCHAR(80) NOT NULL,
+  role ENUM('user','assistant') NOT NULL, content TEXT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (message_id), INDEX idx_messages_session (session_id),
+  CONSTRAINT fk_messages_session FOREIGN KEY (session_id) REFERENCES scenario_sessions(session_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS growth_events (
+  event_id VARCHAR(100) NOT NULL, external_user_id VARCHAR(32) NOT NULL, event_type VARCHAR(50) NOT NULL,
+  event_time DATETIME NOT NULL, skill_id VARCHAR(40), resource_id VARCHAR(50), job_id VARCHAR(50), task_id VARCHAR(180),
+  score_delta DECIMAL(5,2) NOT NULL DEFAULT 0, status VARCHAR(40) NOT NULL, sentiment VARCHAR(30),
+  user_state VARCHAR(50), risk_level VARCHAR(20), detail VARCHAR(600) NOT NULL, duration_minutes INT, points_earned INT,
+  origin VARCHAR(40) NOT NULL, is_synthetic TINYINT(1) NOT NULL, source_ids VARCHAR(300) NOT NULL,
+  confidence DECIMAL(5,4) NOT NULL, claim_level VARCHAR(40) NOT NULL, verification_status VARCHAR(40) NOT NULL,
+  license_scope VARCHAR(80) NOT NULL, is_market_fact TINYINT(1) NOT NULL,
+  schema_version VARCHAR(20) NOT NULL, data_split ENUM('golden','dev','test') NOT NULL,
+  source_generated_at VARCHAR(40), last_verified_at VARCHAR(40),
+  PRIMARY KEY (event_id), INDEX idx_growth_user_time (external_user_id, event_time),
+  CONSTRAINT fk_growth_user FOREIGN KEY (external_user_id) REFERENCES users(external_user_id),
+  CONSTRAINT fk_growth_skill FOREIGN KEY (skill_id) REFERENCES ref_skills(skill_id),
+  CONSTRAINT fk_growth_resource FOREIGN KEY (resource_id) REFERENCES ref_resources(resource_id),
+  CONSTRAINT fk_growth_job FOREIGN KEY (job_id) REFERENCES ref_jobs(job_id),
+  CONSTRAINT fk_growth_task FOREIGN KEY (task_id) REFERENCES path_tasks(task_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ==== A.2 前端可视化扩展表（v1_2 规范外，保留自旧库，供 Flask API / 图表使用）====
+
+CREATE TABLE IF NOT EXISTS skill_snapshots (
+  snapshot_id BIGINT NOT NULL AUTO_INCREMENT,
+  external_user_id VARCHAR(32) NOT NULL,
+  snapshot_date DATE NOT NULL,
+  dimension_scores JSON NOT NULL,
+  overall_score DECIMAL(5,2) NOT NULL,
+  trigger_event VARCHAR(50) COMMENT '触发事件: profile_update/task_complete/training_complete/manual',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (snapshot_id),
+  INDEX idx_snapshots_user (external_user_id),
+  INDEX idx_snapshots_date (snapshot_date),
+  CONSTRAINT fk_snapshots_user FOREIGN KEY (external_user_id) REFERENCES users(external_user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技能快照表(能力趋势图数据源)';
+
+CREATE TABLE IF NOT EXISTS ref_trend_snapshots (
+  trend_id VARCHAR(50) NOT NULL,
+  skill_id VARCHAR(50) NOT NULL,
+  month VARCHAR(10) NOT NULL,
+  trend_index DECIMAL(6,2) NULL,
+  month_over_month_change DECIMAL(6,2) NULL,
+  direction VARCHAR(10) NULL,
+  PRIMARY KEY (trend_id),
+  INDEX idx_ref_trends_skill (skill_id),
+  INDEX idx_ref_trends_month (month)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='技能趋势参考表(旧库原样保留)';
+
+CREATE TABLE IF NOT EXISTS ref_knowledge_cards (
+  card_id VARCHAR(50) NOT NULL,
+  category VARCHAR(50) NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  content TEXT NOT NULL,
+  keywords VARCHAR(500) NULL,
+  related_entity_type VARCHAR(20) NULL,
+  related_entity_id VARCHAR(50) NULL,
+  PRIMARY KEY (card_id),
+  INDEX idx_ref_cards_cat (category),
+  INDEX idx_ref_cards_entity (related_entity_type, related_entity_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='知识卡片参考表(可作平台知识库素材)';
+
+-- ----------------------------------------------------------------------------
+-- PART B  参考数据迁移（先父表后子表，遵守外键）
+-- ----------------------------------------------------------------------------
+
+-- B.1 维度（旧库即为新八维，与总控口径一致）
+INSERT INTO ai_career_nav_v12.ref_dimensions
+  (dimension_id, name, description, display_order, origin, is_synthetic, source_ids, confidence,
+   claim_level, verification_status, license_scope, is_market_fact, data_split, schema_version)
+SELECT d.dimension_id, d.name, d.description, d.display_order,
+       'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+       'synthetic_demo', 'verified', 'internal_demo', 0, 'golden', 'v1.2'
+FROM ai_career_nav.ref_dimensions d;
+
+-- B.2 技能（skill_key 暂用小写 skill_id 保证唯一）
+INSERT INTO ai_career_nav_v12.ref_skills
+  (skill_id, skill_key, name, dimension_id, definition, half_life_days,
+   origin, is_synthetic, source_ids, confidence, claim_level, verification_status,
+   license_scope, is_market_fact, data_split, schema_version)
+SELECT s.skill_id, LOWER(s.skill_id), s.name, s.dimension_id, s.definition, s.half_life_days,
+       'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+       'synthetic_demo', 'verified', 'internal_demo', 0, 'golden', 'v1.2'
+FROM ai_career_nav.ref_skills s;
+
+-- B.3 角色
+INSERT INTO ai_career_nav_v12.ref_roles
+  (role_id, name, summary, target_user_stage, typical_entry_level,
+   origin, is_synthetic, source_ids, confidence, claim_level, verification_status,
+   license_scope, is_market_fact, data_split, schema_version)
+SELECT r.role_id, r.name, r.summary, r.target_user_stage, r.typical_entry_level,
+       'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+       'synthetic_demo', 'verified', 'internal_demo', 0, 'golden', 'v1.2'
+FROM ai_career_nav.ref_roles r;
+
+-- B.4 岗位
+INSERT INTO ai_career_nav_v12.ref_jobs
+  (job_id, role_id, title, company_code, industry, city, work_mode, experience_level, education_level,
+   salary_min_cny_month, salary_max_cny_month, salary_is_simulated, summary,
+   origin, is_synthetic, source_ids, confidence, claim_level, verification_status,
+   license_scope, is_market_fact, data_split, schema_version)
+SELECT j.job_id, j.role_id, j.title, j.company_code, j.industry, j.city, j.work_mode,
+       j.experience_level, j.education_level, j.salary_min_cny_month, j.salary_max_cny_month, 1, j.summary,
+       'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+       'synthetic_demo', 'verified', 'internal_demo', 1, 'golden', 'v1.2'
+FROM ai_career_nav.ref_jobs j;
+
+-- B.5 岗位-技能（结构一致直接搬；岗位表治理列 is_market_fact=1，技能/用户为 0）
+INSERT INTO ai_career_nav_v12.ref_job_skills
+  (job_skill_id, job_id, skill_id, required_score, importance_weight, requirement_type,
+   origin, is_synthetic, source_ids, confidence, claim_level, verification_status,
+   license_scope, is_market_fact, data_split, schema_version)
+SELECT js.job_skill_id, js.job_id, js.skill_id, js.required_score, js.importance_weight, js.requirement_type,
+       'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+       'synthetic_demo', 'verified', 'internal_demo', 0, 'golden', 'v1.2'
+FROM ai_career_nav.ref_job_skills js;
+
+-- B.6 角色-技能 ★旧库缺失，由 ref_jobs x ref_job_skills 聚合派生
+--    （MCP generate_career_path 的 gap_analysis 数据源；岗位匹配只用此表）
+INSERT INTO ai_career_nav_v12.ref_role_skills
+  (role_skill_id, role_id, skill_id, required_score, importance_weight, is_core, rationale,
+   origin, is_synthetic, source_ids, confidence, claim_level, verification_status,
+   license_scope, is_market_fact, data_split, schema_version)
+SELECT CONCAT(j.role_id, '-', js.skill_id),
+       j.role_id, js.skill_id,
+       ROUND(AVG(js.required_score), 2),
+       ROUND(AVG(js.importance_weight), 6),
+       MAX(js.requirement_type = 'required'),
+       '由岗位库 ref_job_skills 按角色聚合派生（legacy_migration）',
+       'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+       'synthetic_demo', 'verified', 'internal_demo', 0, 'golden', 'v1.2'
+FROM ai_career_nav.ref_job_skills js
+JOIN ai_career_nav.ref_jobs j ON j.job_id = js.job_id
+GROUP BY j.role_id, js.skill_id;
+
+-- B.7 学习资源（丢弃旧库多余的 language 列）
+INSERT INTO ai_career_nav_v12.ref_resources
+  (resource_id, resource_type, title, provider, url, difficulty, estimated_hours, cost_type,
+   prerequisite_score, summary, origin, is_synthetic, source_ids, confidence, claim_level,
+   verification_status, license_scope, is_market_fact, data_split, schema_version)
+SELECT r.resource_id, r.resource_type, r.title, r.provider, r.url, r.difficulty, r.estimated_hours,
+       r.cost_type, r.prerequisite_score, r.summary,
+       'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+       'synthetic_demo', 'verified', 'internal_demo', 0, 'golden', 'v1.2'
+FROM ai_career_nav.ref_resources r;
+
+-- B.8 资源-技能 ★旧库缺失；用主题卡标题与技能名前缀匹配派生
+--    （“<技能名>课程主题卡（…）” 命中技能；官方课程标题不含技能名，暂不强绑）
+INSERT INTO ai_career_nav_v12.ref_resource_skills
+  (resource_skill_id, resource_id, skill_id, coverage_weight, expected_score_gain,
+   origin, is_synthetic, source_ids, confidence, claim_level, verification_status,
+   license_scope, is_market_fact, data_split, schema_version)
+SELECT CONCAT(r.resource_id, '-', s.skill_id), r.resource_id, s.skill_id, 1.000000, 5.00,
+       'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+       'synthetic_demo', 'verified', 'internal_demo', 0, 'golden', 'v1.2'
+FROM ai_career_nav.ref_resources r
+JOIN ai_career_nav.ref_skills s
+  ON r.resource_type = 'public_catalog_topic_card'
+ AND r.title LIKE CONCAT(s.name, '%');
+
+-- B.9 技能趋势 / 知识卡（无用户外键，原样保留）
+INSERT INTO ai_career_nav_v12.ref_trend_snapshots
+  (trend_id, skill_id, month, trend_index, month_over_month_change, direction)
+SELECT trend_id, skill_id, month, trend_index, month_over_month_change, direction
+FROM ai_career_nav.ref_trend_snapshots;
+
+INSERT INTO ai_career_nav_v12.ref_knowledge_cards
+  (card_id, category, title, content, keywords, related_entity_type, related_entity_id)
+SELECT card_id, category, title, content, keywords, related_entity_type, related_entity_id
+FROM ai_career_nav.ref_knowledge_cards;
+
+-- ----------------------------------------------------------------------------
+-- PART C  用户与画像
+-- ----------------------------------------------------------------------------
+
+-- C.1 用户（外部ID映射见文件头约定）
+INSERT INTO ai_career_nav_v12.users
+  (external_user_id, persona_code, is_golden, stage, consent_status, data_split, schema_version,
+   origin, is_synthetic, source_ids, confidence, claim_level, verification_status, license_scope,
+   is_market_fact, created_at)
+SELECT
+  CASE WHEN u.id <= 12
+       THEN CONCAT('USER-G', LPAD(u.id, 3, '0'))
+       ELSE CONCAT('USER-', u.nickname) END,
+  u.nickname,
+  IF(u.id <= 12, 1, 0),
+  CASE WHEN u.id <= 12 THEN 'student'
+       WHEN u.id % 2 = 0 THEN 'newcomer'
+       ELSE 'student' END,
+  'granted_demo',
+  IF(u.id <= 12, 'golden', 'dev'),
+  'v1.2',
+  'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+  'synthetic_demo', 'verified', 'internal_demo', 0, u.created_at
+FROM ai_career_nav.users u
+WHERE u.id <= 100;
+
+-- C.2 用户资料（target_role_id 从职业目标文案反推）
+INSERT INTO ai_career_nav_v12.user_profiles
+  (external_user_id, major, education_level, academic_or_job_status, experience_months,
+   weekly_learning_hours, target_role_id, preferred_city, career_goal, data_retention_days)
+SELECT
+  CASE WHEN p.user_id <= 12 THEN CONCAT('USER-G', LPAD(p.user_id, 3, '0'))
+       ELSE CONCAT('USER-', u.nickname) END,
+  p.major, p.education, p.school, p.work_years * 12, p.weekly_hours,
+  CASE WHEN p.target_position LIKE '%AI算法%' THEN 'ROLE-AI-ALG'
+       WHEN p.target_position LIKE '%数据分析师%' THEN 'ROLE-DATA'
+       WHEN p.target_position LIKE '%AI应用%' THEN 'ROLE-AI-APP'
+       ELSE 'ROLE-AI-APP' END,
+  p.city, p.target_position, 365
+FROM ai_career_nav.user_profiles p
+JOIN ai_career_nav.users u ON u.id = p.user_id
+WHERE p.user_id <= 100;
+
+-- C.3 用户技能（技能名→skill_id；补衰减模型字段）
+--    证据时点视为数据导出日(2026-09-15)：age=0 → decay_factor=1.0
+INSERT INTO ai_career_nav_v12.user_skills
+  (external_user_id, skill_id, current_score, observed_score, evidence_age_days, half_life_days,
+   decay_factor, confidence, origin, is_synthetic, source_ids, claim_level, verification_status,
+   license_scope, is_market_fact, data_split, schema_version)
+SELECT
+  CASE WHEN us.user_id <= 12 THEN CONCAT('USER-G', LPAD(us.user_id, 3, '0'))
+       ELSE CONCAT('USER-', u.nickname) END,
+  rs.skill_id, us.score, us.score, 0, rs.half_life_days, 1.000000, 1.0000,
+  'legacy_migration', 1, 'ai_career_nav.sql', 'synthetic_demo', 'verified',
+  'internal_demo', 0, IF(us.user_id <= 12, 'golden', 'dev'), 'v1.2'
+FROM ai_career_nav.user_skills us
+JOIN ai_career_nav.users u ON u.id = us.user_id
+JOIN ai_career_nav.ref_skills rs ON rs.name = us.skill_name
+WHERE us.user_id <= 100;
+
+-- C.4 画像：临时表先算“维度分=该维度技能均值、综合分=八维均值”
+--    与 MCP calculate_career_profile 口径一致（USER-G001 → 39.64）
+--    ⚠️ MySQL 不允许在同一条语句中多次引用临时表，故改为单次扫描 + GROUP BY
+CREATE TEMPORARY TABLE tmp_dim_scores AS
+SELECT
+  CASE WHEN us.user_id <= 12 THEN CONCAT('USER-G', LPAD(us.user_id, 3, '0'))
+       ELSE CONCAT('USER-', u.nickname) END AS external_user_id,
+  rs.dimension_id,
+  ROUND(AVG(us.score), 1) AS dim_score
+FROM ai_career_nav.user_skills us
+JOIN ai_career_nav.users u ON u.id = us.user_id
+JOIN ai_career_nav.ref_skills rs ON rs.name = us.skill_name
+WHERE us.user_id <= 100
+GROUP BY external_user_id, rs.dimension_id;
+
+INSERT INTO ai_career_nav_v12.career_profiles
+  (external_user_id, profile_version, overall_score, dimension_scores, strengths, improvement_priorities,
+   role_matches, calculation_version, formula_json, schema_version)
+SELECT
+  d.external_user_id,
+  1,
+  ROUND(AVG(d.dim_score), 2),
+  JSON_OBJECTAGG(d.dimension_id, d.dim_score),
+  CASE WHEN d.external_user_id = 'USER-G001'
+       THEN JSON_ARRAY('沟通协作与职业素养(51.0)', '机器学习与算法(45.9)') END,
+  CASE WHEN d.external_user_id = 'USER-G001'
+       THEN JSON_ARRAY('大模型与AI应用(27.9)', '学习成长与项目实践(34.3)') END,
+  CASE WHEN d.external_user_id = 'USER-G001'
+       THEN JSON_ARRAY(
+         JSON_OBJECT('role_id', 'ROLE-AI-ALG', 'name', 'AI算法工程师', 'match_score', 75.36),
+         JSON_OBJECT('role_id', 'ROLE-DATA', 'name', '数据分析师', 'match_score', 65.78),
+         JSON_OBJECT('role_id', 'ROLE-AI-APP', 'name', 'AI应用开发工程师', 'match_score', 51.51))
+       END,
+  'v1.2-legacy',
+  JSON_OBJECT('dimension_score', 'AVG(skill_score per dimension)', 'overall', 'AVG(dimension_scores)'),
+  'v1.2'
+FROM tmp_dim_scores d
+GROUP BY d.external_user_id;
+
+DROP TEMPORARY TABLE tmp_dim_scores;
+
+-- C.5 前端能力趋势快照（用户键转换后原样搬入）
+INSERT INTO ai_career_nav_v12.skill_snapshots
+  (external_user_id, snapshot_date, dimension_scores, overall_score, trigger_event)
+SELECT
+  CASE WHEN s.user_id <= 12 THEN CONCAT('USER-G', LPAD(s.user_id, 3, '0'))
+       ELSE CONCAT('USER-', u.nickname) END,
+  s.snapshot_date, s.dimension_scores, s.overall_score, s.trigger_event
+FROM ai_career_nav.skill_snapshots s
+JOIN ai_career_nav.users u ON u.id = s.user_id
+WHERE s.user_id <= 100;
+
+-- ----------------------------------------------------------------------------
+-- PART D  路径（career_paths → career_milestones + path_tasks）
+-- ----------------------------------------------------------------------------
+
+-- D.1 路径主体（horizon=总月数/12；weekly 取用户资料，缺省 10）
+INSERT INTO ai_career_nav_v12.career_paths
+  (path_id, external_user_id, branch_no, branch_type, target_role_id, horizon_years, weekly_hours_limit,
+   objective, status, origin, is_synthetic, source_ids, confidence, claim_level, verification_status,
+   license_scope, is_market_fact, data_split, schema_version)
+SELECT
+  CONCAT('PATH-', LPAD(p.id, 3, '0')),
+  CASE WHEN p.user_id <= 12 THEN CONCAT('USER-G', LPAD(p.user_id, 3, '0'))
+       ELSE CONCAT('USER-', u.nickname) END,
+  1, 'fast_gap', p.target_position, GREATEST(1, ROUND(p.total_duration / 12)),
+  COALESCE(up.weekly_learning_hours, 10),
+  p.title, p.status,
+  'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+  'synthetic_demo', 'verified', 'internal_demo', 0,
+  IF(p.user_id <= 12, 'golden', 'dev'), 'v1.2'
+FROM ai_career_nav.career_paths p
+JOIN ai_career_nav.users u ON u.id = p.user_id
+LEFT JOIN ai_career_nav_v12.user_profiles up
+  ON up.external_user_id = CASE WHEN p.user_id <= 12 THEN CONCAT('USER-G', LPAD(p.user_id, 3, '0'))
+                                ELSE CONCAT('USER-', u.nickname) END
+WHERE p.user_id <= 100;
+
+-- D.2 里程碑（path_phases → career_milestones；旧 duration 单位=周）
+INSERT INTO ai_career_nav_v12.career_milestones
+  (milestone_id, path_id, sequence_no, month_from_start, title, target_skill_id,
+   origin, is_synthetic, source_ids, confidence, claim_level, verification_status,
+   license_scope, is_market_fact, data_split, schema_version)
+SELECT
+  CONCAT('PATH-', LPAD(ph.path_id, 3, '0'), '-M', LPAD(ph.phase_order, 2, '0')),
+  CONCAT('PATH-', LPAD(ph.path_id, 3, '0')),
+  ph.phase_order,
+  GREATEST(1, ROUND(cum.cum_weeks / 4.33)),
+  ph.title,
+  (SELECT s.skill_id FROM ai_career_nav.ref_skills s
+    WHERE ph.title LIKE CONCAT('%：', s.name) LIMIT 1),
+  'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+  'synthetic_demo', 'verified', 'internal_demo', 0, 'golden', 'v1.2'
+FROM ai_career_nav.path_phases ph
+JOIN (
+  SELECT p2.id AS pid, p2.phase_order AS po,
+         SUM(p3.duration) OVER (PARTITION BY p2.id ORDER BY p2.phase_order) AS cum_weeks
+  FROM ai_career_nav.path_phases p2
+  JOIN ai_career_nav.path_phases p3 ON p3.path_id = p2.id AND p3.phase_order <= p2.phase_order
+) cum ON cum.pid = ph.path_id AND cum.po = ph.phase_order;
+
+-- D.3 任务（path_tasks → path_tasks；skill 从“目标技能：SKILL-xxx”解析）
+INSERT INTO ai_career_nav_v12.path_tasks
+  (task_id, path_id, phase_order, title, task_type, difficulty, estimated_hours, skill_id, status)
+SELECT
+  CONCAT('TASK-', LPAD(t.id, 3, '0')),
+  CONCAT('PATH-', LPAD(ph.path_id, 3, '0')),
+  ph.phase_order,
+  t.title, t.task_type, t.difficulty, t.estimated_hours,
+  SUBSTRING_INDEX(SUBSTRING_INDEX(t.description, '：', 2), '，', 1),
+  t.status
+FROM ai_career_nav.path_tasks t
+JOIN ai_career_nav.path_phases ph ON ph.id = t.phase_id
+WHERE t.user_id <= 100;
+
+-- ----------------------------------------------------------------------------
+-- PART E  场景（scenario_sessions → scenario_cases + 迁移会话）
+-- ----------------------------------------------------------------------------
+
+-- E.1 场景用例 ★旧库缺失，由会话内容去重生成：
+--    AI辅助办公案例NN → SCN-AI-OFFICE-NN / 跨岗位沟通案例NN → SCN-CROSS-ROLE-NN
+--    远程协作案例NN → SCN-REMOTE-NN
+INSERT INTO ai_career_nav_v12.scenario_cases
+  (scenario_id, module_id, module_name, difficulty, target_role_id, target_user_stage, title, context,
+   initial_prompt, expected_actions, rubric_json, red_flags, privacy_focus,
+   origin, is_synthetic, source_ids, confidence, claim_level, verification_status,
+   license_scope, is_market_fact, data_split, schema_version)
+SELECT DISTINCT
+  CASE s.scenario_type
+    WHEN 'ai_office'     THEN CONCAT('SCN-AI-OFFICE-', RIGHT(s.scenario_name, 2))
+    WHEN 'cross_role'    THEN CONCAT('SCN-CROSS-ROLE-', RIGHT(s.scenario_name, 2))
+    WHEN 'remote_collab' THEN CONCAT('SCN-REMOTE-', RIGHT(s.scenario_name, 2)) END,
+  CASE s.scenario_type
+    WHEN 'ai_office'     THEN 'SCN-AI-OFFICE'
+    WHEN 'cross_role'    THEN 'SCN-CROSS-ROLE'
+    WHEN 'remote_collab' THEN 'SCN-REMOTE' END,
+  CASE s.scenario_type
+    WHEN 'ai_office'     THEN 'AI辅助办公'
+    WHEN 'cross_role'    THEN '跨岗位沟通'
+    WHEN 'remote_collab' THEN '远程协作' END,
+  CASE s.difficulty WHEN 'easy' THEN 'beginner' WHEN 'medium' THEN 'intermediate' ELSE 'advanced' END,
+  s.ai_role, 'student', s.scenario_name, s.scenario_context,
+  CONCAT('请开始场景：', s.scenario_name, '。请以角色身份直接发言。'),
+  JSON_ARRAY('确认共同目标', '提供可验证证据', '说明取舍', '约定验收标准'),
+  JSON_EXTRACT(s.evaluation, '$'),
+  JSON_ARRAY('泄露个人信息', '编造数据', '未确认需求直接执行'),
+  CASE s.scenario_type WHEN 'ai_office' THEN 'strict' ELSE 'normal' END,
+  'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+  'synthetic_demo', 'verified', 'internal_demo', 0, 'golden', 'v1.2'
+FROM ai_career_nav.scenario_sessions s;
+
+-- E.2 迁移历史会话
+INSERT INTO ai_career_nav_v12.scenario_sessions
+  (session_id, external_user_id, scenario_id, status, started_at, completed_at, evaluation)
+SELECT
+  CONCAT('SESS-', LPAD(s.id, 4, '0')),
+  CASE WHEN s.user_id <= 12 THEN CONCAT('USER-G', LPAD(s.user_id, 3, '0'))
+       ELSE CONCAT('USER-', u.nickname) END,
+  CASE s.scenario_type
+    WHEN 'ai_office'     THEN CONCAT('SCN-AI-OFFICE-', RIGHT(s.scenario_name, 2))
+    WHEN 'cross_role'    THEN CONCAT('SCN-CROSS-ROLE-', RIGHT(s.scenario_name, 2))
+    WHEN 'remote_collab' THEN CONCAT('SCN-REMOTE-', RIGHT(s.scenario_name, 2)) END,
+  s.status, s.started_at, s.completed_at,
+  CASE WHEN s.status = 'completed' THEN s.evaluation ELSE NULL END
+FROM ai_career_nav.scenario_sessions s
+JOIN ai_career_nav.users u ON u.id = s.user_id
+WHERE s.user_id <= 100;
+
+-- ----------------------------------------------------------------------------
+-- PART F  成长事件（learning_records → growth_events）
+--    event_id 对齐旧库快照引用：user1 → EVT-G001-01 … EVT-G001-40
+-- ----------------------------------------------------------------------------
+INSERT INTO ai_career_nav_v12.growth_events
+  (event_id, external_user_id, event_type, event_time, score_delta, status, detail,
+   duration_minutes, origin, is_synthetic, source_ids, confidence, claim_level,
+   verification_status, license_scope, is_market_fact, data_split, schema_version)
+SELECT
+  CONCAT('EVT-',
+         CASE WHEN lr.user_id <= 12 THEN CONCAT('G', LPAD(lr.user_id, 3, '0'))
+              ELSE CONCAT('B', LPAD(lr.user_id - 12, 3, '0')) END,
+         '-', LPAD(seq.seq_no, 2, '0')),
+  CASE WHEN lr.user_id <= 12 THEN CONCAT('USER-G', LPAD(lr.user_id, 3, '0'))
+       ELSE CONCAT('USER-', u.nickname) END,
+  CASE
+    WHEN lr.title LIKE '%技能衰减%'      THEN 'inactivity'
+    WHEN lr.title LIKE '%重算画像%'      THEN 'profile_recalculated'
+    WHEN lr.title LIKE '%任务提醒%'      THEN 'reminder_response'
+    WHEN lr.record_type = 'scenario'     THEN 'scenario_complete'
+    WHEN lr.record_type = 'task'        THEN 'task_complete'
+    WHEN lr.record_type = 'chat'        THEN 'feedback_submitted'
+    ELSE 'manual_update' END,
+  TIMESTAMP(lr.record_date, '10:00:00'),
+  IF(lr.title LIKE '%技能衰减%', -4.00, 0.00),
+  CASE
+    WHEN lr.title LIKE '%技能衰减%' THEN 'attention_needed'
+    WHEN lr.title LIKE '%任务提醒%' THEN 'reminder_sent'
+    ELSE 'completed' END,
+  lr.title,
+  lr.duration_minutes,
+  'legacy_migration', 1, 'ai_career_nav.sql', 1.0000,
+  'synthetic_demo', 'verified', 'internal_demo', 0,
+  IF(lr.user_id <= 12, 'golden', 'dev'), 'v1.2'
+FROM ai_career_nav.learning_records lr
+JOIN ai_career_nav.users u ON u.id = lr.user_id
+JOIN (
+  SELECT id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY id) AS seq_no
+  FROM ai_career_nav.learning_records
+) seq ON seq.id = lr.id
+WHERE lr.user_id <= 100;
+
+-- ----------------------------------------------------------------------------
+-- PART G  数据校验（执行完逐条检查，期望值见注释）
+-- ----------------------------------------------------------------------------
+
+-- G.1 表行数总览
+SELECT 'users' tbl, COUNT(*) cnt FROM ai_career_nav_v12.users
+UNION ALL SELECT 'user_profiles',        COUNT(*) FROM ai_career_nav_v12.user_profiles
+UNION ALL SELECT 'ref_dimensions',       COUNT(*) FROM ai_career_nav_v12.ref_dimensions        -- 期望 8
+UNION ALL SELECT 'ref_skills',           COUNT(*) FROM ai_career_nav_v12.ref_skills            -- 期望 60
+UNION ALL SELECT 'ref_roles',            COUNT(*) FROM ai_career_nav_v12.ref_roles              -- 期望 3
+UNION ALL SELECT 'ref_jobs',             COUNT(*) FROM ai_career_nav_v12.ref_jobs
+UNION ALL SELECT 'ref_job_skills',       COUNT(*) FROM ai_career_nav_v12.ref_job_skills
+UNION ALL SELECT 'ref_role_skills',      COUNT(*) FROM ai_career_nav_v12.ref_role_skills        -- > 0，聚合派生
+UNION ALL SELECT 'ref_resources',        COUNT(*) FROM ai_career_nav_v12.ref_resources
+UNION ALL SELECT 'ref_resource_skills', COUNT(*) FROM ai_career_nav_v12.ref_resource_skills    -- 主题卡派生
+UNION ALL SELECT 'career_paths',        COUNT(*) FROM ai_career_nav_v12.career_paths            -- 期望 12
+UNION ALL SELECT 'career_milestones',   COUNT(*) FROM ai_career_nav_v12.career_milestones       -- 期望 60
+UNION ALL SELECT 'path_tasks',          COUNT(*) FROM ai_career_nav_v12.path_tasks             -- 期望 60
+UNION ALL SELECT 'scenario_cases',      COUNT(*) FROM ai_career_nav_v12.scenario_cases         -- 期望 60
+UNION ALL SELECT 'scenario_sessions',    COUNT(*) FROM ai_career_nav_v12.scenario_sessions       -- 期望 60
+UNION ALL SELECT 'growth_events',        COUNT(*) FROM ai_career_nav_v12.growth_events           -- 期望 4096
+UNION ALL SELECT 'career_profiles',     COUNT(*) FROM ai_career_nav_v12.career_profiles          -- 期望 100
+UNION ALL SELECT 'skill_snapshots',     COUNT(*) FROM ai_career_nav_v12.skill_snapshots;         -- 期望 128
+
+-- G.2 演示主角画像核对：八维分与总控 MCP 返回值一致
+SELECT external_user_id, overall_score, dimension_scores, strengths, improvement_priorities, role_matches
+FROM ai_career_nav_v12.career_profiles
+WHERE external_user_id = 'USER-G001';
+-- 期望 overall_score=39.64，dimension_scores ≈
+-- {"DIM-01":44.7,"DIM-02":41.3,"DIM-03":45.9,"DIM-04":27.9,
+--  "DIM-05":34.8,"DIM-06":37.2,"DIM-07":51.0,"DIM-08":34.3}
+
+-- G.3 主角技能分抽查（与总控“查看我的进度”一致）
+SELECT s.name, us.current_score
+FROM ai_career_nav_v12.user_skills us
+JOIN ai_career_nav_v12.ref_skills s ON s.skill_id = us.skill_id
+WHERE us.external_user_id = 'USER-G001'
+  AND s.name IN ('Python编程', '数据清洗', '深度学习', '大模型基础', '职业伦理与隐私')
+ORDER BY s.skill_id;
+-- 期望 79.90 / 44.30 / 23.20 / 63.70 / 78.00
+
+-- G.4 岗位技能要求聚合抽查（generate_career_path 的 gap 数据源）
+SELECT role_id, COUNT(*) skill_cnt, ROUND(MAX(required_score), 1) max_req, SUM(is_core) core_cnt
+FROM ai_career_nav_v12.ref_role_skills
+GROUP BY role_id;
+
+-- G.5 迁移孤儿检查（三条均应返回 0 行）
+SELECT 'user_skills_unmatched' chk, COUNT(*) bad
+FROM ai_career_nav_v12.user_skills us
+LEFT JOIN ai_career_nav_v12.ref_skills s ON s.skill_id = us.skill_id
+WHERE s.skill_id IS NULL
+UNION ALL
+SELECT 'tasks_bad_skill', COUNT(*)
+FROM ai_career_nav_v12.path_tasks t
+LEFT JOIN ai_career_nav_v12.ref_skills s ON s.skill_id = t.skill_id
+WHERE t.skill_id IS NOT NULL AND s.skill_id IS NULL
+UNION ALL
+SELECT 'milestones_bad_skill', COUNT(*)
+FROM ai_career_nav_v12.career_milestones m
+LEFT JOIN ai_career_nav_v12.ref_skills s ON s.skill_id = m.target_skill_id
+WHERE m.target_skill_id IS NOT NULL AND s.skill_id IS NULL;
+
+-- ============================================================================
+-- 迁移完成后的两步（不在本 SQL 范围内）：
+--   1) Flask backend/app.py：MOCK_* → 连 ai_career_nav_v12（口径见 G.2/G.3）
+--   2) MCP server：mock 数据层 → 连 ai_career_nav_v12（4 工具走真实表）
+-- ============================================================================
