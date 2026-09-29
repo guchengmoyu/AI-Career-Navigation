@@ -1,7 +1,7 @@
 {
   "status": "PASS",
   "schema_version": "1.2.0",
-  "validated_at": "2026-09-13T10:10:46.311Z",
+  "validated_at": "2026-09-29T03:35:06.983Z",
   "summary": {
     "checks": 581,
     "passed": 580,
@@ -4053,7 +4053,7 @@
       "version": "global",
       "severity": "error",
       "passed": true,
-      "detail": "12 golden users, two paths each, eight 8-dimension snapshots each"
+      "detail": "12 golden users, two paths each, eight 8-dimension snapshots each, and five unique primary milestones"
     },
     {
       "check_id": "golden_g009_rank",
@@ -4074,7 +4074,7 @@
       "version": "global",
       "severity": "error",
       "passed": true,
-      "detail": "12 golden users contain ordered learning→project→recalculation→adjustment chain"
+      "detail": "ordered-chain failures=0, onboarding failures=0, recovery-snapshot failures=0"
     },
     {
       "check_id": "no_pii_patterns",

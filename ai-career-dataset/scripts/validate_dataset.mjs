@@ -372,12 +372,23 @@ async function main() {
   addCheck("onet_attribution", onet?.title.includes("31.0") && onet?.license_or_terms.includes("CC BY 4.0") && onet?.transform_note.includes("修改") && onet?.license_scope === "cc_by_4_0_attribution", "O*NET version, attribution license and modification notice present");
 
   const goldenResults = fullTables.golden_expected_results;
-  addCheck("golden_case_counts", goldenResults.length === 12 && fullTables.career_paths.length === 24 && fullTables.golden_profile_snapshots.length === 768, "12 golden users, two paths each, eight 8-dimension snapshots each");
+  const goldenPrimaryPaths = fullTables.career_paths.filter((row) => row.branch_type === "primary");
+  const primaryMilestoneCounts = goldenPrimaryPaths.map((pathRow) => fullTables.career_milestones.filter((row) => row.path_id === pathRow.path_id));
+  addCheck("golden_case_counts", goldenResults.length === 12
+    && fullTables.career_paths.length === 24
+    && fullTables.golden_profile_snapshots.length === 768
+    && primaryMilestoneCounts.every((rows) => rows.length === 5 && new Set(rows.map((row) => row.target_skill_id)).size === 5), "12 golden users, two paths each, eight 8-dimension snapshots each, and five unique primary milestones");
   addCheck("golden_g009_rank", goldenResults.find((row) => row.user_id === "USER-G009")?.expected_primary_rank === "1", "USER-G009 target AI application role ranks first");
   addCheck("golden_target_top_two", goldenResults.every((row) => number(row.expected_primary_rank) <= 2), "all golden target roles rank in top two");
   let chainFailures = 0;
+  let onboardingFailures = 0;
+  let recoveryFailures = 0;
   for (const user of fullTables.users.filter((row) => boolean(row.is_golden))) {
     const events = fullTables.growth_events.filter((row) => row.user_id === user.user_id).sort((a, b) => a.event_time.localeCompare(b.event_time));
+    if (events.filter((row) => row.event_type === "onboarding").length !== 1) onboardingFailures += 1;
+    const recoveryEvent = events.find((row) => row.detail.includes("学习中断后恢复"));
+    const recoverySnapshots = fullTables.golden_profile_snapshots.filter((row) => row.user_id === user.user_id && row.snapshot_sequence === "5");
+    if (recoveryEvent?.event_type !== "skill_practice" || recoverySnapshots.length !== 8 || recoverySnapshots.some((row) => row.trigger_event_id !== recoveryEvent.event_id)) recoveryFailures += 1;
     const chain = ["course_completed", "project_completed", "profile_recalculated", "plan_adjusted"];
     let cursor = -1;
     for (const type of chain) {
@@ -388,7 +399,7 @@ async function main() {
       }
     }
   }
-  addCheck("golden_closed_loop", chainFailures === 0, chainFailures ? `${chainFailures} golden users missing ordered event chain` : "12 golden users contain ordered learning→project→recalculation→adjustment chain");
+  addCheck("golden_closed_loop", chainFailures === 0 && onboardingFailures === 0 && recoveryFailures === 0, `ordered-chain failures=${chainFailures}, onboarding failures=${onboardingFailures}, recovery-snapshot failures=${recoveryFailures}`);
 
   const piiPatterns = [
     /\b1[3-9]\d{9}\b/g,

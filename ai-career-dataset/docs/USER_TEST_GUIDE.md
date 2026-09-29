@@ -12,3 +12,5 @@
 6. 第一轮问题修复后再进行第二轮，并保留版本和修改记录。
 
 空白模板位于 `templates/user_test_feedback_template.csv`。模板不得预填虚构反馈。
+
+第三周的两轮排期、招募话术、主持记录规则和最终验收清单见 `docs/WEEK3_USER_TEST_RUNBOOK.md`。

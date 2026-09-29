@@ -169,6 +169,21 @@
       "detail": "golden target roles must rank in top two and USER-G009 must rank first"
     },
     {
+      "check_id": "golden_single_onboarding",
+      "passed": true,
+      "detail": "each golden user must contain exactly one onboarding event"
+    },
+    {
+      "check_id": "golden_recovery_snapshot",
+      "passed": true,
+      "detail": "snapshot sequence 5 must be triggered by the recovery practice event"
+    },
+    {
+      "check_id": "golden_personalized_paths",
+      "passed": true,
+      "detail": "primary paths must cover every declared gap and end with the role capstone skill"
+    },
+    {
       "check_id": "matching_eval_test_only",
       "passed": true,
       "detail": "matching evaluation must use test split"

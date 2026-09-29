@@ -582,10 +582,10 @@
 | global | topic_card_labeling | error | 通过 | 98 derived topic cards are not labeled as official courses |
 | global | market_claim_boundaries | error | 通过 | jobs, salaries and trends remain explicitly simulated |
 | global | onet_attribution | error | 通过 | O*NET version, attribution license and modification notice present |
-| global | golden_case_counts | error | 通过 | 12 golden users, two paths each, eight 8-dimension snapshots each |
+| global | golden_case_counts | error | 通过 | 12 golden users, two paths each, eight 8-dimension snapshots each, and five unique primary milestones |
 | global | golden_g009_rank | error | 通过 | USER-G009 target AI application role ranks first |
 | global | golden_target_top_two | error | 通过 | all golden target roles rank in top two |
-| global | golden_closed_loop | error | 通过 | 12 golden users contain ordered learning→project→recalculation→adjustment chain |
+| global | golden_closed_loop | error | 通过 | ordered-chain failures=0, onboarding failures=0, recovery-snapshot failures=0 |
 | global | no_pii_patterns | error | 通过 | no phone, ID, email or long account-number patterns found |
 | global | golden_manual_review_template | error | 通过 | 12 blank template rows prepared |
 | global | golden_manual_review_record | error | 通过 | 12 human-review records with 12 unique users |

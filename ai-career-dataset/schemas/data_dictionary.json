@@ -3712,7 +3712,7 @@
     "required": true,
     "primary_key": false,
     "description": "objective",
-    "example": "4年内达到AI算法工程师独立项目交付水平"
+    "example": "4年内补齐“机器学习基础较好，但缺少完整算法项目”相关短板并达到AI算法工程师独立项目交付水平"
   },
   {
     "table_name": "career_paths",
@@ -3909,7 +3909,7 @@
     "required": true,
     "primary_key": false,
     "description": "title",
-    "example": "基础补齐：Python编程"
+    "example": "基础复核：机器学习"
   },
   {
     "table_name": "career_milestones",
@@ -3920,18 +3920,18 @@
     "required": true,
     "primary_key": false,
     "description": "target skill id",
-    "example": "SKILL-001"
+    "example": "SKILL-019"
   },
   {
     "table_name": "career_milestones",
     "table_description": "职业路径里程碑",
     "module_owner": "路径",
     "field_name": "target_score",
-    "data_type": "integer",
+    "data_type": "number",
     "required": true,
     "primary_key": false,
     "description": "target score",
-    "example": 82
+    "example": 73.6
   },
   {
     "table_name": "career_milestones",
@@ -3942,7 +3942,7 @@
     "required": true,
     "primary_key": false,
     "description": "deliverable",
-    "example": "测评与学习记录"
+    "example": "基线测评与证据复核"
   },
   {
     "table_name": "career_milestones",

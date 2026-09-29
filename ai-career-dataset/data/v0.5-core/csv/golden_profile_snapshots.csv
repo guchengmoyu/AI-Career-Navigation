@@ -38,7 +38,7 @@ SNAP-G001-5-04,USER-G001,5,2025-09-15T16:00:00Z,DIM-04,22.8,EVT-G001-21,由课�
 SNAP-G001-5-05,USER-G001,5,2025-09-15T16:00:00Z,DIM-05,29.7,EVT-G001-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G001-5-06,USER-G001,5,2025-09-15T16:00:00Z,DIM-06,34.1,EVT-G001-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G001-5-07,USER-G001,5,2025-09-15T16:00:00Z,DIM-07,45.9,EVT-G001-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G001-5-08,USER-G001,5,2025-09-15T16:00:00Z,DIM-08,26.2,EVT-G001-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G001-5-08,USER-G001,5,2025-09-15T16:00:00Z,DIM-08,26.2,EVT-G001-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G001-6-01,USER-G001,6,2025-12-09T16:00:00Z,DIM-01,41.3,EVT-G001-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G001-6-02,USER-G001,6,2025-12-09T16:00:00Z,DIM-02,37.9,EVT-G001-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G001-6-03,USER-G001,6,2025-12-09T16:00:00Z,DIM-03,42.5,EVT-G001-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
@@ -102,7 +102,7 @@ SNAP-G002-5-04,USER-G002,5,2025-09-15T16:00:00Z,DIM-04,35.6,EVT-G002-21,由课�
 SNAP-G002-5-05,USER-G002,5,2025-09-15T16:00:00Z,DIM-05,34.4,EVT-G002-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G002-5-06,USER-G002,5,2025-09-15T16:00:00Z,DIM-06,29.6,EVT-G002-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G002-5-07,USER-G002,5,2025-09-15T16:00:00Z,DIM-07,31,EVT-G002-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G002-5-08,USER-G002,5,2025-09-15T16:00:00Z,DIM-08,34.1,EVT-G002-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G002-5-08,USER-G002,5,2025-09-15T16:00:00Z,DIM-08,34.1,EVT-G002-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G002-6-01,USER-G002,6,2025-12-09T16:00:00Z,DIM-01,45.7,EVT-G002-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G002-6-02,USER-G002,6,2025-12-09T16:00:00Z,DIM-02,31,EVT-G002-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G002-6-03,USER-G002,6,2025-12-09T16:00:00Z,DIM-03,37.5,EVT-G002-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
@@ -166,7 +166,7 @@ SNAP-G003-5-04,USER-G003,5,2025-09-15T16:00:00Z,DIM-04,18.2,EVT-G003-21,由课�
 SNAP-G003-5-05,USER-G003,5,2025-09-15T16:00:00Z,DIM-05,29.8,EVT-G003-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G003-5-06,USER-G003,5,2025-09-15T16:00:00Z,DIM-06,38.1,EVT-G003-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G003-5-07,USER-G003,5,2025-09-15T16:00:00Z,DIM-07,43.4,EVT-G003-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G003-5-08,USER-G003,5,2025-09-15T16:00:00Z,DIM-08,35.1,EVT-G003-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G003-5-08,USER-G003,5,2025-09-15T16:00:00Z,DIM-08,35.1,EVT-G003-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G003-6-01,USER-G003,6,2025-12-09T16:00:00Z,DIM-01,45,EVT-G003-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G003-6-02,USER-G003,6,2025-12-09T16:00:00Z,DIM-02,44,EVT-G003-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G003-6-03,USER-G003,6,2025-12-09T16:00:00Z,DIM-03,39.4,EVT-G003-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
@@ -230,7 +230,7 @@ SNAP-G004-5-04,USER-G004,5,2025-09-15T16:00:00Z,DIM-04,27.3,EVT-G004-21,由课�
 SNAP-G004-5-05,USER-G004,5,2025-09-15T16:00:00Z,DIM-05,27,EVT-G004-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G004-5-06,USER-G004,5,2025-09-15T16:00:00Z,DIM-06,34.6,EVT-G004-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G004-5-07,USER-G004,5,2025-09-15T16:00:00Z,DIM-07,35.3,EVT-G004-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G004-5-08,USER-G004,5,2025-09-15T16:00:00Z,DIM-08,43.2,EVT-G004-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G004-5-08,USER-G004,5,2025-09-15T16:00:00Z,DIM-08,43.2,EVT-G004-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G004-6-01,USER-G004,6,2025-12-09T16:00:00Z,DIM-01,28.8,EVT-G004-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G004-6-02,USER-G004,6,2025-12-09T16:00:00Z,DIM-02,39.6,EVT-G004-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G004-6-03,USER-G004,6,2025-12-09T16:00:00Z,DIM-03,63.4,EVT-G004-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
@@ -294,7 +294,7 @@ SNAP-G005-5-04,USER-G005,5,2025-09-15T16:00:00Z,DIM-04,22,EVT-G005-21,由课程�
 SNAP-G005-5-05,USER-G005,5,2025-09-15T16:00:00Z,DIM-05,21.7,EVT-G005-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G005-5-06,USER-G005,5,2025-09-15T16:00:00Z,DIM-06,46.4,EVT-G005-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G005-5-07,USER-G005,5,2025-09-15T16:00:00Z,DIM-07,46.5,EVT-G005-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G005-5-08,USER-G005,5,2025-09-15T16:00:00Z,DIM-08,30.8,EVT-G005-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G005-5-08,USER-G005,5,2025-09-15T16:00:00Z,DIM-08,30.8,EVT-G005-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G005-6-01,USER-G005,6,2025-12-09T16:00:00Z,DIM-01,24.5,EVT-G005-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G005-6-02,USER-G005,6,2025-12-09T16:00:00Z,DIM-02,52.6,EVT-G005-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G005-6-03,USER-G005,6,2025-12-09T16:00:00Z,DIM-03,32.4,EVT-G005-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
@@ -358,7 +358,7 @@ SNAP-G006-5-04,USER-G006,5,2025-09-15T16:00:00Z,DIM-04,36.5,EVT-G006-21,由课�
 SNAP-G006-5-05,USER-G006,5,2025-09-15T16:00:00Z,DIM-05,43.9,EVT-G006-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G006-5-06,USER-G006,5,2025-09-15T16:00:00Z,DIM-06,38.3,EVT-G006-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G006-5-07,USER-G006,5,2025-09-15T16:00:00Z,DIM-07,33.1,EVT-G006-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G006-5-08,USER-G006,5,2025-09-15T16:00:00Z,DIM-08,48.2,EVT-G006-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G006-5-08,USER-G006,5,2025-09-15T16:00:00Z,DIM-08,48.2,EVT-G006-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G006-6-01,USER-G006,6,2025-12-09T16:00:00Z,DIM-01,32.5,EVT-G006-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G006-6-02,USER-G006,6,2025-12-09T16:00:00Z,DIM-02,38.8,EVT-G006-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G006-6-03,USER-G006,6,2025-12-09T16:00:00Z,DIM-03,27.9,EVT-G006-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
@@ -422,7 +422,7 @@ SNAP-G007-5-04,USER-G007,5,2025-09-15T16:00:00Z,DIM-04,21.4,EVT-G007-21,由课�
 SNAP-G007-5-05,USER-G007,5,2025-09-15T16:00:00Z,DIM-05,49,EVT-G007-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G007-5-06,USER-G007,5,2025-09-15T16:00:00Z,DIM-06,28.7,EVT-G007-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G007-5-07,USER-G007,5,2025-09-15T16:00:00Z,DIM-07,35.9,EVT-G007-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G007-5-08,USER-G007,5,2025-09-15T16:00:00Z,DIM-08,40.4,EVT-G007-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G007-5-08,USER-G007,5,2025-09-15T16:00:00Z,DIM-08,40.4,EVT-G007-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G007-6-01,USER-G007,6,2025-12-09T16:00:00Z,DIM-01,36.3,EVT-G007-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G007-6-02,USER-G007,6,2025-12-09T16:00:00Z,DIM-02,33.5,EVT-G007-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G007-6-03,USER-G007,6,2025-12-09T16:00:00Z,DIM-03,39.7,EVT-G007-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
@@ -486,7 +486,7 @@ SNAP-G008-5-04,USER-G008,5,2025-09-15T16:00:00Z,DIM-04,24.8,EVT-G008-21,由课�
 SNAP-G008-5-05,USER-G008,5,2025-09-15T16:00:00Z,DIM-05,34.2,EVT-G008-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G008-5-06,USER-G008,5,2025-09-15T16:00:00Z,DIM-06,42,EVT-G008-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G008-5-07,USER-G008,5,2025-09-15T16:00:00Z,DIM-07,49.1,EVT-G008-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G008-5-08,USER-G008,5,2025-09-15T16:00:00Z,DIM-08,37,EVT-G008-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G008-5-08,USER-G008,5,2025-09-15T16:00:00Z,DIM-08,37,EVT-G008-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G008-6-01,USER-G008,6,2025-12-09T16:00:00Z,DIM-01,33,EVT-G008-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G008-6-02,USER-G008,6,2025-12-09T16:00:00Z,DIM-02,43.5,EVT-G008-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G008-6-03,USER-G008,6,2025-12-09T16:00:00Z,DIM-03,36.2,EVT-G008-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
@@ -550,7 +550,7 @@ SNAP-G009-5-04,USER-G009,5,2025-09-15T16:00:00Z,DIM-04,29.2,EVT-G009-21,由课�
 SNAP-G009-5-05,USER-G009,5,2025-09-15T16:00:00Z,DIM-05,30.6,EVT-G009-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G009-5-06,USER-G009,5,2025-09-15T16:00:00Z,DIM-06,48.3,EVT-G009-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G009-5-07,USER-G009,5,2025-09-15T16:00:00Z,DIM-07,59.7,EVT-G009-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G009-5-08,USER-G009,5,2025-09-15T16:00:00Z,DIM-08,17.9,EVT-G009-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G009-5-08,USER-G009,5,2025-09-15T16:00:00Z,DIM-08,17.9,EVT-G009-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G009-6-01,USER-G009,6,2025-12-09T16:00:00Z,DIM-01,48.1,EVT-G009-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G009-6-02,USER-G009,6,2025-12-09T16:00:00Z,DIM-02,41.6,EVT-G009-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G009-6-03,USER-G009,6,2025-12-09T16:00:00Z,DIM-03,27.1,EVT-G009-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
@@ -614,7 +614,7 @@ SNAP-G010-5-04,USER-G010,5,2025-09-15T16:00:00Z,DIM-04,22.2,EVT-G010-21,由课�
 SNAP-G010-5-05,USER-G010,5,2025-09-15T16:00:00Z,DIM-05,21.1,EVT-G010-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G010-5-06,USER-G010,5,2025-09-15T16:00:00Z,DIM-06,40.9,EVT-G010-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G010-5-07,USER-G010,5,2025-09-15T16:00:00Z,DIM-07,42.2,EVT-G010-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G010-5-08,USER-G010,5,2025-09-15T16:00:00Z,DIM-08,12.6,EVT-G010-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G010-5-08,USER-G010,5,2025-09-15T16:00:00Z,DIM-08,12.6,EVT-G010-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G010-6-01,USER-G010,6,2025-12-09T16:00:00Z,DIM-01,34.5,EVT-G010-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G010-6-02,USER-G010,6,2025-12-09T16:00:00Z,DIM-02,32.3,EVT-G010-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G010-6-03,USER-G010,6,2025-12-09T16:00:00Z,DIM-03,52.3,EVT-G010-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
@@ -678,7 +678,7 @@ SNAP-G011-5-04,USER-G011,5,2025-09-15T16:00:00Z,DIM-04,29.8,EVT-G011-21,由课�
 SNAP-G011-5-05,USER-G011,5,2025-09-15T16:00:00Z,DIM-05,32,EVT-G011-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G011-5-06,USER-G011,5,2025-09-15T16:00:00Z,DIM-06,47.4,EVT-G011-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G011-5-07,USER-G011,5,2025-09-15T16:00:00Z,DIM-07,45.5,EVT-G011-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G011-5-08,USER-G011,5,2025-09-15T16:00:00Z,DIM-08,30.8,EVT-G011-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G011-5-08,USER-G011,5,2025-09-15T16:00:00Z,DIM-08,30.8,EVT-G011-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G011-6-01,USER-G011,6,2025-12-09T16:00:00Z,DIM-01,31.1,EVT-G011-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G011-6-02,USER-G011,6,2025-12-09T16:00:00Z,DIM-02,63.7,EVT-G011-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G011-6-03,USER-G011,6,2025-12-09T16:00:00Z,DIM-03,25.4,EVT-G011-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
@@ -742,7 +742,7 @@ SNAP-G012-5-04,USER-G012,5,2025-09-15T16:00:00Z,DIM-04,25.5,EVT-G012-21,由课�
 SNAP-G012-5-05,USER-G012,5,2025-09-15T16:00:00Z,DIM-05,28.5,EVT-G012-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G012-5-06,USER-G012,5,2025-09-15T16:00:00Z,DIM-06,40.5,EVT-G012-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G012-5-07,USER-G012,5,2025-09-15T16:00:00Z,DIM-07,49.9,EVT-G012-21,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
-SNAP-G012-5-08,USER-G012,5,2025-09-15T16:00:00Z,DIM-08,29.2,EVT-G012-21,学习中断导致成长维度短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
+SNAP-G012-5-08,USER-G012,5,2025-09-15T16:00:00Z,DIM-08,29.2,EVT-G012-21,学习中断后恢复练习，成长维度仍保留短期回落,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G012-6-01,USER-G012,6,2025-12-09T16:00:00Z,DIM-01,39.1,EVT-G012-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G012-6-02,USER-G012,6,2025-12-09T16:00:00Z,DIM-02,41,EVT-G012-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden
 SNAP-G012-6-03,USER-G012,6,2025-12-09T16:00:00Z,DIM-03,29.3,EVT-G012-26,由课程、项目、练习或反馈事件更新,1.2.0,derived,true,SRC-SYNTH,2026-09-13T00:00:00+08:00,0.95,primary_derived,derived,,team_generated,false,golden

@@ -2,6 +2,8 @@
 
 自动检查不能替代参赛团队签字。`templates/golden_manual_review_template.csv` 是生成器维护的空白模板；请将人工结果填写到 `reviews/golden_manual_review.csv`。生成器不会覆盖人工记录。由至少一名未参与该案例编写的团队成员逐条完成以下检查。
 
+集中复核时可先查看 `docs/GOLDEN_REVIEW_EVIDENCE.md`，其中汇总了 12 条案例的自动预检结果和个性化路线证据。
+
 ## 每个用户必须确认
 
 1. 专业、经历、学习时间、目标岗位和当前困难没有矛盾。

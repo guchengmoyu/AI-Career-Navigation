@@ -337,7 +337,7 @@ career_paths,黄金用户双分支职业路径,路径,branch_type,string,true,fa
 career_paths,黄金用户双分支职业路径,路径,target_role_id,string,true,false,target role id,ROLE-AI-ALG
 career_paths,黄金用户双分支职业路径,路径,horizon_years,integer,true,false,horizon years,4
 career_paths,黄金用户双分支职业路径,路径,weekly_hours_limit,integer,true,false,weekly hours limit,12
-career_paths,黄金用户双分支职业路径,路径,objective,string,true,false,objective,4年内达到AI算法工程师独立项目交付水平
+career_paths,黄金用户双分支职业路径,路径,objective,string,true,false,objective,4年内补齐“机器学习基础较好，但缺少完整算法项目”相关短板并达到AI算法工程师独立项目交付水平
 career_paths,黄金用户双分支职业路径,路径,status,string,true,false,status,reference_expected
 career_paths,黄金用户双分支职业路径,路径,schema_version,string,true,false,数据契约版本,1.2.0
 career_paths,黄金用户双分支职业路径,路径,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic
@@ -355,10 +355,10 @@ career_milestones,职业路径里程碑,路径,milestone_id,string,true,true,mil
 career_milestones,职业路径里程碑,路径,path_id,string,true,false,path id,PATH-G001-B1
 career_milestones,职业路径里程碑,路径,sequence_no,integer,true,false,sequence no,1
 career_milestones,职业路径里程碑,路径,month_from_start,integer,true,false,month from start,10
-career_milestones,职业路径里程碑,路径,title,string,true,false,title,基础补齐：Python编程
-career_milestones,职业路径里程碑,路径,target_skill_id,string,true,false,target skill id,SKILL-001
-career_milestones,职业路径里程碑,路径,target_score,integer,true,false,target score,82
-career_milestones,职业路径里程碑,路径,deliverable,string,true,false,deliverable,测评与学习记录
+career_milestones,职业路径里程碑,路径,title,string,true,false,title,基础复核：机器学习
+career_milestones,职业路径里程碑,路径,target_skill_id,string,true,false,target skill id,SKILL-019
+career_milestones,职业路径里程碑,路径,target_score,number,true,false,target score,73.6
+career_milestones,职业路径里程碑,路径,deliverable,string,true,false,deliverable,基线测评与证据复核
 career_milestones,职业路径里程碑,路径,acceptance_rule,string,true,false,acceptance rule,在每周不超过12小时的前提下完成，并产生可验证证据
 career_milestones,职业路径里程碑,路径,schema_version,string,true,false,数据契约版本,1.2.0
 career_milestones,职业路径里程碑,路径,origin,string,true,false,数据来源类型：synthetic、public_metadata或derived,synthetic

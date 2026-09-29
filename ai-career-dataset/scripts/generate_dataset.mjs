@@ -769,6 +769,7 @@ for (const user of users) {
   const roleJobIds = jobsByRole.get(user.target_role_id);
   for (let index = 0; index < 40; index += 1) {
     let eventType = eventPattern[index % eventPattern.length];
+    if (index === eventPattern.length) eventType = "skill_practice";
     if (user.user_id === "USER-G012" && index === 37) eventType = "consent_withdrawn";
     if (user.user_id === "USER-G003" && index === 32) eventType = "goal_changed";
     const skillId = roleSkillIds[(index * 3 + user.user_id.charCodeAt(user.user_id.length - 1)) % roleSkillIds.length];
@@ -793,7 +794,13 @@ for (const user of users) {
       sentiment,
       user_state: state,
       risk_level: riskLevel,
-      detail: eventType === "consent_withdrawn" ? "模拟用户撤回授权，停止画像更新并进入删除流程测试" : eventType === "goal_changed" ? "模拟用户从原目标切换到相邻岗位，触发路径重规划" : eventDetails[eventType],
+      detail: eventType === "consent_withdrawn"
+        ? "模拟用户撤回授权，停止画像更新并进入删除流程测试"
+        : eventType === "goal_changed"
+          ? "模拟用户从原目标切换到相邻岗位，触发路径重规划"
+          : index === eventPattern.length
+            ? "学习中断后恢复技能练习，并按提醒结果继续执行调整后的计划"
+            : eventDetails[eventType],
       ...metadata("synthetic", true, "SRC-SYNTH", 0.9, { data_split: user.data_split }),
     });
   }
@@ -836,7 +843,7 @@ for (const [goldIndex, user] of users.filter((item) => item.is_golden).entries()
         dimension_id: dimension.dimension_id,
         score: clamp(round(score, 1), 0, 100),
         trigger_event_id: userEvents[eventIndex].event_id,
-        explanation: sequence === 5 && dimension.dimension_id === "DIM-08" ? "学习中断导致成长维度短期回落" : sequence === 8 ? "最新证据汇总结果" : "由课程、项目、练习或反馈事件更新",
+        explanation: sequence === 5 && dimension.dimension_id === "DIM-08" ? "学习中断后恢复练习，成长维度仍保留短期回落" : sequence === 8 ? "最新证据汇总结果" : "由课程、项目、练习或反馈事件更新",
         ...metadata("derived", true, "SRC-SYNTH", 0.95, { data_split: "golden" }),
       });
     }
@@ -845,6 +852,28 @@ for (const [goldIndex, user] of users.filter((item) => item.is_golden).entries()
 
 const careerPaths = [];
 const careerMilestones = [];
+const milestonePhases = ["基础复核", "短板训练", "综合项目", "岗位验证", "独立交付"];
+const capstoneSkillByRole = new Map([
+  ["ROLE-AI-ALG", "project_delivery"],
+  ["ROLE-AI-APP", "cloud_deployment"],
+  ["ROLE-DATA", "presentation"],
+]);
+const foundationSkillByRole = new Map([
+  ["ROLE-AI-ALG", "machine_learning"],
+  ["ROLE-AI-APP", "backend_service"],
+  ["ROLE-DATA", "statistics"],
+]);
+
+function personalizedPrimaryMilestoneKeys(user, roleId) {
+  const golden = goldenById.get(user.user_id);
+  const capstone = capstoneSkillByRole.get(roleId);
+  const role = roleDefinitions.find((item) => item.role_id === roleId);
+  const candidates = [foundationSkillByRole.get(roleId), ...(golden?.gaps ?? []), ...role.keys]
+    .filter((key) => key && key !== capstone);
+  const unique = [...new Set(candidates)].slice(0, 4);
+  return [...unique, capstone];
+}
+
 for (const [userIndex, user] of users.filter((item) => item.is_golden).entries()) {
   for (let branch = 1; branch <= 2; branch += 1) {
     const roleId = branch === 1 ? user.target_role_id : user.secondary_role_id;
@@ -859,24 +888,35 @@ for (const [userIndex, user] of users.filter((item) => item.is_golden).entries()
       target_role_id: roleId,
       horizon_years: horizonYears,
       weekly_hours_limit: user.weekly_learning_hours,
-      objective: `${horizonYears}年内达到${role.name}独立项目交付水平`,
+      objective: branch === 1
+        ? `${horizonYears}年内补齐“${user.current_challenge}”相关短板并达到${role.name}独立项目交付水平`
+        : `${horizonYears}年内达到${role.name}独立项目交付水平`,
       status: "reference_expected",
       ...metadata("synthetic", true, "SRC-SYNTH", 0.96, { data_split: "golden" }),
     });
-    const milestoneNames = ["基础补齐", "技能项目", "综合项目", "岗位验证", "独立交付"];
-    const required = roleSkillMap.get(roleId).slice(0, 5);
-    milestoneNames.forEach((name, milestoneIndex) => {
-      const mapping = required[milestoneIndex];
-      const skill = skillById.get(mapping.skill_id);
+    const roleRequirements = new Map(roleSkillMap.get(roleId).map((mapping) => [mapping.skill_id, mapping]));
+    const milestoneSkills = branch === 1
+      ? personalizedPrimaryMilestoneKeys(user, roleId).map((key) => skillByKey.get(key))
+      : roleSkillMap.get(roleId).slice(0, 5).map((mapping) => skillById.get(mapping.skill_id));
+    milestoneSkills.forEach((skill, milestoneIndex) => {
+      const mapping = roleRequirements.get(skill.skill_id);
       careerMilestones.push({
         milestone_id: `${pathId}-M${milestoneIndex + 1}`,
         path_id: pathId,
         sequence_no: milestoneIndex + 1,
         month_from_start: Math.round(((milestoneIndex + 1) * horizonYears * 12) / 5),
-        title: `${name}：${skill.name}`,
+        title: `${milestonePhases[milestoneIndex]}：${skill.name}`,
         target_skill_id: skill.skill_id,
-        target_score: mapping.required_score,
-        deliverable: milestoneIndex === 0 ? "测评与学习记录" : milestoneIndex <= 2 ? "可运行项目与复盘" : milestoneIndex === 3 ? "模拟岗位申请与面试反馈" : "完整项目、文档和演示",
+        target_score: mapping?.required_score ?? 70,
+        deliverable: milestoneIndex === 0
+          ? "基线测评与证据复核"
+          : milestoneIndex === 1
+            ? "针对当前短板的可运行练习与复盘"
+            : milestoneIndex === 2
+              ? "与当前困难对应的阶段项目与评测记录"
+              : milestoneIndex === 3
+                ? "岗位任务模拟、验证数据与改进记录"
+                : `完整${role.name}项目、文档、演示与复盘`,
         acceptance_rule: `在每周不超过${user.weekly_learning_hours}小时的前提下完成，并产生可验证证据`,
         ...metadata("synthetic", true, "SRC-SYNTH", 0.94, { data_split: "golden" }),
       });
@@ -1409,6 +1449,23 @@ function validateInMemory() {
   check("evidence_count", userSkillEvidence.length === 30000, "each user must have 60 evidence records");
   check("golden_snapshots", goldenProfileSnapshots.length === 12 * 8 * 8, "golden users need 8 timestamps and 8 dimensions");
   check("golden_target_rank", goldenExpectedResults.every((row) => row.expected_primary_rank <= 2) && goldenExpectedResults.find((row) => row.user_id === "USER-G009")?.expected_primary_rank === 1, "golden target roles must rank in top two and USER-G009 must rank first");
+  check("golden_single_onboarding", users.filter((row) => row.is_golden).every((user) => growthEvents.filter((row) => row.user_id === user.user_id && row.event_type === "onboarding").length === 1), "each golden user must contain exactly one onboarding event");
+  check("golden_recovery_snapshot", users.filter((row) => row.is_golden).every((user) => {
+    const recoveryEvent = growthEvents.find((row) => row.user_id === user.user_id && row.detail.includes("学习中断后恢复"));
+    return recoveryEvent?.event_type === "skill_practice"
+      && goldenProfileSnapshots.filter((row) => row.user_id === user.user_id && row.snapshot_sequence === 5).every((row) => row.trigger_event_id === recoveryEvent.event_id);
+  }), "snapshot sequence 5 must be triggered by the recovery practice event");
+  check("golden_personalized_paths", users.filter((row) => row.is_golden).every((user) => {
+    const golden = goldenById.get(user.user_id);
+    const path = careerPaths.find((row) => row.user_id === user.user_id && row.branch_type === "primary");
+    const milestoneSkillIds = careerMilestones.filter((row) => row.path_id === path?.path_id).map((row) => row.target_skill_id);
+    const gapSkillIds = golden.gaps.map((key) => skillByKey.get(key).skill_id);
+    const capstoneSkillId = skillByKey.get(capstoneSkillByRole.get(user.target_role_id)).skill_id;
+    return milestoneSkillIds.length === 5
+      && new Set(milestoneSkillIds).size === 5
+      && gapSkillIds.every((skillId) => milestoneSkillIds.includes(skillId))
+      && milestoneSkillIds.at(-1) === capstoneSkillId;
+  }), "primary paths must cover every declared gap and end with the role capstone skill");
   check("matching_eval_test_only", matchingEvaluation.every((row) => row.data_split === "test"), "matching evaluation must use test split");
   check("path_eval_test_only", pathEvaluation.every((row) => row.data_split === "test"), "path evaluation must use test split");
   check("dialogue_eval_balance", dialogueEvaluation.filter((row) => row.target_user_stage === "student").length === 75 && dialogueEvaluation.filter((row) => row.target_user_stage === "newcomer").length === 75, "dialogue evaluation must be 75/75 by stage");
