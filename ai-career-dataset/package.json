@@ -1,0 +1,16 @@
+{
+  "name": "ai-career-competition-dataset",
+  "version": "1.2.0",
+  "private": true,
+  "type": "module",
+  "description": "A02 AI职业导航比赛模拟数据生成、校验与交付工程",
+  "scripts": {
+    "generate": "node scripts/generate_dataset.mjs",
+    "validate": "node scripts/validate_dataset.mjs",
+    "workbook": "node scripts/build_workbook.mjs",
+    "build": "node scripts/generate_dataset.mjs && node scripts/validate_dataset.mjs && node scripts/build_workbook.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

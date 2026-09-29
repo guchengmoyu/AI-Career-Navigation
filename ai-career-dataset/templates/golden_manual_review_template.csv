@@ -1,0 +1,13 @@
+﻿review_id,user_id,automated_precheck,target_role_rank,snapshot_count,path_branch_count,event_chain_present,reviewer,review_date,target_role_plausible,path_constraints_plausible,narrative_consistent,review_notes,status
+REVIEW-USER-G001,USER-G001,passed,1,8,2,true,,,,,,,pending_team_signoff
+REVIEW-USER-G002,USER-G002,passed,1,8,2,true,,,,,,,pending_team_signoff
+REVIEW-USER-G003,USER-G003,passed,1,8,2,true,,,,,,,pending_team_signoff
+REVIEW-USER-G004,USER-G004,passed,1,8,2,true,,,,,,,pending_team_signoff
+REVIEW-USER-G005,USER-G005,passed,1,8,2,true,,,,,,,pending_team_signoff
+REVIEW-USER-G006,USER-G006,passed,1,8,2,true,,,,,,,pending_team_signoff
+REVIEW-USER-G007,USER-G007,passed,1,8,2,true,,,,,,,pending_team_signoff
+REVIEW-USER-G008,USER-G008,passed,1,8,2,true,,,,,,,pending_team_signoff
+REVIEW-USER-G009,USER-G009,passed,1,8,2,true,,,,,,,pending_team_signoff
+REVIEW-USER-G010,USER-G010,passed,1,8,2,true,,,,,,,pending_team_signoff
+REVIEW-USER-G011,USER-G011,passed,1,8,2,true,,,,,,,pending_team_signoff
+REVIEW-USER-G012,USER-G012,passed,2,8,2,true,,,,,,,pending_team_signoff

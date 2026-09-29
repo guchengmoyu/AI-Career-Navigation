@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI职业导航数据通用元数据",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "origin",
+    "is_synthetic",
+    "source_ids",
+    "generated_at",
+    "confidence",
+    "claim_level",
+    "verification_status",
+    "last_verified_at",
+    "license_scope",
+    "is_market_fact",
+    "data_split"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.2.0"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "synthetic",
+        "public_metadata",
+        "derived"
+      ]
+    },
+    "is_synthetic": {
+      "type": "boolean"
+    },
+    "source_ids": {
+      "type": "string",
+      "description": "多个来源ID使用竖线分隔"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "claim_level": {
+      "type": "string",
+      "enum": [
+        "verified_primary",
+        "primary_derived",
+        "synthetic"
+      ]
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "derived",
+        "not_applicable"
+      ]
+    },
+    "last_verified_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "license_scope": {
+      "type": "string",
+      "enum": [
+        "metadata_only",
+        "cc_by_4_0_attribution",
+        "reference_only",
+        "team_generated"
+      ]
+    },
+    "is_market_fact": {
+      "type": "boolean"
+    },
+    "data_split": {
+      "type": "string",
+      "enum": [
+        "golden",
+        "dev",
+        "test"
+      ]
+    }
+  }
+}
